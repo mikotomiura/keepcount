@@ -155,3 +155,118 @@ def windows(times: np.ndarray, width_ms: float, rest_ms: float) -> list[Window]:
 def unit(x: float, lo: float, hi: float) -> float:
     """x placed on [0, 1] between lo and hi, saturated outside."""
     return float(np.clip((x - lo) / (hi - lo), 0.0, 1.0))
+
+
+# ---------------------------------------------------------------- v2 (prototype_v2; the functions above stay as v1 used them)
+
+
+@dataclass(frozen=True)
+class Mixture:
+    """Lognormals with weights, drawn below or at-or-above a threshold (by rejection)."""
+    parts: tuple[tuple[float, Lognormal], ...]
+
+    def draw(self, rng: np.random.Generator, below: float | None = None, at_least: float | None = None) -> float:
+        w = np.array([a for a, _ in self.parts], dtype=float)
+        if not (w.size and np.all(w >= 0) and w.sum() > 0):
+            raise ValueError("a mixture needs non-negative weights with a positive sum")
+        w = w / w.sum()
+        for _ in range(100_000):
+            x = float(self.parts[rng.choice(len(w), p=w)][1].draw(rng))
+            if (below is None or x < below) and (at_least is None or x >= at_least):
+                return x
+        raise RuntimeError("rejection did not find a draw in 100000 tries")
+
+
+def share_below(d: Lognormal, x: float) -> float:
+    """P(gap < x) for a lognormal gap."""
+    from math import erf, log, sqrt
+
+    if d.sigma == 0:
+        return 1.0 if d.median_ms < x else 0.0
+    return 0.5 * (1.0 + erf((log(x) - log(d.median_ms)) / (d.sigma * sqrt(2.0))))
+
+
+@dataclass(frozen=True)
+class MatchedRegimes:
+    fast: Mixture
+    slow: Mixture
+    rest: Mixture
+    rest_chance: float
+    mean_run_fast: float
+    mean_run_slow: float
+
+
+def matched_regimes(text: str, timing: TextTiming, rest_ms: float, mean_run_fast: float) -> MatchedRegimes:
+    """Regimes whose gaps have, in expectation, the distribution of the gaps of from_text(text, timing): the same
+    chance of a rest, the same distribution of rest lengths, and the same mixture of shorter gaps. What differs is
+    the order: short gaps come in runs of a fast regime (gaps inside words) and a slow one (the other kinds below
+    the threshold), with geometric run lengths whose means give the text's share of slow gaps; rests fall at random.
+    """
+    labels = positions(text)[1:]
+    kinds = ("within_word", "word_start", "sentence_end", "paragraph_end")
+    n = {k: labels.count(k) for k in kinds}
+    below = {k: n[k] * share_below(getattr(timing, k), rest_ms) for k in kinds}
+    above = {k: n[k] - below[k] for k in kinds}
+    slow_kinds = kinds[1:]
+    short = sum(below.values())
+    slow_share = sum(below[k] for k in slow_kinds) / short
+    if not 0 < slow_share < 1:
+        raise ValueError("the text gives no mix of fast and slow gaps")
+    return MatchedRegimes(
+        # weights are the counts: drawing below or above the threshold by rejection multiplies each part by its
+        # chance of falling there, which gives below[k] and above[k]
+        fast=Mixture(((float(n["within_word"]), timing.within_word),)),
+        slow=Mixture(tuple((float(n[k]), getattr(timing, k)) for k in slow_kinds if n[k] > 0)),
+        rest=Mixture(tuple((float(n[k]), getattr(timing, k)) for k in kinds if above[k] > 0)),
+        rest_chance=sum(above.values()) / len(labels),
+        mean_run_fast=mean_run_fast,
+        mean_run_slow=mean_run_fast * slow_share / (1.0 - slow_share),
+    )
+
+
+def from_matched_regimes(n_presses: int, g: MatchedRegimes, rest_ms: float, rng: np.random.Generator) -> np.ndarray:
+    """Press times (ms, the first at 0) of n_presses without a text. A gap is a rest with chance rest_chance;
+    otherwise it is drawn below the threshold from the current regime, whose run lengths count short gaps only."""
+    if n_presses < 2:
+        raise ValueError("at least two presses")
+    gaps = np.empty(n_presses - 1)
+    fast = rng.random() < g.mean_run_fast / (g.mean_run_fast + g.mean_run_slow)  # start in proportion
+    left = rng.geometric(1.0 / (g.mean_run_fast if fast else g.mean_run_slow))
+    for k in range(n_presses - 1):
+        if rng.random() < g.rest_chance:
+            gaps[k] = g.rest.draw(rng, at_least=rest_ms)
+            continue
+        if left == 0:
+            fast = not fast
+            left = rng.geometric(1.0 / (g.mean_run_fast if fast else g.mean_run_slow))
+        left -= 1
+        gaps[k] = (g.fast if fast else g.slow).draw(rng, below=rest_ms)
+    return np.concatenate([[0.0], np.cumsum(gaps)])
+
+
+def check_times(times: np.ndarray) -> np.ndarray:
+    t = np.asarray(times, dtype=float)
+    if t.ndim != 1 or t.size < 2 or not np.all(np.isfinite(t)) or t[0] != 0.0 or np.any(np.diff(t) <= 0):
+        raise ValueError("times must be finite, start at 0, rise strictly and hold at least two presses")
+    return t
+
+
+def full_windows(times: np.ndarray, width_ms: float, rest_ms: float) -> tuple[list[Window], float]:
+    """The full windows [k w, (k + 1) w), k = 0 .. floor(end / w) - 1, all half-open; the time after the last full
+    window is dropped and returned. Speed: median of the gaps < rest_ms with both presses in the window (None if
+    none). Rest: share of the window's time inside gaps >= rest_ms."""
+    t = check_times(times)
+    if not (np.isfinite(width_ms) and width_ms > 0 and np.isfinite(rest_ms) and rest_ms > 0):
+        raise ValueError("window width and rest threshold must be positive")
+    gaps = np.diff(t)
+    is_rest = gaps >= rest_ms - TOL_MS
+    lo, hi = t[:-1][is_rest], t[1:][is_rest]
+    n = int(np.floor(t[-1] / width_ms))
+    out = []
+    for k in range(n):
+        a, b = k * width_ms, (k + 1) * width_ms
+        inside = (t >= a) & (t < b)
+        short = gaps[inside[:-1] & inside[1:] & ~is_rest]
+        rest = float(np.sum(np.clip(np.minimum(hi, b) - np.maximum(lo, a), 0.0, None)))
+        out.append(Window(a, int(inside.sum()), float(np.median(short)) if short.size else None, rest / (b - a)))
+    return out, float(t[-1] - n * width_ms)

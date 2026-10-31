@@ -60,3 +60,60 @@ def test_windows_reject_bad_times():
         ks.windows(np.array([1.0, 2.0]), 1000.0, 2000.0)
     with pytest.raises(ValueError):
         ks.windows(np.array([0.0, 5.0, 3.0]), 1000.0, 2000.0)
+
+
+# ---------------------------------------------------------------- v2
+
+
+def _timing():
+    return ks.TextTiming(ks.Lognormal(240, 0.4), ks.Lognormal(735, 0.5), ks.Lognormal(2697, 0.5),
+                         ks.Lognormal(5394, 0.5))
+
+
+def test_full_windows_are_half_open_and_drop_the_tail():
+    t = np.array([0.0, 100.0, 3000.0, 3100.0, 6000.0, 6100.0])
+    w, dropped = ks.full_windows(t, 3000.0, 2000.0)
+    assert [x.presses for x in w] == [2, 2]  # the press at 6000 is not in [3000, 6000)
+    assert dropped == pytest.approx(100.0)
+    assert w[0].rest_share == pytest.approx(2900.0 / 3000.0) and w[1].rest_share == pytest.approx(2900.0 / 3000.0)
+
+
+def test_full_windows_check_inputs():
+    for bad in ([0.0], [0.0, 0.0, 5.0], [1.0, 2.0], [0.0, np.nan]):
+        with pytest.raises(ValueError):
+            ks.full_windows(np.array(bad), 1000.0, 2000.0)
+    with pytest.raises(ValueError):
+        ks.full_windows(np.array([0.0, 5.0]), 0.0, 2000.0)
+
+
+def test_rest_time_is_conserved_over_full_windows():
+    rng = np.random.default_rng(3)
+    g = ks.matched_regimes(open("works/texts/rule.en.txt").read(), _timing(), 2000.0, 30.0)
+    t = ks.from_matched_regimes(600, g, 2000.0, rng)
+    w, _ = ks.full_windows(t, 10000.0, 2000.0)
+    gaps = np.diff(t)
+    end = len(w) * 10000.0
+    starts, ends = t[:-1][gaps >= 2000], t[1:][gaps >= 2000]
+    total = np.sum(np.clip(np.minimum(ends, end) - starts, 0, None))
+    assert sum(x.rest_share * 10000.0 for x in w) == pytest.approx(total)
+
+
+def test_matched_regimes_match_the_text_in_distribution():
+    text = open("works/texts/seasons.en.txt").read()
+    timing = _timing()
+    g = ks.matched_regimes(text, timing, 2000.0, 30.0)
+    n = len(ks.positions(text))
+    a = np.concatenate([np.diff(ks.from_text(text, timing, np.random.default_rng(i))) for i in range(200)])
+    b = np.concatenate([np.diff(ks.from_matched_regimes(n, g, 2000.0, np.random.default_rng(1000 + i)))
+                        for i in range(200)])
+    assert np.mean(a >= 2000) == pytest.approx(np.mean(b >= 2000), abs=0.003)
+    assert np.median(a[a < 2000]) == pytest.approx(np.median(b[b < 2000]), rel=0.03)
+    assert np.median(a[a >= 2000]) == pytest.approx(np.median(b[b >= 2000]), rel=0.05)
+    assert a.sum() / 200 == pytest.approx(b.sum() / 200, rel=0.02)
+
+
+def test_mixture_draws_respect_the_bounds():
+    m = ks.Mixture(((1.0, ks.Lognormal(1000, 0.5)),))
+    rng = np.random.default_rng(4)
+    assert all(m.draw(rng, below=800) < 800 for _ in range(200))
+    assert all(m.draw(rng, at_least=2000) >= 2000 for _ in range(200))

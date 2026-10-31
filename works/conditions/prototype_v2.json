@@ -1,0 +1,103 @@
+{
+ "purpose": "Prototype v2 of the works from keystrokes: as v1, with 10 s windows for the figures (30 s kept as a count), the regimes matched to the series from the text in the distribution of gaps (same chance of a rest, same distribution of rest lengths, same mixture of shorter gaps; only the order differs), and the fixes of the reviews of v1.",
+ "fixed_before_running": "Written on 2026-10-31 after seeing the results of v1 (results/prototype_v1, commit 2d033fd and the corrected notes fd7298c): the window width (decision 7 of .steering/20261031-synthetic-prototype, researcher) and the matching of the regimes (decision 5 of .steering/20261031-keystroke-design was not met by v1) are changes made after seeing. No series of v2 had been generated.",
+ "version": 2,
+ "texts": {
+  "seasons": {
+   "file": "works/texts/seasons.en.txt",
+   "sha256": "71df379759ad1c291ab1aa5f1fe5a195490c3374c26bbcdd3a55fe1fb4ef1fc9"
+  },
+  "rule": {
+   "file": "works/texts/rule.en.txt",
+   "sha256": "fcb71e621e7d2cadeba35dd6e55c7e65dc20d8a0b71cc566cc98f06e50fbf1d4"
+  },
+  "elements": {
+   "file": "works/texts/elements.en.txt",
+   "sha256": "d84a5f38590f87527ff4659d6e3790669ecaf778bc4235be0a632401cbdcb5a4"
+  },
+  "features": {
+   "file": "works/texts/features.en.txt",
+   "sha256": "fbd5ab9ce58b240c1917de3660bd127824f270e668c6ed0884f311ec95f43ace"
+  }
+ },
+ "keystrokes": {
+  "unit": "press time in ms; no key, character or release",
+  "text_timing": {
+   "within_word": {
+    "median_ms": 240.0,
+    "sigma": 0.4
+   },
+   "word_start": {
+    "median_ms": 735.0,
+    "sigma": 0.5
+   },
+   "sentence_end": {
+    "median_ms": 2697.0,
+    "sigma": 0.5
+   },
+   "paragraph_end": {
+    "median_ms": 5394.0,
+    "sigma": 0.5
+   },
+   "source": "decision 3 of .steering/20261031-synthetic-prototype: Dhakal et al. 2018 (mean IKI 238.66 ms) and the mixture of Baaijen et al. 2012 cited by Van Waes et al. 2021 (330, 735, 2697 ms); paragraph_end and the sigmas assumed"
+  },
+  "regimes": {
+   "mean_run_fast": 30,
+   "matching": "src/keystroke.matched_regimes: rest chance = sum over kinds of count x P(gap >= rest_ms); rests drawn at or above rest_ms from the kinds' lognormals weighted by count; short gaps drawn below rest_ms, fast regime = within_word, slow regime = the other kinds weighted by count; mean slow run = mean fast run x slow share / (1 - slow share); run lengths count short gaps only",
+   "presses": "per text: the number of presses of the text",
+   "source": "mean_run_fast assumed (as v1); the rest matched to the text"
+  },
+  "seeds": 10,
+  "seed_base": 20261031
+ },
+ "windows": {
+  "widths_ms": [
+   10000.0,
+   30000.0
+  ],
+  "figure_width_ms": 10000.0,
+  "rest_ms": 2000.0,
+  "windows": "src/keystroke.full_windows: half-open [k w, (k + 1) w), the time after the last full window dropped and recorded",
+  "speed": "median of gaps < rest_ms with both presses in the window (GSE features.rs F1)",
+  "rest": "share of the window's time inside gaps >= rest_ms",
+  "no_speed": "p = 0 and flagged; the min-max reference uses only windows with a speed"
+ },
+ "mapping": {
+  "form": "atact.mapping coefficients: f = F0 + F1 p, s = S0 + S1 q, gamma = G0 + G1 (WP p + WQ q)",
+  "external": {
+   "p": "(ln 481.03 - ln m) / (ln 481.03 - ln 121.70), saturated to [0, 1]",
+   "q": "1 - rest share",
+   "slow_ms": 481.03,
+   "fast_ms": 121.7,
+   "source": "Dhakal et al. 2018, Table 3 (slow and fast typists' mean IKI); decision 5"
+  },
+  "minmax": "reference only: per series, ln m and rest share each min-max to [0, 1] over its windows, then p and q as above (decision 5)"
+ },
+ "relief": {
+  "seed": 42,
+  "octaves": 4,
+  "normalize": "ampsum",
+  "s_max": 0.3,
+  "grey": "H / (2 s_max) + 1/2, as the common scale of the works of words (no STL: images only)"
+ },
+ "figure": {
+  "tile_px": 80,
+  "gap_px": 4,
+  "rows": "per text: from_text, shuffled, regimes (seed index 0 of each), 10 s windows"
+ },
+ "counts": "per series and window width: the share of [0, 1] spanned by the middle half of p and of q over the windows, under the external scale, for every seed and generator (as v1)",
+ "generator": {
+  "requirement": "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+  "commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+  "library_sha256": {
+   "__init__.py": "d5980876e37cb7a1f5dc379028ab50f7a0c1d77d84c7651ee5d1beefd623b6ab",
+   "field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
+   "lexicon.py": "36cad1e49a25b352a7ae04868c6693ef349e8276d51909061eeb378085065e81",
+   "mapping.py": "83a50faaa664ddcb99004392e13a73fb096a85588a8b3c423b2c8b71ce626d26",
+   "transform.py": "5d35c9c10dfa6c8d5d3b2a9e8126ab45b895a1be14e05650c3ef60ffd3431bd1"
+  }
+ },
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1"
+}
