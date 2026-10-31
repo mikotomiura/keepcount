@@ -1,0 +1,68 @@
+{
+ "purpose": "Prototype v6e: v6b's count 1 and v6d's split of the reference observable on a second dataset, the essays of the Kaggle competition Linking Writing Processes to Writing Quality (LWP), to confirm finding 1 of paper A (the image stages do not show the place of the pauses beyond the person's own variation, while the reference observable does) outside KUPA-KEYS. Decided by the researcher (decisions 1-4 of .steering/20261101-second-dataset). LWP has one essay per person, so identification across tasks (count 2) is not made.",
+ "fixed_before_running": "Written on 2026-11-01 after seeing the results of v6 to v6d on KUPA and Aalto (results/prototype_v6*/notes.md). Before writing, LWP was read only for structure (record 1 of .steering/20261101-second-dataset): the columns, the number of essays and events, the number of Input events and of sentence-end inputs per essay, the kinds of activity and down_event, and one decreasing down_time. No gap, speed, rest, p, q, depth, fineness, SEQ or LOC of any LWP essay had been computed. A first draft was sent to Codex (codex-consult, the conditions text only, no data) and changed after its points 1 and 3-7 (decision 5 of .steering/20261101-second-dataset); point 2 (adding operations that shuffle only within a key kind) was not taken, to keep the counts of KUPA.",
+ "version": "6e",
+ "data": {
+  "lwp": {
+   "name": "Linking Writing Processes to Writing Quality (Kaggle, The Learning Agency Lab and Vanderbilt University, 2023), https://www.kaggle.com/competitions/linking-writing-processes-to-writing-quality",
+   "file": "external/kaggle-lwp/data/train_logs.csv",
+   "sha256": "64b18e6df9c9180bd85c762e054f651ba4174a0191f59c1afee1f565ec590cab",
+   "archive_sha256": "c8d1e34a7051240f3e9e458d00ef7fa8633411470398f4249e62fff56fa55316",
+   "terms": "competition rules accepted by the researcher's account on 2026-11-01: non-commercial use including academic research; no redistribution of the data (only counts and figures over persons are published here). The rules state CC-BY-NC-SA 4.0 at the top and CC-BY-NC 4.0 in section 7A.",
+   "consent": "not stated on the competition pages. The KLiCKe paper (Tian, Crossley & Van Waes 2025, Journal of Writing Research 17(1), doi:10.17239/jowr-2025.17.01.02), by an author of the competition and with the same procedure (Amazon Mechanical Turk, 30 minutes, retired SAT prompts, four prompts, at least 200 words in 3 paragraphs), states that participants were presented with an informed consent form; that LWP comes from the same collection is inferred, not stated.",
+   "columns_used": "id, event_id, down_time, down_event. down_event is read only to sort an event into a kind; no text_change, cursor position or other column is used or written.",
+   "counted_press": "an event whose down_event is 'q' (letters and digits are replaced by q), 'Space' (read as ' '), 'Enter', 'Backspace', 'Delete', or another single character; every other down_event (Shift, arrows, mouse clicks, CapsLock, 'Unidentified', other key names) is not counted. The time of a press is down_time (ms). Kinds as v6b's kind_b on the key ('q' alnum, ' ' and Enter space, . ! ? end, , ; : sub, Backspace, Delete and other single characters other). Events are taken in the order of event_id; then v6's clean (stable sort by time, drop a press at the same time as the previous one). LWP has no flag for key repeats, so held keys count as presses (KUPA dropped repeats). Recorded per person set: the number of events with a down_time below the previous event of the same id (in event_id order) and of presses dropped for an equal time."
+  }
+ },
+ "participants": {
+  "eligible": "as v6's KUPA rule on the one essay: at least 5 sentences and at least 5 full 10 s windows, and every sentence holds at least one gap under each of the countings before, after and none.",
+  "draw": "the distinct ids of train_logs.csv sorted as Python strings, permuted by v6's draw_order with d = 2 (numpy.random.default_rng([20261031, 6, 2])); the first 200 eligible ids in that order. Recorded: the number looked at and the SHA-256 of the sorted chosen ids.",
+  "n": 200,
+  "count_persons": "as v6b: per unit, persons with at least 8 tiles and at least one held gap in every part under both baselines; the numbers left out are recorded."
+ },
+ "units": "as v6 (sentences cut at the sentence-end keys, counting 'before' for the tiles; full 10 s windows); rest_ms 2000; the mapping and relief of v4's conditions.",
+ "rows": "as v6's KUPA rows: sentence text/before, text/after, text/none, inside/before, shuffled/before, shuffled_in_halves/before; window_10s text, inside, shuffled, shuffled_in_halves (v6.make_rows, random keys with dataset code 2).",
+ "stages": "S0, S1, S2 (v6), SEQ under the halves baseline (v6b), LOC (v6b, called R in paper A), and its parts R_pos (the first six numbers) and R_lag (the seventh) as v6d.",
+ "count": "v6b's one() per row, stage and baseline (oddeven, halves), on the persons of count 1; for LOC, R_pos and R_lag on the persons with LOC for 'text' and the row (text/none has no LOC by construction and is recorded as not defined), with S1, S2 and (halves) SEQ counted again on those persons. Bootstrap key [20261031, 69, unit, stage, row index, baseline] with stage S0 0, S1 1, S2 2, SEQ 3, LOC 4, R_pos 5, R_lag 6, unit sentence 0 and window_10s 1, baseline oddeven 0 and halves 1.",
+ "lengths": "per person: counted presses, sentences and full 10 s windows; for the count persons per unit and baseline, tiles, held gaps and adjacent pairs in each half (as v6d). Five-number summaries; no per-person value.",
+ "reading": "v6's two axes on the share of persons with change > own: detection (lower end of the 95% CI above 0.5) and size against 0.60 (upper end below 0.60: below; lower end above 0.60: above; else undecided); and upper end below 0.5 for 'the operation moves the stage less than the person's own variation in most persons'.",
+ "prediction": "Claude's, written before running, from KUPA's v6b and v6d. P1: at the image stages (S1, S2, SEQ), every row in every cell and baseline reads below 0.60. P2: for shuffled and shuffled_in_halves at the image stages, the upper end is below 0.5 in at least two thirds of the cells. P3: LOC, shuffled and shuffled_in_halves read above 0.60 in every cell and baseline. P4: R_pos, shuffled and shuffled_in_halves read above 0.60 in every cell; R_lag above 0.60 in most cells. P5: inside reads below 0.60 or undecided on LOC in most cells; after reads below 0.60 on every stage. No value of v6e had been seen.",
+ "confirmation_rule": "fixed before running. Finding 1 (the image stages do not show the operations beyond the person's own variation, the reference observable does) is called confirmed on LWP if P1 holds in all 40 cells and P3 in all 8; partly confirmed if P1 holds in all 40 and P3 in at least 6 of 8; not confirmed otherwise. Its stronger form (the operations move the image stages less than the person's own variation in most persons) is called confirmed if, in addition, P2 holds in at least two thirds of its 20 cells (14). P4 and P5 are reported but do not enter the rule. Both the share and the medians of change and base (and their ratio) are reported, to tell 'not shown' from 'a large baseline'.",
+ "main_cells": "fixed before running, shown first: essay, sentence unit, odd/even baseline, rows inside, shuffled and shuffled_in_halves: share of S1, S2, LOC, R_pos and R_lag. Everything else follows in the order of this file.",
+ "record": {
+  "public": "results/prototype_v6e/record.json holds counts and summaries over persons and the provenance. No press time, gap, key, text, per-person vector, per-person value or essay id is written; ids only as the SHA-256 of their sorted list. The data are not redistributed.",
+  "provenance": "git commit and dirty state of the conditions, code and lock; SHA-256 of the conditions, the code, the data file and the v4 conditions; versions"
+ },
+ "limits_written_before": "One essay per person, so the person's own variation is between two parts of one essay, as in v6b. US crowd workers writing an argumentative essay in 30 minutes, not English learners as in KUPA; a different browser logger; letters and digits replaced by q (the kinds used here do not need them); key repeats not flagged; consent inferred from the KLiCKe paper. LOC and its split were chosen on KUPA after seeing v6 and v6b; on LWP they are fixed before running, so this is a confirmation of the observables chosen on KUPA, not a new choice. The many cells are read descriptively.",
+ "generator": {
+  "requirement": "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+  "commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+  "library_sha256": {
+   "__init__.py": "d5980876e37cb7a1f5dc379028ab50f7a0c1d77d84c7651ee5d1beefd623b6ab",
+   "field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
+   "lexicon.py": "36cad1e49a25b352a7ae04868c6693ef349e8276d51909061eeb378085065e81",
+   "mapping.py": "83a50faaa664ddcb99004392e13a73fb096a85588a8b3c423b2c8b71ce626d26",
+   "transform.py": "5d35c9c10dfa6c8d5d3b2a9e8126ab45b895a1be14e05650c3ef60ffd3431bd1"
+  }
+ },
+ "v4_conditions": {
+  "file": "works/conditions/prototype_v4.json"
+ },
+ "v6_conditions": {
+  "file": "works/conditions/prototype_v6.json",
+  "sha256": "afc4c330c7a3862ca9f2d6a1ad6d0c1d84ff68ff3b2baf4b39acdd0b6085b078"
+ },
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1",
+ "cells": {
+  "P1": "image stages: S1 and S2 under both baselines and SEQ under halves, for the rows text/after, text/none, inside/before, shuffled/before, shuffled_in_halves/before (sentence) and inside, shuffled, shuffled_in_halves (window_10s): 2 x 5 x 2 + 1 x 5 = 25 cells in sentences and 2 x 3 x 2 + 1 x 3 = 15 in windows, 40 in all. Read on all count persons; also reported on the persons of LOC (same-person counts).",
+  "P2": "the cells of P1 with rows shuffled and shuffled_in_halves: per unit, S1 and S2 under both baselines and SEQ under halves for two rows (5 x 2 = 10), 20 in all. 'Holds' means the upper end is below 0.5.",
+  "P3": "LOC for the rows shuffled and shuffled_in_halves, two units, two baselines: 8 cells.",
+  "P4": "R_pos and R_lag in the 8 cells of P3.",
+  "P5": "LOC for inside in 4 cells (two units, two baselines); after on every stage in the sentence unit under both baselines.",
+  "handling": "every cell must be computed; a cell with fewer than 2 persons stops the run (v6b's one()). 'Holds' for P1 means the upper end of the 95% CI is below 0.60; an undecided cell counts as not holding. 'Holds' for P3 means the lower end is above 0.60; an undecided cell counts as not holding. Three quarters of 8 cells is 6. The CI is v6's: 95% percentile interval of 2000 bootstrap resamples of persons."
+ },
+ "sensitivity": "fixed before running, main cells only (essay, sentence unit, both baselines, rows inside, shuffled, shuffled_in_halves; stages S1, S2, LOC, R_pos, R_lag): the same counts with only events whose activity is Input or Remove/Cut (excluding Nonproduction, Paste, Replace and Move events), on the persons eligible under that reading (drawn in the same order). Reported beside the main counts; not in the rule.",
+ "rerun_rule": "if a defect of the code is found after the first run, the first record is kept unchanged, the fix and the reason are committed, and the rerun is reported separately beside the first; the conditions are not changed after the first run except by such a recorded amendment."
+}
