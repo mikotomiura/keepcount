@@ -1,0 +1,21 @@
+[project]
+name = "affective-tactility-keystroke"
+version = "0.0.0"
+description = "Works made with the rule from affect to tactile relief, with keystrokes as input: scripts, conditions and results"
+authors = [{ name = "Mikoto Miura" }, { name = "Yuusuke Harada" }]
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    # the generator, pinned to the same commit as the works of words (cited as Zenodo 10.5281/zenodo.23681773)
+    "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+    "numpy==2.5.4",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
