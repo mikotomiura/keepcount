@@ -202,7 +202,11 @@ def matched_regimes(text: str, timing: TextTiming, rest_ms: float, mean_run_fast
     the order: short gaps come in runs of a fast regime (gaps inside words) and a slow one (the other kinds below
     the threshold), with geometric run lengths whose means give the text's share of slow gaps; rests fall at random.
     """
+    if not (np.isfinite(rest_ms) and rest_ms > 0 and np.isfinite(mean_run_fast) and mean_run_fast >= 1):
+        raise ValueError("rest_ms must be positive and mean_run_fast at least 1")
     labels = positions(text)[1:]
+    if not labels:
+        raise ValueError("the text has fewer than two presses")
     kinds = ("within_word", "word_start", "sentence_end", "paragraph_end")
     n = {k: labels.count(k) for k in kinds}
     below = {k: n[k] * share_below(getattr(timing, k), rest_ms) for k in kinds}
@@ -270,3 +274,44 @@ def full_windows(times: np.ndarray, width_ms: float, rest_ms: float) -> tuple[li
         rest = float(np.sum(np.clip(np.minimum(hi, b) - np.maximum(lo, a), 0.0, None)))
         out.append(Window(a, int(inside.sum()), float(np.median(short)) if short.size else None, rest / (b - a)))
     return out, float(t[-1] - n * width_ms)
+
+
+# ---------------------------------------------------------------- v3 (prototype_v3; one tile per sentence)
+
+
+def sentence_starts(text: str) -> list[int]:
+    """Indices of the presses that start a sentence: the first press and every press labelled 'sentence_end' or
+    'paragraph_end' by positions()."""
+    return [i for i, lab in enumerate(positions(text)) if lab in ("start", "sentence_end", "paragraph_end")]
+
+
+@dataclass(frozen=True)
+class Segment:
+    first_press: int
+    presses: int
+    gaps: int
+    speed_ms: float | None  # median of the gaps < rest_ms in the segment; None if none
+    rest_share: float  # share of the segment's time (the sum of its gaps) inside gaps >= rest_ms
+
+
+def segments(times: np.ndarray, starts: list[int], rest_ms: float) -> list[Segment]:
+    """One segment per sentence, given by press indices (the same indices cut every generator's series). Segment k
+    holds the gaps before presses starts[k] .. starts[k + 1] - 1, so the rest before a sentence belongs to that
+    sentence (decision 9 of .steering/20261031-synthetic-prototype); the first segment has no gap before its first
+    press."""
+    t = check_times(times)
+    if not (np.isfinite(rest_ms) and rest_ms > 0):
+        raise ValueError("the rest threshold must be positive")
+    if not starts or starts[0] != 0 or any(b <= a for a, b in zip(starts, starts[1:])) or starts[-1] >= t.size:
+        raise ValueError("sentence starts must begin at 0, rise strictly and lie inside the series")
+    gaps = np.diff(t)  # gaps[j] is the gap before press j + 1
+    ends = [*starts[1:], t.size]
+    out = []
+    for a, b in zip(starts, ends):
+        g = gaps[max(a - 1, 0): b - 1]
+        if g.size == 0:
+            raise ValueError("a sentence of one press has no gap")
+        rest = g >= rest_ms - TOL_MS
+        out.append(Segment(a, b - a, int(g.size), float(np.median(g[~rest])) if (~rest).any() else None,
+                           float(g[rest].sum() / g.sum())))
+    return out

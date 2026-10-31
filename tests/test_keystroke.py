@@ -1,7 +1,11 @@
+from pathlib import Path
+
 import numpy as np
 import pytest
 
 import keystroke as ks
+
+TEXTS = Path(__file__).resolve().parents[1] / "works" / "texts"
 
 
 def test_positions_labels_every_press():
@@ -88,7 +92,7 @@ def test_full_windows_check_inputs():
 
 def test_rest_time_is_conserved_over_full_windows():
     rng = np.random.default_rng(3)
-    g = ks.matched_regimes(open("works/texts/rule.en.txt").read(), _timing(), 2000.0, 30.0)
+    g = ks.matched_regimes(open(TEXTS / "rule.en.txt").read(), _timing(), 2000.0, 30.0)
     t = ks.from_matched_regimes(600, g, 2000.0, rng)
     w, _ = ks.full_windows(t, 10000.0, 2000.0)
     gaps = np.diff(t)
@@ -99,7 +103,7 @@ def test_rest_time_is_conserved_over_full_windows():
 
 
 def test_matched_regimes_match_the_text_in_distribution():
-    text = open("works/texts/seasons.en.txt").read()
+    text = open(TEXTS / "seasons.en.txt").read()
     timing = _timing()
     g = ks.matched_regimes(text, timing, 2000.0, 30.0)
     n = len(ks.positions(text))
@@ -117,3 +121,35 @@ def test_mixture_draws_respect_the_bounds():
     rng = np.random.default_rng(4)
     assert all(m.draw(rng, below=800) < 800 for _ in range(200))
     assert all(m.draw(rng, at_least=2000) >= 2000 for _ in range(200))
+
+
+# ---------------------------------------------------------------- v3
+
+
+def test_sentence_starts():
+    assert ks.sentence_starts("Ab cd. Ef\n\nGh") == [0, 7, 10]
+
+
+def test_segments_give_the_rest_before_a_sentence_to_it():
+    # presses: 0 100 200 | (rest 3000) 3200 3300 | (rest 2500) 5800 5900
+    t = np.array([0.0, 100.0, 200.0, 3200.0, 3300.0, 5800.0, 5900.0])
+    s = ks.segments(t, [0, 3, 5], 2000.0)
+    assert [x.presses for x in s] == [3, 2, 2] and [x.gaps for x in s] == [2, 2, 2]
+    assert s[0].rest_share == 0.0 and s[0].speed_ms == 100.0
+    assert s[1].rest_share == pytest.approx(3000.0 / 3100.0) and s[1].speed_ms == 100.0
+    assert s[2].rest_share == pytest.approx(2500.0 / 2600.0)
+    assert sum(x.gaps for x in s) == t.size - 1
+
+
+def test_segments_check_starts():
+    t = np.array([0.0, 100.0, 200.0])
+    for bad in ([], [1], [0, 0], [0, 3]):
+        with pytest.raises(ValueError):
+            ks.segments(t, bad, 2000.0)
+
+
+def test_matched_regimes_check_inputs():
+    with pytest.raises(ValueError):
+        ks.matched_regimes("a", _timing(), 2000.0, 30.0)
+    with pytest.raises(ValueError):
+        ks.matched_regimes("ab cd", _timing(), 2000.0, 0.5)
