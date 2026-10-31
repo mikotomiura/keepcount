@@ -1,21 +1,27 @@
 {
  "purpose": "Prototype v6d: v6b's reference observable of the place of the pauses (R, called LOC in v6b) split into its position part and its order part, and the lengths of the records of v6 and v6b. Asked for by the keystroke-biometrics reviewer of round 2 of the pre-review of paper A's outline (R holds the lag-1 correlation of the gaps, an order statistic that shuffling breaks by construction, so R's detection of shuffling may not be about the place of the pauses; the dependence on the length of the records is not stated) and decided by the researcher (decisions 10 and 11 of .steering/20261031-paper-a-outline). Nothing of v6b is changed: the same persons, tasks, units, parts, rows, baselines and the count.",
- "fixed_before_running": "Written on 2026-11-01 after seeing v6b's record (results/prototype_v6b/record.json, SHA-256 94d3feda2b4a499738e2711821f930a88443ddca05e02c31782ad564c9cacb6f): every share of S0, S1, S2, SEQ and LOC, and its notes. Not seen before writing: any share of a part of LOC, any length of a record (beyond v6's tile medians and person counts in its record).",
+ "fixed_before_running": "Written on 2026-11-01 after seeing v6b's record (results/prototype_v6b/record.json, SHA-256 94d3feda2b4a499738e2711821f930a88443ddca05e02c31782ad564c9cacb6f): every share of S0, S1, S2, SEQ and LOC, and its notes. Not seen before writing: any share of a part of LOC, any length of a record (beyond v6's tile medians and person counts in its record). Amended before the first run (2026-11-01, after the code review and the Codex review of the code, decision 2 of .steering/20261101-v6d-reference-split): Aalto's presses as the sum over sentences, the halves recorded as A and B with held gaps and adjacent pairs, v6's record read with its SHA-256, the check of persons and of a null median.",
  "version": "6d",
  "v6b": {
-  "conditions": {"file": "works/conditions/prototype_v6b.json", "sha256": "ae52effd10d6235051839df1ebfa35249e283846090805213b5b3c0e6272ba7a"},
-  "record": {"file": "results/prototype_v6b/record.json", "sha256": "94d3feda2b4a499738e2711821f930a88443ddca05e02c31782ad564c9cacb6f"},
+  "conditions": {
+   "file": "works/conditions/prototype_v6b.json",
+   "sha256": "ae52effd10d6235051839df1ebfa35249e283846090805213b5b3c0e6272ba7a"
+  },
+  "record": {
+   "file": "results/prototype_v6b/record.json",
+   "sha256": "94d3feda2b4a499738e2711821f930a88443ddca05e02c31782ad564c9cacb6f"
+  },
   "reuse": "persons (the 200 new KUPA persons of v6b, ids checked against v6b's SHA-256), labels, LOC and the count (works/prototype_v6b.py, unchanged since v6b's run at e74c880; the SHA-256 of each code file recorded in v6b's record must equal the file read now)."
  },
  "split": {
   "R_pos": "the first six numbers of LOC: the median ln gap of sentence, subsentence, word and within gaps, sentence minus within, and the share of rest time (gaps of 2 s or more) at sentence and subsentence gaps. They depend on which gaps carry which label, not on the order of the gaps.",
   "R_lag": "the seventh number of LOC alone: the lag-1 Pearson correlation of ln gaps over adjacent held gaps (v6b's definition, 0 with fewer than 3 pairs or a constant side). It depends on the order of the gaps.",
   "count": "v6b's count 1 (works/prototype_v6b.py one()) on R_pos and on R_lag, for every task (essay, copy), unit (sentence, window_10s), baseline (oddeven, halves) and row but text/none (where LOC is not defined), on the persons of LOC of that row (the same persons as v6b's LOC). Standardisation as in one(): each kept feature divided by its standard deviation over the 'text' halves of those persons; a feature with standard deviation 0 is dropped and recorded; if every feature is dropped the run stops. Bootstrap key [20261031, 67, task, unit, part, row index, baseline] with part R_pos 0, R_lag 1, and v6b's codes for task, unit, row index and baseline.",
-  "check": "LOC itself is counted again with v6b's key; its share_vs_own and median_change_over_base must equal v6b's record for every cell and row (absolute difference below 1e-12), otherwise stop before writing."
+  "check": "LOC itself is counted again with v6b's key; its share_vs_own and median_change_over_base must equal v6b's record for every cell and row (absolute difference below 1e-12), otherwise stop before writing. The number of persons must also be equal. If v6b's median_change_over_base is null, the recomputed one must be null too."
  },
  "lengths": {
   "persons": "v6's 200 KUPA and 200 Aalto persons (drawn as v6; ids checked against v6's record) and v6b's 200 KUPA persons.",
-  "counts": "per person and part: counted presses, sentences (KUPA: cut at the full-stop keys as v6; Aalto: the presented sentences of the part) and full 10 s windows; for v6b's persons also the number of tiles of each unit and the number in each half under each baseline. KUPA parts: copy, essay; Aalto parts: sentences 1-7, 8-15.",
+  "counts": "per person and part: counted presses (Aalto: the sum of the counted presses of the part's sentences), sentences (KUPA: cut at the full-stop keys as v6; Aalto: the presented sentences of the part) and full 10 s windows. For v6b's persons of count 1 (at least 8 tiles and a gap in every part), per unit and baseline: for each half A and B, the number of tiles, of held gaps and of pairs of adjacent held gaps (R_lag is 0 with fewer than 3 pairs), and the number of persons with fewer than 3 pairs in a half. KUPA parts: copy, essay; Aalto parts: sentences 1-7, 8-15.",
   "summary": "per dataset, set of persons and part: minimum, 25th, 50th and 75th percentile and maximum over persons (numpy.percentile, method linear). No per-person value is written."
  },
  "main_cells": "fixed before running, shown first: v6b's main cell (KUPA essay, sentence unit, odd/even baseline), rows inside, shuffled and shuffled_in_halves: share_vs_own of LOC, R_pos and R_lag. Everything else follows in the order of this file and is read descriptively, with v6's two-axis reading (detection against 0.5, size against 0.60).",
@@ -38,5 +44,11 @@
  },
  "numpy": "2.5.4",
  "pillow": "13.0.0",
- "scipy": "1.18.1"
+ "scipy": "1.18.1",
+ "v6": {
+  "record": {
+   "file": "results/prototype_v6/record.json",
+   "sha256": "4672ad73eb24d0716ff52ec31f9e000b0027c4663949668e0cfe598568dc11d3"
+  }
+ }
 }
