@@ -409,3 +409,70 @@ def reordered_by_runs(times: np.ndarray, text: str, rest_ms: float, mean_run_fas
     for c in ("rest", "fast", "slow"):
         out[kind == c] = rng.permutation(pools[c])
     return np.concatenate([[0.0], np.cumsum(out)])
+
+
+# ---------------------------------------------------------------- v6 (prototype_v6; human series. The functions above stay as v1-v5 used them)
+
+
+def counted_ranges(starts: list[int], n_presses: int, counting: str) -> list[tuple[int, int]]:
+    """The range [lo, hi) of gap indices held by each sentence under a counting, as segments_counted (gaps[j] is the
+    gap before press j + 1)."""
+    if counting not in ("before", "after", "none"):
+        raise ValueError(f"unknown counting {counting!r}")
+    n_gaps = n_presses - 1
+    out = []
+    for a, b in _sentence_bounds(starts, n_presses):
+        lo = max(a - 1, 0) if counting == "before" else a
+        hi = min(b, n_gaps) if counting == "after" else b - 1
+        out.append((lo, hi))
+    return out
+
+
+def segments_of_gaps(gaps: np.ndarray, ranges: list[tuple[int, int]], rest_ms: float) -> list[Segment]:
+    """One segment per range [lo, hi) of gap indices: speed and rest share as segments_counted. first_press is lo and
+    presses is hi - lo + 1 (the segment read as its own run of presses)."""
+    g_all = np.asarray(gaps, dtype=float)
+    if g_all.ndim != 1 or not np.all(np.isfinite(g_all)) or np.any(g_all <= 0):
+        raise ValueError("gaps must be finite and positive")
+    if not (np.isfinite(rest_ms) and rest_ms > 0):
+        raise ValueError("the rest threshold must be positive")
+    out = []
+    for lo, hi in ranges:
+        if not 0 <= lo < hi <= g_all.size:
+            raise ValueError(f"gap range [{lo}, {hi}) is empty or outside the gaps")
+        g = g_all[lo:hi]
+        rest = g >= rest_ms - TOL_MS
+        out.append(Segment(lo, hi - lo + 1, int(g.size), float(np.median(g[~rest])) if (~rest).any() else None,
+                           float(g[rest].sum() / g.sum())))
+    return out
+
+
+def rests_inside_at(times: np.ndarray, starts: list[int], word_starts: list[int],
+                    rng: np.random.Generator) -> tuple[np.ndarray, int]:
+    """rests_inside with the sentence and word starts given as press indices (human series): in every sentence but
+    the first, the gap before its first press is swapped with the gap before one of its own word starts after its
+    first press, chosen uniformly. A sentence without such a word start is left as it is; their number is returned."""
+    t = check_times(times)
+    ws = np.array(sorted(set(word_starts)), dtype=int)
+    gaps = np.diff(t).copy()
+    left = 0
+    for a, b in _sentence_bounds(starts, t.size)[1:]:
+        inner = ws[(ws > a) & (ws < b)]
+        if inner.size == 0:
+            left += 1
+            continue
+        j = int(inner[int(rng.integers(inner.size))]) - 1
+        gaps[a - 1], gaps[j] = gaps[j], gaps[a - 1]
+    return np.concatenate([[0.0], np.cumsum(gaps)]), left
+
+
+def shuffled_in_two(times: np.ndarray, split: int, rng: np.random.Generator) -> np.ndarray:
+    """The gaps before index split (gaps[:split]) shuffled among themselves, then the others among themselves; no gap
+    crosses the split."""
+    t = check_times(times)
+    gaps = np.diff(t)
+    if not 0 < split < gaps.size:
+        raise ValueError("the split must leave gaps on both sides")
+    a = rng.permutation(gaps[:split])
+    b = rng.permutation(gaps[split:])
+    return np.concatenate([[0.0], np.cumsum(np.concatenate([a, b]))])
