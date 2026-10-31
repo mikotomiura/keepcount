@@ -1,0 +1,164 @@
+{
+ "purpose": "Prototype v6 of the works from keystrokes: the audit of the compression (decision 3 of .steering/20261031-keystroke-concept) on human keystrokes from two public datasets. At each stage of the transform (times -> the two quantities speed and rest -> the form, depth and fineness -> the image) the same two counts are made: (2) how far the stage tells one person from another, registered on one task and evaluated on another (KUPA-KEYS) or on another part of the same session (Aalto 136M); (1, human version) how far the operations on a series of v4 (order, place of the rest, counting) move the stage, against the person's own variation and against another person. Not in v6: machines and the input path (v7).",
+ "fixed_before_running": "Written on 2026-10-31 after seeing the results of v1 to v5 (synthetic only; results/prototype_v5, commit 6fd5d61). Before writing, the data were read only for structure (decision 0 of .steering/20261031-compression-audit-v6): per KUPA participant and task the number of counted presses, of sentences cut at the full-stop keys and of full 10 s windows; the KEYBOARD_TYPE column of Aalto's metadata; the key labels of three Aalto files. No gap, speed, rest, p, q, depth or fineness of any human series had been computed. The choices below were made by the researcher (decisions 1-7 of the same file). A first draft was sent to Codex (codex-consult, the conditions text only, no data) and changed after its seven points (decision 8 of .steering/20261031-compression-audit-v6), including the persons of count 1 (decision 9, the researcher).",
+ "version": 6,
+ "data": {
+  "kupa": {
+   "name": "KUPA-KEYS (Velentzas et al., LREC-COLING 2024), https://huggingface.co/datasets/ALTACambridge/KUPA-KEYS",
+   "license": "CC BY-NC-SA 4.0; figures and counts derived from it are published under the same licence with attribution",
+   "files": {
+    "copy": {
+     "file": "external/kupa-keys/KUPA-KEYS-TASK-1.csv",
+     "sha256": "b26ad0fca7e34f8f4e87dccd0c04b95adc082cc8db4f87dc6be8d6224f5f10f2"
+    },
+    "essay": {
+     "file": "external/kupa-keys/KUPA-KEYS-TASK-2.csv",
+     "sha256": "4ad24cbf78879f2fb45c1334eb827f2c8c2fada09a957252a4c86b8e20f28aef"
+    }
+   },
+   "columns_used": "id, time, type, key, is_repeat. key is read only to sort a press into one of four kinds (sentence end, alphanumeric, space or Enter, other counted) and to decide whether it is counted; no key, text, range or metadata is kept or written.",
+   "counted_press": "type 'down', is_repeat not true, and key of one character (letters, digits, space, punctuation) or key 'Enter', 'Backspace' or 'Delete' (decision 4 of .steering/20261031-human-keystroke-datasets). Modifier keys alone, arrows, clicks and other events are not counted.",
+   "order": "the counted presses of a participant and task in the order of the file, then stably sorted by time",
+   "equal_times": "a counted press at the same ms as the previous counted press is dropped (a gap of 0 has no place in the series); the number dropped is recorded per dataset and task",
+   "sentence_starts": "press 0 and the first alphanumeric press after a press of '.', '!' or '?' (decision 3 of .steering/20261031-human-keystroke-datasets; 'the first character key' read as the first alphanumeric key, so the space after a full stop stays in the previous sentence, as the synthetic series of v1 to v5). Abbreviation stops count; a deleted stop still cuts.",
+   "word_starts": "an alphanumeric press whose previous counted press is a space or Enter (used only by the row 'inside')",
+   "main_task": "essay (decision 6); copy is secondary and the bridge to Aalto"
+  },
+  "aalto": {
+   "name": "136M Keystrokes (Dhakal, Feit, Kristensson, Oulasvirta, CHI 2018, https://doi.org/10.1145/3173574.3174220), http://userinterfaces.aalto.fi/136Mkeystrokes",
+   "license": "readme: 'You are free to use this data for non-commercial use in your own research or projects with attribution to the authors.'",
+   "file": "external/aalto-136m/Keystrokes.zip",
+   "sha256": "5fb217e0e1273017a6789c5c7ebcc00eed624f2f6426c284da2077a88e270420",
+   "read": "members are read from the zip, not extracted: Keystrokes/files/metadata_participants.txt (columns PARTICIPANT_ID and KEYBOARD_TYPE only) and Keystrokes/files/<id>_keystrokes.txt (columns TEST_SECTION_ID, PRESS_TIME, LETTER only); repeated header lines are skipped",
+   "counted_press": "LETTER of one character, or LETTER 'BKSP'. Other labels (SHIFT and the like, keycodes written in place of a letter) are not counted; their number is recorded",
+   "order": "per sentence (TEST_SECTION_ID, in the order of first appearance in the file) the counted presses stably sorted by PRESS_TIME",
+   "equal_times": "as KUPA, within a sentence",
+   "sentences": "the presented sentences (decision 5): one tile per TEST_SECTION_ID. The gap between the last press of a sentence and the first of the next (reading the next sentence) is dropped: the series of a participant is the within-sentence gaps of the 15 sentences joined in order, times = 0 followed by their cumulative sum. Sentence k holds exactly its own within-sentence gaps.",
+   "no_counting_rows": "since the gap before a sentence is dropped, the rows 'after', 'none' and 'inside' do not apply to Aalto"
+  }
+ },
+ "participants": {
+  "kupa_eligible": "both tasks have at least 5 sentences and at least 5 full 10 s windows (decision 1), counted on the series as defined above",
+  "aalto_eligible": "KEYBOARD_TYPE 'full' or 'laptop' in the metadata, and the file has exactly 15 TEST_SECTION_IDs each with at least 2 counted presses at distinct times (decision 1)",
+  "draw": "per dataset, the ids (KUPA: distinct ids of the essay file as integers; Aalto: PARTICIPANT_ID of the metadata as integers) sorted ascending and permuted by numpy.random.default_rng([20261031, 6, d]).permutation, d = 0 for KUPA and 1 for Aalto; walking the permutation, the first 200 eligible ids are taken (decision 1). The ids taken and the number of ids looked at are recorded.",
+  "n": 200
+ },
+ "units": {
+  "rest_ms": 2000.0,
+  "sentence": "one tile per sentence: KUPA by src/keystroke.segments_counted at the sentence starts; Aalto by the presented sentences",
+  "window_10s": "src/keystroke.full_windows with width 10000 ms on the series (KUPA: the counted presses of a task; Aalto: the joined within-sentence series)",
+  "main_unit": "sentence; window_10s secondary",
+  "no_speed": "a tile without a gap below rest_ms gets p = 0 (as v4); the number of such tiles is recorded"
+ },
+ "mapping": {
+  "from": "v4: external scale, p = (ln 481.03 - ln speed) / (ln 481.03 - ln 121.70) saturated to [0, 1], q = 1 - rest share (Dhakal et al. 2018, Table 3); the functions pq and tile of works/prototype_v4.py are imported",
+  "relief": "v4's relief (octaves 4, normalize ampsum, s_max 0.3, grey H / (2 s_max) + 1/2) on field 42 only; tile_px 120 for sentences and 80 for windows, as v4",
+  "v4_conditions": {
+   "file": "works/conditions/prototype_v4.json",
+   "sha256": "c334f89543fc84bd90e02f6d3eae105d0e285643628aeda809dc4bc7ef731e8e"
+  },
+  "form": "depth and fineness of works/prototype_v5.py (imported)"
+ },
+ "stages": {
+  "note": "decision 2. Each stage gives one vector per person and per part of the record; the image stage is represented by the numbers of the form (v4's pixel difference measures the phase of the field and is not used). The scatter of p and q is shown as a figure only (it holds the same information as the stage of the two quantities).",
+  "S0_times": "the gaps held by the part (below): 7 numbers, the quantiles 0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95 of ln(gap in ms) (numpy.quantile, method 'linear'). Unit-free: for a sentence part the gaps held by its sentence tiles; for a window part the gaps whose first press lies in its windows.",
+  "S1_two_quantities": "per unit: 4 numbers, the median and the interquartile range (numpy.percentile 75 - 25, method 'linear') of p and of q over the tiles of the part",
+  "S2_form": "per unit: 4 numbers, the median and the interquartile range of depth and of fineness over the tiles of the part (field 42)",
+  "S3_image": "= S2 (stated, not computed again). S2 stands for the image as a proxy; v6 does not audit the image itself (what a viewer sees)."
+ },
+ "count_2_person": {
+  "decision": "decisions 3, 4 and 8",
+  "kupa": "registration on copy, evaluation on essay (main); and the reverse (secondary). Each part = the whole task.",
+  "aalto": "registration on sentences 1-7, evaluation on sentences 8-15 of the same session; called identification within a session, not across sessions.",
+  "standardise": "main: per set (registration, evaluation), per feature: (x - mean) / standard deviation over the 200 persons of that set (ddof 0); this removes the difference of mean and scale between the two tasks or parts and leaves each person's own change between them. A feature whose standard deviation is 0 in either set is dropped from both and recorded.",
+  "distance": "Euclidean between standardised vectors; every evaluation vector against every registration vector",
+  "top1": "per evaluation person i: 1 if d(i, i) is below d(i, j) for every j != i; with ties at the minimum, 1 / (number tied, i included) if i is among them; mean over i. Chance 1/200 = 0.005.",
+  "tpr_at_far_0.01": "pooled: the threshold is the 0.01 quantile (numpy.quantile, 'linear') of all impostor distances; the share of genuine distances at or below it",
+  "ci": "95% percentile interval from 2000 bootstrap resamples of the evaluation persons (the per-person values of top1 and rank_auc resampled; the registration set and the scales fixed), numpy.random.default_rng([20261031, 6, 2, dataset, direction, stage, unit]). The interval is conditional on these 200 registration persons and these scales; it is not an interval for a population of persons.",
+  "permutation": "1000 permutations of the registration labels (numpy.random.default_rng([20261031, 6, 3, dataset, direction, stage, unit])): top1 and rank_auc under each; p = (1 + number with value >= observed) / 1001",
+  "stage_difference": "rank_auc(S0) - rank_auc(S1) and rank_auc(S1) - rank_auc(S2) per unit, with the paired bootstrap (the same resampled persons for both stages, the random key of the later stage). The stages are summaries, not nested: S1 cannot be recovered from S0, and a difference mixes what is lost with a change of the distance's scale (hence the rank sensitivity).",
+  "reading": "decisions 4 and 8, written before running, on rank_auc, two axes reported side by side. Detection: the lower end of the CI above 0.5 -> 'detectable'; otherwise 'not detected'. Size against the smallest difference 0.60: the upper end below 0.60 -> 'below 0.60' (with this observable the stage does not practically tell the persons apart), the lower end above 0.60 -> 'above 0.60' (the stage carries the person), otherwise 'undecided'. A cell can be 'detectable' and 'below 0.60' at once. Neither reading is a guarantee of anonymity: it says what this observable and this attack did.",
+  "sensitivity": {
+   "registration_scale": "the mean and standard deviation of the registration set applied to both sets (no correction of the evaluation set as a group)",
+   "ranks": "each feature replaced by its rank within its set (average ranks for ties), then standardised as main: the stage difference with less dependence on the Euclidean metric of the raw scale"
+  },
+  "rank_auc": "main number. Per evaluation person i: the share of j != i with d(i, j) > d(i, i), ties 1/2; mean over i. It is the verification ROC-AUC with a threshold of each person's own (each genuine distance ranked among the same person's impostor distances), not the pooled ROC-AUC.",
+  "pooled_auc": "the ROC-AUC of all 200 genuine against all 200 x 199 impostor distances (Mann-Whitney, ties 1/2): one common threshold"
+ },
+ "count_1_operations": {
+  "decision": "decisions 7, 8 and 9",
+  "rows": {
+   "kupa_sentence": [
+    "text/before",
+    "text/after",
+    "text/none",
+    "inside/before",
+    "shuffled/before",
+    "shuffled_in_halves/before"
+   ],
+   "kupa_window_10s": [
+    "text",
+    "inside",
+    "shuffled",
+    "shuffled_in_halves"
+   ],
+   "aalto_sentence": [
+    "text",
+    "shuffled",
+    "shuffled_in_halves"
+   ],
+   "aalto_window_10s": [
+    "text",
+    "shuffled",
+    "shuffled_in_halves"
+   ]
+  },
+  "row_rules": {
+   "text": "the person's series",
+   "before/after/none": "the countings of v4 (src/keystroke.segments_counted)",
+   "shuffled": "src/keystroke.shuffled: the same gaps in a random order, numpy.random.default_rng([20261031, 6, 4, dataset, task, person id]); for Aalto the joined within-sentence gaps are shuffled and the sentences cut at the same gap indices",
+   "inside": "as v4's rests_inside, with the word starts of the data: in every sentence but the first, the gap before its first press is swapped with the gap before one of its own word starts after its first press, chosen uniformly (numpy.random.default_rng([20261031, 6, 5, dataset, task, person id])). A sentence without such a word start is left as it is and counted.",
+   "shuffled_in_halves": "the gaps of each half shuffled within that half only (numpy.random.default_rng([20261031, 6, 7, dataset, task, unit, person id])): the gaps before and after the first press of tile floor(n / 2) (sentence: its first press; window: the first press at or after its start) are permuted separately, so no gap crosses between A and B"
+  },
+  "tasks": "KUPA essay (main) and copy; Aalto",
+  "halves": "per person, task, unit and row: the tiles are computed on the whole series and split by index, part A = the first floor(n / 2) tiles of the row 'text', part B = the rest; for every row the same tile indices (sentences: the same sentences; windows: the same times)",
+  "standardise": "per dataset, task, unit and stage: each feature divided by its standard deviation (ddof 0) over the 400 half vectors (A and B) of the 200 persons of the row 'text' (the first row); a feature with standard deviation 0 is dropped and recorded",
+  "distances": {
+   "base": "per person: d(text A, text B), the person's own variation between the halves",
+   "change": "per person and row R: (d(R A, text A) + d(R B, text B)) / 2, the change made by the operation within the same half (both halves, symmetric)",
+   "cross": "per person and row R: (d(R A, text B) + d(R B, text A)) / 2 (as the first draft; reported only)",
+   "between": "per person: the median over j != i of d(text A of i, text B of j)"
+  },
+  "stat": "per row R other than the first, per stage: the share of persons with change > base, ties 1/2 (vs own), and the share with change > between (vs another person), each with a 95% CI from 2000 bootstrap resamples of the persons (numpy.random.default_rng([20261031, 6, 6, dataset, task, unit, stage, row index])); and the size: the medians of base, change, cross and between and the median over persons of change / base (persons with base 0 left out and counted)",
+  "reading": "the same two axes as count 2, on the share vs own: detection, the lower end above 0.5 -> 'moves more than own in most persons'; size, the upper end below 0.60 -> 'below 0.60', the lower end above 0.60 -> 'above 0.60', otherwise 'undecided'; with the median ratio change / base given beside it (a share below 0.60 does not by itself mean the change is smaller than the person's own variation)",
+  "persons": "per dataset, task and unit: the persons of the 200 whose row 'text' has at least 8 tiles in that unit (at least 4 per half; decision 9); their number is recorded. Every row of a person uses the same halves.",
+  "check": "whole-series shuffle leaves S0 of a whole series unchanged; shuffled_in_halves leaves S0 of each half of a sentence unit unchanged (implementation check, the run stops otherwise)"
+ },
+ "main_cells": "fixed before running, shown first and in this order: count 2, KUPA copy -> essay, sentence unit, main standardisation, S0 / S1 / S2 and the two stage differences; then count 1, KUPA essay, sentence unit, every row, S1 and S2. Everything else (reverse direction, windows, Aalto, KUPA copy in count 1, the sensitivities, pooled_auc, top1, TPR) follows in the order of this file and is read as secondary.",
+ "rng_codes": "integers in the random keys: dataset KUPA 0, Aalto 1; task copy 0, essay 1, Aalto 0; direction copy->essay 0, essay->copy 1, Aalto A->B 0; stage S0 0, S1 1, S2 2; unit sentence 0, window_10s 1; row index = place in the row list of count_1_operations; person id = the dataset's integer id. S0 is computed per unit as defined in stages (the gaps held by the part's tiles), so every stage exists for both units.",
+ "figures": {
+  "tiles": "per dataset and task, the sentence tiles of the row 'text' of the first 4 persons drawn, one row per person (truncated at 24 tiles), field 42, gap 6 px, as v4's figure function",
+  "scatter": "per dataset and task: the median p against the median q of every person (sentence unit), 200 points, axes [0, 1]; no person id written on a figure",
+  "files": "results/prototype_v6/*.png, SHA-256 recorded"
+ },
+ "record": {
+  "public": "results/prototype_v6/record.json holds counts and summaries over persons and the provenance. No press time, gap, key, text, per-person vector or person id is written; the ids drawn are recorded only as the SHA-256 of their sorted list (they can be drawn again from the seed and the data).",
+  "provenance": "git commit and dirty state of the conditions, code and lock; SHA-256 of the conditions, the code, the three data files and the v4 conditions; versions"
+ },
+ "prediction": "Claude's, written before running. (2) S0 carries the person in both datasets (rank_auc lower end above 0.60, likely above 0.8); S1 is detectable (lower end above 0.5) but with a clearly lower rank_auc than S0; S2 is within a few hundredths of S1 (v5: depth and fineness are nearly monotone images of p and q); Aalto (same session) above KUPA (across tasks); copy -> essay and essay -> copy similar. (1) In KUPA sentences, 'none' moves S1 more than own in most persons (q rises where the rest before a sentence is removed); 'shuffled' moves S1 more than own in sentences and about as much in windows; 'shuffled_in_halves' less than 'shuffled'; 'after' and 'inside' undecided or below own; every row moves the stages less than switching to another person. No result of v6 had been seen.",
+ "limits_written_before": "KUPA was logged in the browser (Prolific, desktop or laptop) and Aalto in an online typing test: both are browser recordings, and the two datasets differ in path and task, so a difference between datasets is not a difference between kinds of people. KUPA participants are mostly English learners. The person counts register on one occasion only (KUPA two tasks in one sitting; Aalto one session): across days is not measured. S0 is a summary of the gaps, not the raw series: identification with the raw series is stronger in the literature (TypeNet). The many cells are read descriptively; no correction for multiple comparisons. Count 1 uses only persons with at least 8 tiles in the unit (decision 9), so in the KUPA essay sentences it leaves out the persons with short essays.",
+ "generator": {
+  "requirement": "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+  "commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+  "library_sha256": {
+   "__init__.py": "d5980876e37cb7a1f5dc379028ab50f7a0c1d77d84c7651ee5d1beefd623b6ab",
+   "field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
+   "lexicon.py": "36cad1e49a25b352a7ae04868c6693ef349e8276d51909061eeb378085065e81",
+   "mapping.py": "83a50faaa664ddcb99004392e13a73fb096a85588a8b3c423b2c8b71ce626d26",
+   "transform.py": "5d35c9c10dfa6c8d5d3b2a9e8126ab45b895a1be14e05650c3ef60ffd3431bd1"
+  }
+ },
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1"
+}
