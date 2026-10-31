@@ -114,9 +114,9 @@ def test_count_leaves_loc_undefined_for_a_row_without_it():
     text = [(vec(), vec()) for _ in range(5)]
     none = [(vec(False), vec(False)) for _ in range(5)]
     shuf = [(vec(), vec()) for _ in range(5)]
-    out = v6b.count({"text": text, "none": none, "shuffled": shuf}, ["text", "none", "shuffled"], "essay", "sentence",
-                    "oddeven")
-    assert out["none"]["LOC"] == {"defined": False, "persons": 0}
+    out = v6b.count({"text": text, "text/none": none, "shuffled": shuf}, ["text", "text/none", "shuffled"], "essay",
+                    "sentence", "oddeven")
+    assert out["text/none"]["LOC"] == {"defined": False, "persons": 0}
     assert out["shuffled"]["LOC"]["persons"] == 5 and "same_persons_as_LOC" in out["shuffled"]
 
 
