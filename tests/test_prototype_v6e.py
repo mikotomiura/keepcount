@@ -77,3 +77,35 @@ def test_rule():
     assert v6e.evaluate(c)["finding_1"] == "partly confirmed"
     c["window_10s"]["oddeven"]["shuffled"]["LOC"]["share_vs_own_ci"] = [0.55, 0.9]
     assert v6e.evaluate(c)["finding_1"] == "not confirmed"
+
+
+def test_stronger_form_needs_full_confirmation_and_p2_boundary():
+    c = fake_counts(0.55, 0.7)
+    c["sentence"]["oddeven"]["shuffled/before"]["LOC"]["share_vs_own_ci"] = [0.55, 0.9]
+    r = v6e.evaluate(c)
+    assert r["finding_1"] == "partly confirmed" and r["stronger_form"] == "not confirmed"
+    assert "sentence | oddeven | shuffled/before | LOC" in r["cells_not_holding"]["P3"]
+    c = fake_counts(0.55, 0.7)
+    shuf = [(u, how, row, st) for u, rows in (("sentence", ["shuffled/before", "shuffled_in_halves/before"]),
+                                              ("window_10s", ["shuffled", "shuffled_in_halves"]))
+            for how, sts in (("oddeven", ("S1", "S2")), ("halves", ("S1", "S2", "SEQ"))) for row in rows for st in sts]
+    for u, how, row, st in shuf[:6]:          # 14 of 20 still below 0.5
+        c[u][how][row][st]["share_vs_own_ci"] = [0.3, 0.55]
+    assert v6e.evaluate(c)["stronger_form"] == "confirmed"
+    u, how, row, st = shuf[6]                 # 13 of 20
+    c[u][how][row][st]["share_vs_own_ci"] = [0.3, 0.55]
+    assert v6e.evaluate(c)["stronger_form"] == "not confirmed"
+
+
+def test_p5_after_includes_the_parts_of_loc():
+    c = fake_counts(0.55, 0.7)
+    r = v6e.evaluate(c)
+    assert r["of"]["P5_after_below"] == 13 and r["held"]["P5_after_below"] == 7  # S0, S1, S2 (and SEQ) below; LOC-like high
+
+
+def test_non_finite_time_and_exact_activity(tmp_path):
+    with pytest.raises(SystemExit):
+        v6e.read_lwp(write(tmp_path, [("a", 1, "nan", "Nonproduction", "Shift")]), None)
+    out, _, tally = v6e.read_lwp(write(tmp_path, [("a", 1, 1, "Input", "q"), ("a", 2, 2, "Inputx", "q"),
+                                                  ("a", 3, 3, "Input", "q")]), v6e.EDIT_ACTIVITIES)
+    assert tally["other_activity"] == 1 and len(out["a"]["kinds"]) == 2

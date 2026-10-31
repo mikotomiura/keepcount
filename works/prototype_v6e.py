@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import csv
 import datetime as dt
+import math
 import hashlib
 import json
 import sys
@@ -68,6 +69,8 @@ def read_lwp(path: Path, activities: tuple[str, ...] | None) -> tuple[dict[str, 
         for row in csv.DictReader(f):
             tally["events"] += 1
             pid, ev, t = row["id"], int(row["event_id"]), float(row["down_time"])
+            if not math.isfinite(t):
+                raise SystemExit("a down_time is not a finite number")
             if pid != last_id:
                 if pid in done:
                     raise SystemExit("rows of an id are not contiguous")
@@ -80,7 +83,7 @@ def read_lwp(path: Path, activities: tuple[str, ...] | None) -> tuple[dict[str, 
             if last_t is not None and t < last_t:
                 tally["decreasing_down_time"] += 1
             last_ev, last_t = ev, t
-            if activities is not None and not any(row["activity"].startswith(a) for a in activities):
+            if activities is not None and row["activity"] not in activities:
                 tally["other_activity"] += 1
                 continue
             key = lwp_key(row["down_event"])
@@ -100,8 +103,9 @@ def read_lwp(path: Path, activities: tuple[str, ...] | None) -> tuple[dict[str, 
     return out, ids, tally
 
 
-def choose(lwp: dict, ids: list[str]) -> tuple[list[str], dict, int]:
-    """The first 200 eligible ids in v6's draw order with d = 2, their series and kinds, and the number looked at."""
+def choose(lwp: dict, ids: list[str], allow_fewer: bool = False) -> tuple[list[str], dict, int]:
+    """The first 200 eligible ids in v6's draw order with d = 2, their series and kinds, and the number looked at
+    (fewer only if allowed: the sensitivity)."""
     chosen, series, looked = [], {}, 0
     for pid in v6.draw_order(sorted(ids), 2):
         looked += 1
@@ -117,7 +121,7 @@ def choose(lwp: dict, ids: list[str]) -> tuple[list[str], dict, int]:
         series[pid] = (s, x["kinds"])
         if len(chosen) == v6.N:
             break
-    if len(chosen) < v6.N:
+    if len(chosen) < v6.N and not allow_fewer:
         raise SystemExit(f"only {len(chosen)} eligible ids")
     return chosen, series, looked
 
@@ -131,12 +135,15 @@ def vectors(t: v6.Tiles, idx: np.ndarray, lab: np.ndarray, how: str) -> dict:
     return v
 
 
-def count(halves: dict, rows: list[str], unit: str, how: str, stages: tuple[str, ...], prefix: int) -> dict:
+def count(halves: dict, rows: list[str], unit: str, how: str, stages: tuple[str, ...], prefix: int,
+          main_rows: list[str] | None = None) -> dict:
     """v6b's one() per row and stage; LOC-like stages on the persons with LOC for 'text' and the row, and S1, S2 and
     (halves) SEQ again on those persons."""
     out: dict = {}
     n_all = len(halves[rows[0]])
     for ri, row in enumerate(rows[1:], start=1):
+        if main_rows is not None:
+            ri = main_rows.index(row)  # the row index of the main counts, for the same keys
         res: dict = {}
         loc_ok = [i for i in range(n_all) if v6b.has(halves[rows[0]][i], "LOC") and v6b.has(halves[row][i], "LOC")]
         for st in stages:
@@ -190,6 +197,7 @@ def build(series: dict, chosen: list[str], place: dict, m: dict, r: dict, rest_m
                 left["part_without_gap"] += 1
                 continue
             tiles_count.append(tt.n)
+            # random keys [dataset 2, task 0 (the one essay), place]
             rw, _ = v6.make_rows("kupa", s, unit, tt, [DATASET, 0, place[pid]], m, r, rest_ms)
             rw = {row: t for row, t in rw.items() if row in rows}
             v6.check_s0(rw, unit)
@@ -236,8 +244,9 @@ def evaluate(cnt: dict) -> dict:
     p3 = cells(shuf, loc)
     p4 = cells(shuf, {"oddeven": ("R_pos", "R_lag"), "halves": ("R_pos", "R_lag")})
     p5_in = [(u, how, inside[u], "LOC") for u in inside for how in v6b.BASELINE]
-    p5_after = [("sentence", how, "text/after", st) for how in v6b.BASELINE for st in img[how] + ("S0", "LOC")]
-    if (len(p1), len(p2), len(p3)) != (40, 20, 8):
+    p5_after = [("sentence", how, "text/after", st) for how in v6b.BASELINE
+                for st in img[how] + ("S0", "LOC", "R_pos", "R_lag")]
+    if (len(p1), len(p2), len(p3), len(p5_after)) != (40, 20, 8, 13):
         raise SystemExit("the cells of the rule differ from the conditions")
     held = {
         "P1": sum(ci(c)[1] < 0.60 for c in p1),
@@ -258,9 +267,12 @@ def evaluate(cnt: dict) -> dict:
         finding = "partly confirmed"
     else:
         finding = "not confirmed"
-    stronger = finding != "not confirmed" and held["P2"] >= 14
+    stronger = finding == "confirmed" and held["P2"] >= 14
+    failed = {"P1": [c for c in p1 if not ci(c)[1] < 0.60], "P2": [c for c in p2 if not ci(c)[1] < 0.5],
+              "P3": [c for c in p3 if not ci(c)[0] > 0.60]}
     return {"held": held, "of": of, "finding_1": finding,
-            "stronger_form": "confirmed" if stronger else "not confirmed"}
+            "stronger_form": "confirmed" if stronger else "not confirmed",
+            "cells_not_holding": {k: {" | ".join(c): "not held" for c in v} for k, v in failed.items()}}
 
 
 def main() -> None:
@@ -277,6 +289,8 @@ def main() -> None:
     raw6 = cm.check_file(ROOT / c["v6_conditions"]["file"], c["v6_conditions"]["sha256"], "v6's conditions")
     c6 = json.loads(raw6)
     m4 = c6["mapping"]["v4_conditions"]
+    if c["v4_conditions"]["file"] != m4["file"]:
+        raise SystemExit("v4's conditions differ between v6 and v6e")
     raw4 = cm.check_file(ROOT / m4["file"], m4["sha256"], "v4's conditions")
     c4 = json.loads(raw4)
     if c6["generator"] != c["generator"]:
@@ -304,21 +318,24 @@ def main() -> None:
         "persons": {"ids_in_file": len(ids), "ids_looked_at": looked,
                     "ids_sha256": hashlib.sha256("\n".join(sorted(chosen)).encode()).hexdigest(), "tally": tally,
                     "presses": v6d.five([series[p][0].times.size for p in chosen]),
-                    "sentences": v6d.five([len(series[p][0].starts) for p in chosen])},
+                    "sentences": v6d.five([len(series[p][0].starts) for p in chosen]),
+                    "windows_10s": v6d.five([int(np.floor(series[p][0].times[-1] / v6.WINDOW_MS))
+                                             for p in chosen])},
         "lengths": lengths, "count": cnt, "rule": evaluate(cnt)}
 
     # sensitivity: only Input and Remove/Cut events, main cells
     lwp2, ids2, tally2 = read_lwp(ROOT / d["file"], EDIT_ACTIVITIES)
-    chosen2, series2, looked2 = choose(lwp2, ids2)
+    chosen2, series2, looked2 = choose(lwp2, ids2, allow_fewer=True)
     del lwp2
     rows2 = {"sentence": [rows_of["sentence"][0], *MAIN_ROWS]}
-    hv2, _ = build(series2, chosen2, place, m, r, rest_ms, rows2)
+    hv2, lengths2 = build(series2, chosen2, place, m, r, rest_ms, rows2)
     st2 = ("S1", "S2", "LOC", "R_pos", "R_lag")
     rec["sensitivity_input_and_remove_only"] = {
-        "ids_looked_at": looked2, "ids_sha256": hashlib.sha256("\n".join(sorted(chosen2)).encode()).hexdigest(),
+        "persons": len(chosen2), "lengths": lengths2, "ids_looked_at": looked2, "ids_sha256": hashlib.sha256("\n".join(sorted(chosen2)).encode()).hexdigest(),
         "overlap_with_main": len(set(chosen) & set(chosen2)), "tally": tally2,
-        "count": {how: count(hv2["sentence"][how], rows2["sentence"], "sentence", how, st2, 70)
-                  for how in v6b.BASELINE}}
+        "keys": "as the main counts: [20261031, 69, unit, stage, row index in the main rows, baseline]",
+        "count": {how: count(hv2["sentence"][how], rows2["sentence"], "sentence", how, st2, 69,
+                             main_rows=rows_of["sentence"]) for how in v6b.BASELINE}}
     v6d.no_per_person(rec)
     rec["provenance"] = {"run_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), **state,
                          "conditions_sha256": hashlib.sha256(raw).hexdigest(),
