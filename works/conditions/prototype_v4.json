@@ -1,0 +1,174 @@
+{
+ "purpose": "Prototype v4 of the works from keystrokes, the first version of an atlas of what this transform cannot tell apart (claim E of .steering/20261031-keystroke-claim). The series of v2 and v3 are kept with the same random keys; three pairs are added: where the rest of a sentence falls (the drawn gaps fixed, only their place or their counting changed), the seed of the field (the same values drawn on four fields), and a split of the generator without a text (the gaps of the series from the text put in the order of the regimes' runs). Units: one tile per sentence and 10 s windows; 30 s windows counted only.",
+ "fixed_before_running": "Written on 2026-10-31 after seeing the results of v1 to v3 (results/prototype_v1..v3, notes corrected in fd7298c, 0709d1c, e6e8985). The claim (decision 1 of .steering/20261031-keystroke-claim), the three pairs (decision 2), the units (decision 3), the fixed values for the placement (decision 1 of .steering/20261031-atlas-v4), the field seeds (decision 2) and the counts fixed before running (decision 3) are changes made after seeing v1 to v3. The correlation of sentence length and q was chosen after seeing v3 and is fixed here before v4 is run. No series of v4 had been generated.",
+ "version": 4,
+ "texts": {
+  "seasons": {
+   "file": "works/texts/seasons.en.txt",
+   "sha256": "71df379759ad1c291ab1aa5f1fe5a195490c3374c26bbcdd3a55fe1fb4ef1fc9"
+  },
+  "rule": {
+   "file": "works/texts/rule.en.txt",
+   "sha256": "fcb71e621e7d2cadeba35dd6e55c7e65dc20d8a0b71cc566cc98f06e50fbf1d4"
+  },
+  "elements": {
+   "file": "works/texts/elements.en.txt",
+   "sha256": "d84a5f38590f87527ff4659d6e3790669ecaf778bc4235be0a632401cbdcb5a4"
+  },
+  "features": {
+   "file": "works/texts/features.en.txt",
+   "sha256": "fbd5ab9ce58b240c1917de3660bd127824f270e668c6ed0884f311ec95f43ace"
+  }
+ },
+ "keystrokes": {
+  "unit": "press time in ms; no key, character or release",
+  "text_timing": {
+   "within_word": {
+    "median_ms": 240.0,
+    "sigma": 0.4
+   },
+   "word_start": {
+    "median_ms": 735.0,
+    "sigma": 0.5
+   },
+   "sentence_end": {
+    "median_ms": 2697.0,
+    "sigma": 0.5
+   },
+   "paragraph_end": {
+    "median_ms": 5394.0,
+    "sigma": 0.5
+   },
+   "source": "decision 3 of .steering/20261031-synthetic-prototype: Dhakal et al. 2018 (mean IKI 238.66 ms) and the mixture of Baaijen et al. 2012 cited by Van Waes et al. 2021 (330, 735, 2697 ms); paragraph_end and the sigmas assumed"
+  },
+  "regimes": {
+   "mean_run_fast": 30,
+   "matching": "src/keystroke.matched_regimes: rest chance = sum over kinds of count x P(gap >= rest_ms); rests drawn at or above rest_ms from the kinds' lognormals weighted by count; short gaps drawn below rest_ms, fast regime = within_word, slow regime = the other kinds weighted by count; mean slow run = mean fast run x slow share / (1 - slow share); run lengths count short gaps only",
+   "presses": "per text: the number of presses of the text",
+   "source": "mean_run_fast assumed (as v1); the rest matched to the text"
+  },
+  "seeds": 10,
+  "seed_base": 20261031
+ },
+ "series": {
+  "from_text": "as v2 and v3, the same random keys: default_rng([seed_base, sha256(text name)[:8] as int, 0, seed index])",
+  "shuffled": "as v2 and v3 (generator id 1)",
+  "regimes": "as v2 and v3 (generator id 2): src/keystroke.matched_regimes and from_matched_regimes",
+  "inside": {
+   "id": 3,
+   "rule": "src/keystroke.rests_inside: the gaps of from_text (same seed index); for every sentence but the first, the gap before its first press is swapped with the gap before one of its own word starts (positions() label 'word_start' after its first press), chosen uniformly. The multiset of the gaps of every sentence, its number and lengths of rests and its time are those of from_text; only the place of the gap before the sentence changes."
+  },
+  "reordered": {
+   "id": 4,
+   "rule": "src/keystroke.reordered_by_runs: the gaps of from_text (same seed index) in the order of the regimes. Classes: rest (gap >= rest_ms), fast (label within_word, below rest_ms), slow (other labels, below rest_ms), with the counts of that series. Rest places: chosen uniformly without replacement among all gaps. The other places, in order, are filled with runs alternating fast and slow, the first fast with chance mean_run_fast / (mean_run_fast + mean_run_slow), run lengths geometric with the means of matched_regimes (mean_run_fast of the conditions, mean_run_slow from the text's share of slow gaps); a run is cut when its class has no gap left, and when one class is used up the remaining places take the other. Each class is then filled with a random permutation of its gaps. The multiset of all gaps is that of from_text; against shuffled only the clustering of the classes differs, against regimes only the variation of counts and lengths within a series."
+  }
+ },
+ "units": {
+  "rest_ms": 2000.0,
+  "sentence": {
+   "starts": "src/keystroke.sentence_starts (as v3); the same press indices cut every series",
+   "counting": {
+    "before": "as v3 (src/keystroke.segments): sentence k holds the gaps before presses starts[k] .. starts[k + 1] - 1, the gap before a sentence counted in it",
+    "after": "sentence k holds the gaps before presses starts[k] + 1 .. starts[k + 1]: the gap before a sentence counted in the previous one; the last sentence holds only its inner gaps",
+    "none": "sentence k holds the gaps before presses starts[k] + 1 .. starts[k + 1] - 1: the gap before a sentence counted in none"
+   },
+   "rows": [
+    [
+     "from_text",
+     "before"
+    ],
+    [
+     "from_text",
+     "after"
+    ],
+    [
+     "from_text",
+     "none"
+    ],
+    [
+     "inside",
+     "before"
+    ],
+    [
+     "shuffled",
+     "before"
+    ],
+    [
+     "reordered",
+     "before"
+    ],
+    [
+     "regimes",
+     "before"
+    ]
+   ],
+   "presses": "the presses of a sentence are starts[k + 1] - starts[k] (the last: presses - starts[-1]) under every counting",
+   "tile_px": 120,
+   "gap_px": 6
+  },
+  "windows": {
+   "widths_ms": [
+    10000.0,
+    30000.0
+   ],
+   "figure_width_ms": 10000.0,
+   "windows": "src/keystroke.full_windows (as v2)",
+   "rows": [
+    "from_text",
+    "inside",
+    "shuffled",
+    "reordered",
+    "regimes"
+   ],
+   "tile_px": 80,
+   "gap_px": 4
+  },
+  "speed": "median of the gaps < rest_ms (of the sentence; of the window with both presses in it)",
+  "rest": "share of the time of the sentence (the sum of its gaps) or of the window inside gaps >= rest_ms",
+  "no_speed": "p = 0 and flagged; the min-max reference uses only tiles with a speed"
+ },
+ "mapping": {
+  "form": "atact.mapping coefficients: f = F0 + F1 p, s = S0 + S1 q, gamma = G0 + G1 (WP p + WQ q)",
+  "external": {
+   "p": "(ln 481.03 - ln m) / (ln 481.03 - ln 121.70), saturated to [0, 1]",
+   "q": "1 - rest share",
+   "slow_ms": 481.03,
+   "fast_ms": 121.7,
+   "source": "Dhakal et al. 2018, Table 3 (slow and fast typists' mean IKI); decision 5"
+  },
+  "minmax": "reference only: per series, ln m and rest share each min-max to [0, 1] over its windows, then p and q as above (decision 5)"
+ },
+ "relief": {
+  "octaves": 4,
+  "normalize": "ampsum",
+  "s_max": 0.3,
+  "grey": "H / (2 s_max) + 1/2, as the common scale of the works of words (no STL: images only)",
+  "seeds": [
+   42,
+   43,
+   44,
+   45
+  ],
+  "seeds_rule": "42 as v1 to v3 and the next three, fixed before seeing (decision 2 of .steering/20261031-atlas-v4)"
+ },
+ "figures": "per text and unit (sentence; 10 s): one figure per field seed under the external scale, and one under the min-max reference on field 42; rows as in units, seed index 0 of each series",
+ "counts": {
+  "spread": "per series, unit and counting: the share of [0, 1] spanned by the middle half of p and of q over the tiles, external scale, every seed index (as v1 to v3); summarised by the median over seed indices",
+  "correlation": "per sentence row: Pearson correlation of ln(presses of a sentence) with its q (external scale) over the sentences, every seed index, and again without the first sentence; None when q or the presses do not vary; summarised by median, min and max over seed indices",
+  "image_difference": "per text, unit and seed index (all ten), external scale: the tiles of every row on every field seed. Between rows: for each row R other than the first (from_text before) and each field, the mean over tiles of the mean absolute difference of grey between R and the first row on that field. Between fields: for each row and each field other than 42, the same difference between the row on that field and on 42. Tiles are paired by index up to the smaller number of tiles of the two (windows: series differ in duration). Summarised per row by the median over seed indices of the mean over fields (between rows) and of the mean over the three other fields (between fields)."
+ },
+ "generator": {
+  "requirement": "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+  "commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+  "library_sha256": {
+   "__init__.py": "d5980876e37cb7a1f5dc379028ab50f7a0c1d77d84c7651ee5d1beefd623b6ab",
+   "field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
+   "lexicon.py": "36cad1e49a25b352a7ae04868c6693ef349e8276d51909061eeb378085065e81",
+   "mapping.py": "83a50faaa664ddcb99004392e13a73fb096a85588a8b3c423b2c8b71ce626d26",
+   "transform.py": "5d35c9c10dfa6c8d5d3b2a9e8126ab45b895a1be14e05650c3ef60ffd3431bd1"
+  }
+ },
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1"
+}
