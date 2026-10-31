@@ -171,6 +171,9 @@ def one(first: list, sel: list, st: str, rng_key: list[int]) -> dict:
     if n < 2:
         raise SystemExit(f"fewer than 2 persons for {rng_key}")
     t_all = np.array([v[h][st] for v in first for h in (0, 1)])
+    r_all = np.array([v[h][st] for v in sel for h in (0, 1)])
+    if not (np.all(np.isfinite(t_all)) and np.all(np.isfinite(r_all))):
+        raise SystemExit(f"a non-finite value for {rng_key}")
     sd = t_all.std(axis=0)
     keep = sd > 0
     if not keep.any():
@@ -215,16 +218,20 @@ def count(halves: dict, rows: list[str], task: str, unit: str, how: str) -> dict
         for st in stages:
             key = [20261031, 66, v6.TASK[task], v6.UNIT[unit], STAGE[st], ri, BASELINE[how]]
             ok = [i for i in range(n_all) if has(halves[rows[0]][i], st) and has(halves[row][i], st)]
-            if st == "LOC" and not ok:
+            if st == "LOC" and row == "text/none":
+                if ok:
+                    raise SystemExit(f"{task} {unit} text/none has LOC for some persons")
                 res[st] = {"defined": False, "persons": 0}
                 continue
+            if st == "LOC" and len(ok) < 2:
+                raise SystemExit(f"{task} {unit} {row}: LOC for fewer than 2 persons")
             if st != "LOC" and len(ok) != n_all:
                 raise SystemExit(f"{task} {unit} {row} {st}: a vector is missing")
             res[st] = one([halves[rows[0]][i] for i in ok], [halves[row][i] for i in ok], st, key)
             res[st]["left_out_no_vector"] = n_all - len(ok)
             if st == "LOC":
                 same = {}
-                for s2 in ("S1", "S2"):
+                for s2 in ("S1", "S2") + (("SEQ",) if how == "halves" else ()):
                     k2 = [20261031, 66, v6.TASK[task], v6.UNIT[unit], STAGE[s2], ri, BASELINE[how]]
                     same[s2] = one([halves[rows[0]][i] for i in ok], [halves[row][i] for i in ok], s2, k2)
                 res["same_persons_as_LOC"] = same
@@ -260,8 +267,12 @@ def run(c6: dict, m: dict, r: dict) -> dict:
             ser[task] = (s, x["kinds"])
         return ser
 
+    if c6["units"]["rest_ms"] != 2000.0:
+        raise SystemExit("rest_ms differs")
     v6_ids = [pid for pid in order[:V6_LOOKED] if eligible(pid) is not None]
     rec6 = json.loads((ROOT / "results/prototype_v6/record.json").read_text())
+    if rec6["datasets"]["kupa"]["ids_looked_at"] != V6_LOOKED:
+        raise SystemExit("v6 did not look at 217 ids")
     if len(v6_ids) != v6.N or hashlib.sha256("\n".join(sorted(v6_ids)).encode()).hexdigest() != \
             rec6["datasets"]["kupa"]["ids_sha256"]:
         raise SystemExit("the first 217 ids of the permutation do not give v6's persons")
@@ -313,6 +324,8 @@ def main() -> None:
     if OUT_DIR.exists():
         raise SystemExit(f"{OUT_DIR} exists; refusing to overwrite")
     raw, c = cm.load_conditions(COND)
+    if c["participants"]["n"] != v6.N:
+        raise SystemExit("n differs")
     cm.check_generator(c["generator"])
     from importlib import metadata
     for pkg in ("numpy", "pillow", "scipy"):
@@ -335,14 +348,17 @@ def main() -> None:
                          "v6_conditions_sha256": hashlib.sha256(raw6).hexdigest(),
                          "data_sha256": {t: x["sha256"] for t, x in c6["data"]["kupa"]["files"].items()},
                          "code_sha256": {p: cm.sha256(ROOT / p) for p in CODE},
-                         "versions": cm.versions("numpy", "pillow", "scipy")}
+                         "versions": cm.versions("numpy", "pillow", "scipy"),
+                         "same_persons_rng": "the same-person counts (S1, S2 and, under halves, SEQ on the persons of "
+                                             "LOC) reuse the bootstrap keys of their stage and row"}
     tmp = Path(tempfile.mkdtemp(prefix="prototype_v6b-", dir=OUT_DIR.parent))
     (tmp / "record.json").write_text(json.dumps(rec, indent=1, ensure_ascii=False, allow_nan=False) + "\n")
     if OUT_DIR.exists():
         raise SystemExit(f"{OUT_DIR} appeared during the run; the result is left in {tmp}")
     tmp.rename(OUT_DIR)
     main_cell = rec["count"]["essay_sentence"]["oddeven"]
-    print(json.dumps({row: {st: (round(v["share_vs_own"], 3), v["reading"]["size"]) for st, v in main_cell[row].items()}
+    print(json.dumps({row: {st: (round(v["share_vs_own"], 3), v["reading"]["size"]) for st, v in main_cell[row].items()
+                            if st in STAGE and "share_vs_own" in v}
                       for row in ("inside/before", "shuffled/before", "shuffled_in_halves/before")}))
 
 

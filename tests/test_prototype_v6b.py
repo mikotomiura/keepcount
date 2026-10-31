@@ -118,3 +118,32 @@ def test_count_leaves_loc_undefined_for_a_row_without_it():
                     "oddeven")
     assert out["none"]["LOC"] == {"defined": False, "persons": 0}
     assert out["shuffled"]["LOC"]["persons"] == 5 and "same_persons_as_LOC" in out["shuffled"]
+
+
+def test_count_stops_on_a_nan_and_on_partial_loc_in_text_none():
+    rng = np.random.default_rng(1)
+    def vec(loc=True):
+        return {"S0": rng.random(7), "S1": rng.random(4), "S2": rng.random(4), "LOC": rng.random(7) if loc else None}
+    text = [(vec(), vec()) for _ in range(5)]
+    bad = [(vec(), vec()) for _ in range(5)]
+    bad[2][0]["S1"][1] = np.nan
+    with pytest.raises(SystemExit):
+        v6b.count({"text": text, "shuffled": bad}, ["text", "shuffled"], "essay", "sentence", "oddeven")
+    none = [(vec(False), vec(False)) for _ in range(4)] + [(vec(), vec())]
+    with pytest.raises(SystemExit):
+        v6b.count({"text": text, "text/none": none}, ["text", "text/none"], "essay", "sentence", "oddeven")
+
+
+def test_read_kupa_b_matches_v6_after_mapping_back(tmp_path):
+    rows = ["id,time,type,key,key_code,alt_key,ctrl_key,meta_key,shift_key,is_repeat,range_start,range_end,text"]
+    keys = ["H", "i", ",", " ", "y", ";", ":", "Backspace", ".", "Enter", "Shift", "a"]
+    for i, k in enumerate(keys):
+        rows.append(f"P1,{100 * i},down,{k if k != ',' else '\",\"'},,,,,,,0,0,")
+    rows.append("P2,5,click,,,,,,,,0,0,")
+    f = tmp_path / "t.csv"
+    f.write_text("\n".join(rows) + "\n")
+    b, seen_b = v6b.read_kupa_b(f)
+    a, seen_a = v6.read_kupa(f)
+    assert seen_a == seen_b == {"P1", "P2"}
+    assert v6b.v6_kinds(b["P1"]["kinds"]) == a["P1"]["kinds"]
+    assert b["P1"]["kinds"].count("sub") == 3
