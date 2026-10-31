@@ -36,7 +36,7 @@ Over all cells (essay and copy, sentences and 10 s windows, both baselines):
 | v6b KUPA essay | 843 / 1100 / 1444 / 1830 / 4090 | 5 / 9 / 13 / 17 / 37 | 16 / 46 / 60 / 91 / 332 |
 
 In v6b's count-1 persons each half holds 4-19 sentence tiles (median 6.5-7) or 8-166 window tiles (median 30) and at
-least 254 adjacent pairs of held gaps; no person has fewer than 3 pairs in a half (R_lag is never 0 by the rule of
+least 247 adjacent pairs of held gaps; no person has fewer than 3 pairs in a half (R_lag is never 0 by the rule of
 fewer than 3 pairs).
 
 ## Readings (Claude)
@@ -45,7 +45,7 @@ fewer than 3 pairs).
    alone show it in every cell (0.90-0.96). So v6b's reading 2 does not rest on the order statistic: what the image
    lacks includes which kind of gap (sentence, subsentence, word, within word) carries the long and short gaps.
 2. The lag-1 alone also shows shuffling (0.73-0.85), less clearly than position. Its own difference between halves is
-   small enough against the drop that the prediction "below or undecided" did not hold: with 250-2,000 adjacent pairs
+   small enough against the drop that the prediction "below or undecided" did not hold: with 247-2,471 adjacent pairs
    per half, the lag-1 of a half is estimated well.
 3. Moving the rest inside its sentence is seen weakly by position (0.60-0.70) and not by the lag-1 (0.24-0.31): it moves
    one gap per sentence between labels, and changes the order little.
