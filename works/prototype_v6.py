@@ -87,6 +87,8 @@ def kupa_kind(key: str) -> str | None:
 
 def clean(times: list[float], kinds: list[str]) -> tuple[np.ndarray, list[str], int]:
     """Stable sort by time, then drop a press at the same time as the previous one; times from 0."""
+    if not all(math.isfinite(x) for x in times):
+        raise SystemExit("a press time is not a finite number")
     order = sorted(range(len(times)), key=lambda i: times[i])
     t = np.array([times[i] for i in order], dtype=float)
     k = [kinds[i] for i in order]
@@ -96,12 +98,15 @@ def clean(times: list[float], kinds: list[str]) -> tuple[np.ndarray, list[str], 
     return (t - t[0] if t.size else t), k, dropped
 
 
-def read_kupa(path: Path) -> dict[str, dict]:
-    """Per id: the counted presses (times from 0) and their kinds, and the number dropped for equal times."""
+def read_kupa(path: Path) -> tuple[dict[str, dict], set[str]]:
+    """Per id: the counted presses (times from 0) and their kinds, and the number dropped for equal times; and every
+    id with any event."""
     raw: dict[str, tuple[list[float], list[str]]] = {}
+    seen: set[str] = set()
     csv.field_size_limit(sys.maxsize)
     with open(path, newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
+            seen.add(row["id"])
             if row["type"] != "down" or row["is_repeat"] == "True":
                 continue
             kind = kupa_kind(row["key"])
@@ -114,7 +119,7 @@ def read_kupa(path: Path) -> dict[str, dict]:
     for pid, (ts, kinds) in raw.items():
         t, k, dropped = clean(ts, kinds)
         out[pid] = {"times": t, "kinds": k, "dropped": dropped}
-    return out
+    return out, seen
 
 
 def kupa_starts(kinds: list[str]) -> list[int]:
@@ -129,20 +134,25 @@ def kupa_starts(kinds: list[str]) -> list[int]:
     return starts
 
 
+def every_sentence_holds_a_gap(s: "Series") -> bool:
+    """Under each of the countings before, after and none, every sentence holds at least one gap (decision 11)."""
+    return all(hi > lo for c in ("before", "after", "none") for lo, hi in ks.counted_ranges(s.starts, s.times.size, c))
+
+
 def kupa_word_starts(kinds: list[str]) -> list[int]:
     return [i for i in range(1, len(kinds)) if kinds[i] == "alnum" and kinds[i - 1] == "space"]
 
 
-def aalto_ids(zf: zipfile.ZipFile) -> list[int]:
-    """PARTICIPANT_ID of the metadata with KEYBOARD_TYPE 'full' or 'laptop'."""
+def aalto_ids(zf: zipfile.ZipFile) -> dict[int, bool]:
+    """Every PARTICIPANT_ID of the metadata, mapped to whether its KEYBOARD_TYPE is 'full' or 'laptop'."""
     text = io.TextIOWrapper(zf.open("Keystrokes/files/metadata_participants.txt"), encoding="utf-8", errors="replace")
     header = text.readline().rstrip("\n").split("\t")
     i_id, i_kb = header.index("PARTICIPANT_ID"), header.index("KEYBOARD_TYPE")
-    out = []
+    out = {}
     for line in text:
         f = line.rstrip("\n").split("\t")
-        if len(f) > max(i_id, i_kb) and f[i_kb] in ("full", "laptop"):
-            out.append(int(f[i_id]))
+        if len(f) > max(i_id, i_kb):
+            out[int(f[i_id])] = f[i_kb] in ("full", "laptop")
     return out
 
 
@@ -157,6 +167,7 @@ def read_aalto(zf: zipfile.ZipFile, pid: int, tally: dict) -> list[np.ndarray] |
         tally["missing_files"] += 1
         return None
     sents: dict[str, list[float]] = {}
+    digits = 0
     with io.TextIOWrapper(zf.open(info), encoding="utf-8", errors="replace") as f:
         for line in f:
             x = line.rstrip("\r\n").split("\t")
@@ -167,10 +178,13 @@ def read_aalto(zf: zipfile.ZipFile, pid: int, tally: dict) -> list[np.ndarray] |
             if len(x) != 9:
                 tally["lines_read_from_ends"] += 1
             letter = x[-2]
+            presses = sents.setdefault(x[1], [])  # every section seen, counted presses or not
             if not (len(letter) == 1 or letter == "BKSP"):
                 tally["not_counted"] += 1
                 continue
-            sents.setdefault(x[1], []).append(float(x[-4]))
+            if letter.isdigit():
+                digits += 1
+            presses.append(float(x[-4]))
     if len(sents) != 15:
         return None
     out = []
@@ -180,6 +194,11 @@ def read_aalto(zf: zipfile.ZipFile, pid: int, tally: dict) -> list[np.ndarray] |
         if t.size < 2:
             return None
         out.append(t)
+    for part in (out[:7], out[7:]):  # each part needs a full 10 s window (decision 11)
+        if int(np.floor(aalto_series(part).times[-1] / WINDOW_MS)) < 1:
+            tally["part_without_window"] += 1
+            return None
+    tally["digit_letters_of_eligible"] += digits
     return out
 
 
@@ -316,7 +335,7 @@ def pooled(d: np.ndarray) -> tuple[float, float]:
     hi = np.searchsorted(s, gen, side="right")
     auc = float(np.mean((imp.size - hi + 0.5 * (hi - lo)) / imp.size))
     thr = float(np.quantile(imp, 0.01, method="linear"))
-    return auc, float(np.mean(gen <= thr))
+    return auc, float(np.mean(gen <= thr)), thr, float(np.mean(imp <= thr))
 
 
 def ci(values: np.ndarray, idx: np.ndarray) -> list[float]:
@@ -333,7 +352,7 @@ def reading(lo: float, hi: float) -> dict:
 def identify(g: np.ndarray, e: np.ndarray, idx: np.ndarray, perm_rng: np.random.Generator) -> dict:
     d = distances(e, g)
     top1, rauc = per_person(d)
-    pa, tpr = pooled(d)
+    pa, tpr, thr, far = pooled(d)
     null_top1, null_rauc = [], []
     for _ in range(N_PERM):
         pi = perm_rng.permutation(d.shape[1])
@@ -343,6 +362,7 @@ def identify(g: np.ndarray, e: np.ndarray, idx: np.ndarray, perm_rng: np.random.
     c_r = ci(rauc, idx)
     return {"rank_auc": float(rauc.mean()), "rank_auc_ci": c_r, "reading": reading(*c_r),
             "top1": float(top1.mean()), "top1_ci": ci(top1, idx), "pooled_auc": pa, "tpr_at_far_0.01": tpr,
+            "far_threshold": thr, "far_realised": far,
             "p_rank_auc": (1 + int(np.sum(np.array(null_rauc) >= rauc.mean()))) / (N_PERM + 1),
             "p_top1": (1 + int(np.sum(np.array(null_top1) >= top1.mean()))) / (N_PERM + 1),
             "_rauc": rauc}
@@ -378,6 +398,8 @@ def count1(halves: dict, ds: str, task: str, unit: str) -> dict:
     rows = ROWS[ds][unit]
     first = halves[rows[0]]
     n = len(first)
+    if n < 2:
+        raise SystemExit(f"count 1 {ds} {task} {unit}: fewer than 2 persons")
     out: dict = {"persons": n}
     for st in STAGE:
         t_all = np.array([v[h][st] for v in first for h in (0, 1)])
@@ -453,12 +475,12 @@ def check_s0(rows: dict[str, Tiles], unit: str) -> None:
     for name, t in rows.items():
         kind = name.split("/")[0]
         if kind == "shuffled" and unit == "sentence":
-            if not np.allclose(t.all()["S0"], first.all()["S0"], rtol=S0_TOL, atol=0):
+            if not np.allclose(t.all()["S0"], first.all()["S0"], rtol=S0_TOL, atol=1e-12):
                 raise SystemExit("a whole-series shuffle changed S0 of the whole series")
         if kind == "shuffled_in_halves" and unit == "sentence":
             h = first.n // 2
             for idx in (np.arange(h), np.arange(h, first.n)):
-                if not np.allclose(t.vectors(idx)["S0"], first.vectors(idx)["S0"], rtol=S0_TOL, atol=0):
+                if not np.allclose(t.vectors(idx)["S0"], first.vectors(idx)["S0"], rtol=S0_TOL, atol=1e-12):
                     raise SystemExit("a shuffle in halves changed S0 of a half")
 
 
@@ -499,8 +521,10 @@ def run(c: dict, m: dict, r: dict, out_dir: Path) -> dict:
 
     # KUPA
     kp = c["data"]["kupa"]["files"]
-    kupa = {task: read_kupa(ROOT / kp[task]["file"]) for task in ("copy", "essay")}
-    ids_sorted = sorted(kupa["essay"])
+    kupa, seen = {}, {}
+    for task in ("copy", "essay"):
+        kupa[task], seen[task] = read_kupa(ROOT / kp[task]["file"])
+    ids_sorted = sorted(seen["essay"])
     place = {pid: i for i, pid in enumerate(ids_sorted)}
     chosen, looked = [], 0
     series: dict = {}
@@ -514,7 +538,7 @@ def run(c: dict, m: dict, r: dict, out_dir: Path) -> dict:
                 break
             st = kupa_starts(x["kinds"])
             s = Series(x["times"], st, kupa_word_starts(x["kinds"]))
-            if len(st) < 5 or int(np.floor(s.times[-1] / WINDOW_MS)) < 5:
+            if len(st) < 5 or int(np.floor(s.times[-1] / WINDOW_MS)) < 5 or not every_sentence_holds_a_gap(s):
                 ok = False
                 break
             ser[task] = s
@@ -526,7 +550,8 @@ def run(c: dict, m: dict, r: dict, out_dir: Path) -> dict:
     if len(chosen) < N:
         raise SystemExit(f"KUPA: only {len(chosen)} eligible ids")
     rec["datasets"]["kupa"] = kupa_rec = {
-        "ids_read": {t: len(v) for t, v in kupa.items()}, "ids_looked_at": looked,
+        "ids_read": {t: len(v) for t, v in seen.items()}, "ids_with_counted_presses": {t: len(v) for t, v in kupa.items()},
+        "ids_looked_at": looked,
         "ids_sha256": hashlib.sha256("\n".join(sorted(chosen)).encode()).hexdigest(),
         "dropped_equal_times": {t: int(sum(kupa[t][p]["dropped"] for p in chosen)) for t in kupa},
         "presses": {t: int(sum(series[p][t].times.size for p in chosen)) for t in kupa}}
@@ -535,12 +560,16 @@ def run(c: dict, m: dict, r: dict, out_dir: Path) -> dict:
     # Aalto
     za = ROOT / c["data"]["aalto"]["file"]
     tally = {"missing_files": 0, "short_lines": 0, "lines_read_from_ends": 0, "not_counted": 0,
-             "dropped_equal_times": 0}
+             "dropped_equal_times": 0, "part_without_window": 0, "digit_letters_of_eligible": 0, "keyboard_not_eligible": 0}
     with zipfile.ZipFile(za) as zf:
-        a_ids = sorted(aalto_ids(zf))
+        kb = aalto_ids(zf)
+        a_ids = sorted(kb)
         a_chosen, a_looked, a_series = [], 0, {}
         for pid in draw_order(a_ids, 1):
             a_looked += 1
+            if not kb[pid]:
+                tally["keyboard_not_eligible"] += 1
+                continue
             sents = read_aalto(zf, pid, tally)
             if sents is None:
                 continue
@@ -551,7 +580,7 @@ def run(c: dict, m: dict, r: dict, out_dir: Path) -> dict:
     if len(a_chosen) < N:
         raise SystemExit(f"Aalto: only {len(a_chosen)} eligible ids")
     rec["datasets"]["aalto"] = aalto_rec = {
-        "ids_with_keyboard": len(a_ids), "ids_looked_at": a_looked,
+        "ids_in_metadata": len(a_ids), "ids_with_keyboard": int(sum(kb.values())), "ids_looked_at": a_looked,
         "ids_sha256": hashlib.sha256("\n".join(str(x) for x in sorted(a_chosen)).encode()).hexdigest(),
         "tally_over_files_looked_at": tally,
         "presses": int(sum(sum(t.size for t in v) for v in a_series.values()))}
@@ -570,7 +599,8 @@ def run(c: dict, m: dict, r: dict, out_dir: Path) -> dict:
             first_row = ROWS[ds][unit][0]
             counting = first_row.partition("/")[2] or "before"
             tt = Tiles(s, unit, counting, m, r, rest_ms)
-            mk = meta.setdefault((ds, task, unit), {"tiles": [], "no_speed": 0, "inside_left": 0, "persons_count1": 0})
+            mk = meta.setdefault((ds, task, unit), {"tiles": [], "no_speed": 0, "inside_left": 0, "persons_count1": 0,
+                                                    "left_out_half_without_gap": 0})
             mk["tiles"].append(tt.n)
             mk["no_speed"] += tt.no_speed
             if ds == "kupa":
@@ -581,12 +611,16 @@ def run(c: dict, m: dict, r: dict, out_dir: Path) -> dict:
                 if len(tile_rows_fig.setdefault((ds, task), [])) < 4:
                     tile_rows_fig[(ds, task)].append(
                         [v4.tile(a, b, r, FIELD, TILE_PX[unit]) for a, b in zip(tt.p[:24], tt.q[:24])])
-            if tt.n >= MIN_TILES_COUNT1:
+            h = tt.n // 2
+            halves_hold = tt.n >= MIN_TILES_COUNT1 and all(
+                sum(tt.held[i].size for i in part) > 0 for part in (range(h), range(h, tt.n)))
+            if tt.n >= MIN_TILES_COUNT1 and not halves_hold:
+                mk["left_out_half_without_gap"] += 1
+            if halves_hold:
                 rows, info = make_rows(ds, s, unit, tt, key, m, r, rest_ms)
                 check_s0(rows, unit)
                 mk["inside_left"] += info["inside_left"]
                 mk["persons_count1"] += 1
-                h = tt.n // 2
                 iA, iB = np.arange(h), np.arange(h, tt.n)
                 for row, t_ in rows.items():
                     if t_.n < tt.n:
@@ -598,6 +632,11 @@ def run(c: dict, m: dict, r: dict, out_dir: Path) -> dict:
                 sp = aalto_series(sents[sl])
                 for unit in UNIT:
                     tp = Tiles(sp, unit, "before", m, r, rest_ms)
+                    mp = meta.setdefault(("aalto", f"part_{part}", unit), {"tiles": [], "no_speed": 0, "inside_left": 0,
+                                                                          "persons_count1": 0,
+                                                                          "left_out_half_without_gap": 0})
+                    mp["tiles"].append(tp.n)
+                    mp["no_speed"] += tp.no_speed
                     for st, v in tp.all().items():
                         vec2.setdefault((ds, part), {}).setdefault(unit, {}).setdefault(st, []).append(v)
 
@@ -613,7 +652,8 @@ def run(c: dict, m: dict, r: dict, out_dir: Path) -> dict:
                                  for (ds, task, unit), hv in half.items()}
     rec["tiles"] = {f"{ds}_{task}_{unit}": {"persons": len(v["tiles"]), "tiles_total": int(sum(v["tiles"])),
                                             "tiles_median": float(np.median(v["tiles"])), "no_speed": v["no_speed"],
-                                            "persons_count1": v["persons_count1"], "inside_left": v["inside_left"]}
+                                            "persons_count1": v["persons_count1"], "inside_left": v["inside_left"],
+                                            "left_out_half_without_gap": v["left_out_half_without_gap"]}
                     for (ds, task, unit), v in meta.items()}
     rec["stage_summary"] = {f"{ds}_{part}_{unit}": {st: {"median": np.median(a, axis=0).tolist(),
                                                          "iqr": (np.percentile(a, 75, axis=0)

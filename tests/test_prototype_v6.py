@@ -124,16 +124,18 @@ def test_read_aalto_reads_fields_from_both_ends_and_needs_15_sentences():
     lines = [head]
     for s in range(15):
         sent = "a\tb" if s == 0 else "ab"  # a tab inside the sentence of the first section
-        for j, (letter, t) in enumerate([("SHIFT", 0), ("a", 10), ("b", 30), ("b", 30), ("BKSP", 55)]):
-            lines.append(f"7\t{100 + s}\t{sent}\tab\t{j}\t{1000 * s + t}\t{1000 * s + t + 5}\t{letter}\t0")
+        for j, (letter, t) in enumerate([("SHIFT", 0), ("a", 10), ("b", 30), ("b", 30), ("BKSP", 2055)]):
+            lines.append(f"7\t{100 + s}\t{sent}\tab\t{j}\t{3000 * s + t}\t{3000 * s + t + 5}\t{letter}\t0")
     lines.insert(20, head)  # a repeated header
     tally = {"missing_files": 0, "short_lines": 0, "lines_read_from_ends": 0, "not_counted": 0,
-             "dropped_equal_times": 0}
+             "dropped_equal_times": 0, "part_without_window": 0, "digit_letters_of_eligible": 0}
     out = v6.read_aalto(aalto_zip(lines), 7, tally)
     assert len(out) == 15
-    assert out[0].tolist() == [0.0, 20.0, 45.0]
+    assert out[0].tolist() == [0.0, 20.0, 2045.0]
     assert tally["lines_read_from_ends"] == 5 and tally["not_counted"] == 15 and tally["dropped_equal_times"] == 15
     assert v6.read_aalto(aalto_zip(lines[:-5]), 7, dict(tally)) is None  # 14 sentences
+    extra = [f"7\t999\tx\tx\t99\t99000\t99005\tSHIFT\t16"]
+    assert v6.read_aalto(aalto_zip(lines + extra), 7, dict(tally)) is None  # a 16th section with no counted press
 
 
 def test_aalto_series_drops_the_gap_between_sentences():
@@ -185,3 +187,46 @@ def test_count1_of_an_unchanged_row_is_zero_change():
     assert out["shuffled"]["S1"]["share_vs_own"] == 0.0
     assert out["shuffled"]["S1"]["median_change"] == 0.0
     assert out["shuffled"]["S1"]["reading"] == {"detection": "not detected", "size": "below 0.60"}
+
+
+def test_aalto_part_without_a_full_window_is_not_eligible():
+    head = "PARTICIPANT_ID\tTEST_SECTION_ID\tSENTENCE\tUSER_INPUT\tKEYSTROKE_ID\tPRESS_TIME\tRELEASE_TIME\tLETTER\tKEYCODE"
+    lines = [head] + [f"7\t{100 + s}\tab\tab\t{j}\t{1000 * s + 100 * j}\t0\ta\t0" for s in range(15) for j in range(3)]
+    tally = {"missing_files": 0, "short_lines": 0, "lines_read_from_ends": 0, "not_counted": 0,
+             "dropped_equal_times": 0, "part_without_window": 0, "digit_letters_of_eligible": 0}
+    assert v6.read_aalto(aalto_zip(lines), 7, tally) is None
+    assert tally["part_without_window"] == 1
+
+
+def test_a_one_press_sentence_at_the_end_or_start_is_caught():
+    t = np.arange(10, dtype=float) * 100
+    assert v6.every_sentence_holds_a_gap(v6.Series(t, [0, 4, 7]))
+    assert not v6.every_sentence_holds_a_gap(v6.Series(t, [0, 4, 9]))  # last sentence of one press ('after')
+    assert not v6.every_sentence_holds_a_gap(v6.Series(t, [0, 1, 5]))  # first sentence of one press ('before')
+
+
+def test_clean_stops_on_a_time_that_is_not_finite():
+    with pytest.raises(SystemExit):
+        v6.clean([0.0, float("nan"), 2.0], ["a", "b", "c"])
+
+
+def test_pooled_records_threshold_and_realised_far():
+    d = np.full((5, 5), 2.0)
+    np.fill_diagonal(d, 1.0)
+    auc, tpr, thr, far = v6.pooled(d)
+    assert (auc, tpr, thr, far) == (1.0, 1.0, 2.0, 1.0)  # all impostors tied: the realised FAR is 1, not 0.01
+
+
+def test_count1_between_and_cross():
+    a = [({"S0": np.array([0.0]), "S1": np.array([0.0]), "S2": np.array([0.0])},
+          {"S0": np.array([1.0]), "S1": np.array([1.0]), "S2": np.array([1.0])}),
+         ({"S0": np.array([4.0]), "S1": np.array([4.0]), "S2": np.array([4.0])},
+          {"S0": np.array([5.0]), "S1": np.array([5.0]), "S2": np.array([5.0])})]
+    moved = [({k: v + 0.5 for k, v in x[0].items()}, {k: v + 0.5 for k, v in x[1].items()}) for x in a]
+    out = v6.count1({"text": a, "shuffled": moved, "shuffled_in_halves": a}, "aalto", "session", "sentence")
+    sd = np.std([0.0, 1.0, 4.0, 5.0])
+    r = out["shuffled"]["S1"]
+    assert r["median_base"] == pytest.approx(1 / sd)
+    assert r["median_change"] == pytest.approx(0.5 / sd)
+    assert r["median_between"] == pytest.approx(np.median([5 / sd, 3 / sd]))
+    assert r["share_vs_own"] == 0.0 and r["median_change_over_base"] == pytest.approx(0.5)
