@@ -46,6 +46,7 @@ DIRECTIONS = {"kupa_copy_to_essay": ("kupa", "copy", "essay", 0), "kupa_essay_to
 def rank_rates(d: np.ndarray, ranks: tuple[int, ...]) -> dict[int, np.ndarray]:
     """Per evaluation person, the rate of identification within rank n (ties broken at random in expectation):
     r = 1 + impostors closer than the genuine, t = impostors as close; rate = clip((n - r + 1) / (t + 1), 0, 1)."""
+    finite(d)
     n = d.shape[0]
     gen = np.diag(d)
     imp = d[~np.eye(n, dtype=bool)].reshape(n, n - 1)
@@ -56,15 +57,24 @@ def rank_rates(d: np.ndarray, ranks: tuple[int, ...]) -> dict[int, np.ndarray]:
 
 def eer(d: np.ndarray) -> dict:
     """Pooled equal error rate: at each distinct distance as threshold, FAR = impostors at or below it, FRR =
-    genuines above it; EER = (FAR + FRR) / 2 at the first threshold where |FAR - FRR| is smallest."""
+    genuines above it; EER = (FAR + FRR) / 2 at the first threshold where |FAR - FRR| is smallest, compared in exact
+    integers: |a G - (G - b) I| with a impostors and b genuines at or below the threshold."""
+    finite(d)
     n = d.shape[0]
     gen = np.sort(np.diag(d))
     imp = np.sort(d[~np.eye(n, dtype=bool)])
+    big_g, big_i = gen.size, imp.size
     thr = np.unique(np.concatenate([gen, imp]))
-    far = np.searchsorted(imp, thr, side="right") / imp.size
-    frr = 1.0 - np.searchsorted(gen, thr, side="right") / gen.size
-    i = int(np.argmin(np.abs(far - frr)))
-    return {"eer": float((far[i] + frr[i]) / 2), "far": float(far[i]), "frr": float(frr[i])}
+    a = np.searchsorted(imp, thr, side="right").astype(np.int64)
+    b = np.searchsorted(gen, thr, side="right").astype(np.int64)
+    i = int(np.argmin(np.abs(a * big_g - (big_g - b) * big_i)))
+    far, frr = a[i] / big_i, (big_g - b[i]) / big_g
+    return {"eer": float((far + frr) / 2), "far": float(far), "frr": float(frr)}
+
+
+def finite(d: np.ndarray) -> None:
+    if not np.isfinite(d).all():
+        raise SystemExit("distances that are not finite")
 
 
 def full(g: np.ndarray, e: np.ndarray, key: list[int]) -> dict:
@@ -80,16 +90,17 @@ def full(g: np.ndarray, e: np.ndarray, key: list[int]) -> dict:
             "eer": eer(d), "dropped_features": drop}
 
 
-def subset(g: np.ndarray, e: np.ndarray, sel: np.ndarray) -> tuple[float, float, float]:
-    gs, es, _ = v6.standardise(g[sel], e[sel], "main")
+def subset(g: np.ndarray, e: np.ndarray, sel: np.ndarray) -> tuple[float, float, float, int]:
+    """top1, rank-5 rate and rank_auc of the subset sel, and the number of features dropped in it."""
+    gs, es, drop = v6.standardise(g[sel], e[sel], "main")
+    if gs.shape[1] == 0:
+        raise SystemExit("every feature dropped in a subset")
     d = v6.distances(es, gs)
     top1, rauc = v6.per_person(d)
-    return float(top1.mean()), float(rank_rates(d, (5,))[5].mean()), float(rauc.mean())
+    return float(top1.mean()), float(rank_rates(d, (5,))[5].mean()), float(rauc.mean()), len(drop)
 
 
-def population(g: dict, e: dict, ds: str, direction: int) -> dict:
-    """g[unit][stage], e[unit][stage]: (200, k). The same subsets for every stage and unit of a direction."""
-    n = next(iter(next(iter(g.values())).values())).shape[0]
+def draw_subsets(n: int, ds: str, direction: int) -> dict[int, list[np.ndarray]]:
     subsets = {}
     for size in POPULATION:
         if size == n:
@@ -97,6 +108,13 @@ def population(g: dict, e: dict, ds: str, direction: int) -> dict:
         else:
             rng = np.random.default_rng([v6.SEED, 63, 2, v6.DATASET[ds], direction, size])
             subsets[size] = [rng.choice(n, size, replace=False) for _ in range(N_SUBSETS)]
+    return subsets
+
+
+def population(g: dict, e: dict, ds: str, direction: int) -> dict:
+    """g[unit][stage], e[unit][stage]: (200, k). The same subsets for every stage and unit of a direction."""
+    n = next(iter(next(iter(g.values())).values())).shape[0]
+    subsets = draw_subsets(n, ds, direction)
     out: dict = {}
     for unit in v6.UNIT:
         out[unit] = {}
@@ -104,12 +122,15 @@ def population(g: dict, e: dict, ds: str, direction: int) -> dict:
             out[unit][st] = {}
             for size, sels in subsets.items():
                 vals = np.array([subset(g[unit][st], e[unit][st], s) for s in sels])
-                out[unit][st][str(size)] = {
+                cell = out[unit][st][str(size)] = {
                     name: {"mean": float(vals[:, j].mean()),
-                           **({"p2.5": float(np.percentile(vals[:, j], 2.5)),
-                               "p97.5": float(np.percentile(vals[:, j], 97.5))} if len(sels) > 1 else {})}
+                           **({"p2.5": float(np.percentile(vals[:, j], 2.5, method="linear")),
+                               "p97.5": float(np.percentile(vals[:, j], 97.5, method="linear"))}
+                              if len(sels) > 1 else {})}
                     for j, name in enumerate(("top1", "rank5", "rank_auc"))}
-                out[unit][st][str(size)]["chance"] = {"top1": 1 / size, "rank5": 5 / size}
+                cell["chance"] = {"top1": 1 / size, "rank5": 5 / size}
+                cell["dropped_features"] = {"subsets_with_any": int((vals[:, 3] > 0).sum()),
+                                            "largest_number": int(vals[:, 3].max())}
     return out
 
 
@@ -118,7 +139,7 @@ def check_v6(res: dict, v6rec: dict, name: str) -> None:
         for st, r_ in su.items():
             ref = v6rec["count_2_person"][name][unit]["main"][st]
             for k in ("top1", "rank_auc"):
-                if abs(r_[k] - ref[k]) >= CHECK_TOL:
+                if not abs(r_[k] - ref[k]) < CHECK_TOL:
                     raise SystemExit(f"{name} {unit} {st} {k}: {r_[k]} differs from v6's {ref[k]}")
 
 
@@ -202,13 +223,30 @@ def run(c6: dict, m: dict, r: dict, v6rec: dict) -> dict:
                       for st in v6.STAGE} for unit in v6.UNIT}
         check_v6(res, v6rec, name)
         rec["full"][name] = res
-        rec["population"][name] = population(g, e, ds, direction)
+    for name, (ds, a, b, direction) in DIRECTIONS.items():
+        rec["population"][name] = population(arr[(ds, a)], arr[(ds, b)], ds, direction)
+    no_per_person(rec)
     return rec
+
+
+def no_per_person(x, path: str = "") -> None:
+    """The record holds no list as long as a set of persons (the longest allowed are intervals and dropped feature
+    indices)."""
+    if isinstance(x, dict):
+        for k, v in x.items():
+            no_per_person(v, f"{path}/{k}")
+    elif isinstance(x, (list, tuple)):
+        if len(x) >= min(POPULATION):
+            raise SystemExit(f"{path}: a list of {len(x)} values in the record")
+        for v in x:
+            no_per_person(v, path)
 
 
 def main() -> None:
     if OUT_DIR.exists():
         raise SystemExit(f"{OUT_DIR} exists; refusing to overwrite")
+    if not OUT_DIR.parent.is_dir():
+        raise SystemExit(f"{OUT_DIR.parent} does not exist")
     raw, c = cm.load_conditions(COND)
     cm.check_generator(c["generator"])
     from importlib import metadata
@@ -218,6 +256,9 @@ def main() -> None:
     raw6 = cm.check_file(ROOT / c["v6"]["conditions"]["file"], c["v6"]["conditions"]["sha256"], "v6's conditions")
     rawr = cm.check_file(ROOT / c["v6"]["record"]["file"], c["v6"]["record"]["sha256"], "v6's record")
     c6, v6rec = json.loads(raw6), json.loads(rawr)
+    for p, h in v6rec["provenance"]["code_sha256"].items():
+        if cm.sha256(ROOT / p) != h:
+            raise SystemExit(f"{p} differs from the code that made v6's record")
     if c6["generator"] != c["generator"]:
         raise SystemExit("the generator of v6's conditions differs from v6c's")
     m4 = c6["mapping"]["v4_conditions"]

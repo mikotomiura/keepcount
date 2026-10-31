@@ -64,3 +64,67 @@ def test_population_subsets_and_full_set():
     assert cell["200"]["rank_auc"]["mean"] == float(rauc.mean())
     again = v6c.population(g, e, "kupa", 0)
     assert again["window_10s"]["S2"]["50"] == out["window_10s"]["S2"]["50"]
+
+
+def test_eer_tie_takes_the_first_threshold():
+    # genuine [1, 2, 3], impostors [1, 1, 2, 2, 3, 3]: |FAR - FRR| is 1/3 at thresholds 1 and 2
+    d = np.array([[1.0, 1.0, 2.0],
+                  [1.0, 2.0, 3.0],
+                  [2.0, 3.0, 3.0]])
+    r = v6c.eer(d)
+    assert r["far"] == 2 / 6 and r["frr"] == 2 / 3 and r["eer"] == 0.5
+
+
+def test_eer_all_equal_is_the_discrete_approximation():
+    r = v6c.eer(np.ones((5, 5)))
+    assert (r["eer"], r["far"], r["frr"]) == (0.5, 1.0, 0.0)
+
+
+def test_subsets_follow_the_key_of_the_conditions():
+    s = v6c.draw_subsets(200, "aalto", 0)
+    rng = np.random.default_rng([20261031, 63, 2, 1, 0, 50])
+    want = [rng.choice(200, 50, replace=False) for _ in range(200)]
+    assert all(np.array_equal(a, b) for a, b in zip(s[50], want))
+    assert len(s[25]) == 200 and len(s[200]) == 1 and np.array_equal(s[200][0], np.arange(200))
+    assert not np.array_equal(v6c.draw_subsets(200, "aalto", 1)[50][0], s[50][0])
+
+
+def test_subset_standardises_within_the_subset_and_counts_drops():
+    rng = np.random.default_rng(4)
+    g, e = rng.random((200, 3)), rng.random((200, 3))
+    sel = np.arange(30)
+    g[:30, 2] = 7.0  # constant only within the subset
+    gs, es, drop = v6.standardise(g[sel], e[sel], "main")
+    top1, rauc = v6.per_person(v6.distances(es, gs))
+    t1, r5, ra, nd = v6c.subset(g, e, sel)
+    assert (t1, ra, nd) == (float(top1.mean()), float(rauc.mean()), 1) and drop == [2]
+
+
+def test_non_finite_distances_stop():
+    d = np.ones((4, 4))
+    d[0, 1] = np.nan
+    for f in (lambda: v6c.rank_rates(d, (1,)), lambda: v6c.eer(d)):
+        try:
+            f()
+        except SystemExit:
+            continue
+        raise AssertionError("did not stop")
+
+
+def test_record_guard_refuses_per_person_lists():
+    v6c.no_per_person({"a": {"ci": [0.1, 0.2], "dropped_features": [1, 2]}})
+    try:
+        v6c.no_per_person({"a": {"b": list(range(25))}})
+    except SystemExit:
+        return
+    raise AssertionError("did not stop")
+
+
+def test_eer_tie_where_floats_would_pick_the_later_threshold():
+    # genuine [2, 2, 2], impostors [1, 1, 2, 2, 9, 9]: |FAR - FRR| = 2/3 at thresholds 1 and 2 exactly,
+    # but 0.6666666666666667 against 0.6666666666666666 in floats
+    d = np.array([[2.0, 1.0, 1.0],
+                  [2.0, 2.0, 9.0],
+                  [9.0, 2.0, 2.0]])
+    r = v6c.eer(d)
+    assert (r["far"], r["frr"]) == (2 / 6, 1.0)
