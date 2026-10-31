@@ -1,0 +1,80 @@
+{
+ "purpose": "Prototype v6f: answers points A and B of the pre-review of paper A (round 1, .steering/20261101-paper-a-draft/attack-me/manuscript-paper-a/round-1/verdict.md) and Codex's point 2, on v6b's KUPA persons and v6e's LWP persons. (1) The image itself: the sequence of tiles position by position (IMG), beside the summaries S1, S2 and SEQ. (2) A positive control of the image stages: operations that by construction move the tiles (rests gathered into some tiles; rests multiplied by 1.5, 2 and 3). (3) A reference without operation for the share (the same series cut into quarters), reported outside the rule because it does not calibrate the null of an operation. Decided by the researcher (decision 3 of .steering/20261101-paper-a-draft).",
+ "fixed_before_running": "Written on 2026-11-01 after seeing the results of v6 to v6e (results/prototype_v6*/notes.md) and the pre-review of the draft of paper A. No value of IMG, of the positive-control rows or of the reference quarters has been computed for any person of any dataset; the tiles of four of v6's KUPA persons (not v6b's) were seen only as v6's figure. A first draft was sent to Codex (codex-consult, the conditions text only, no data; .steering/20261101-v6f-image-level/codex-consult-output.md) and changed after its six points (decision 1 of the same folder): the quarter control is a reference outside the rule, not a calibration; IMG is named for what it is; the rule's cells are fixed in advance (no cell is dropped for lack of sensitivity: such cells make the finding 'not evaluable'); the rule is on the main cells (KUPA essay and LWP, sentence unit), copy and windows are reported beside it; degenerate cases are fixed. The researcher then chose (decision 2 of the same folder) to grade the strength of the milder control (rests multiplied by 1.5, 2 and 3 instead of 2 only) and confirmed the rest as written.",
+ "version": "6f",
+ "data": {
+  "kupa": "v6b's: works/conditions/prototype_v6b.json data (KUPA-KEYS TASK-1 copy and TASK-2 essay, files and SHA-256 by v6's conditions); persons drawn by v6b's procedure and checked against v6b's record (ids_sha256); tasks essay (main) and copy",
+  "lwp": "v6e's: works/conditions/prototype_v6e.json data.lwp (file, SHA-256, counted presses, kinds); persons drawn by v6e's procedure and checked against v6e's record (ids_sha256); the one essay",
+  "conditions_sha256": "the SHA-256 of v6's, v6b's, v6e's and v4's conditions and of v6b's and v6e's records are checked before reading the data"
+ },
+ "participants": "the count persons of v6b (KUPA, per task and unit) and of v6e (LWP, per unit): at least 8 tiles and at least one held gap in every part under both baselines. No new person is drawn.",
+ "units": "v6's sentence (counting before for the tiles) and window_10s; rest_ms 2000; v4's mapping and relief",
+ "rows": {
+  "kept": "v6's KUPA rows: sentence text/before, text/after, text/none, inside/before, shuffled/before, shuffled_in_halves/before; window_10s text, inside, shuffled, shuffled_in_halves (v6.make_rows, random keys of v6b for KUPA and v6e for LWP)",
+  "gathered": "positive control 1, both units ('gathered/before' in sentences, 'gathered' in windows). The tiles of the row text are labelled receiving (index k with k mod 4 in {0, 1}) or giving (k mod 4 in {2, 3}), so that each part of either baseline holds both kinds. Every rest gap (>= rest_ms - TOL_MS of src/keystroke) held by a giving tile is swapped with a non-rest gap held by a receiving tile, the receiving gaps chosen uniformly without replacement (numpy.random.default_rng([20261031, 6, 8, dataset, task, person place])), giving tiles taken in order; rests left when no receiving non-rest gap is left stay and are counted. The gaps keep their multiset (S0 of the whole series is unchanged). Sentences: the tiles are cut by presses, so positions stay. Windows: the gaps held are those of the text windows; the windows are cut again on the new times (same total duration), so a window holds what its time span holds after the swap; a person whose number of windows changes stops the run. In windows the labels receiving and giving are not kept after the cut (a window holds what its time span holds), so the windows' 'gathered' is reported beside the rule, not in it.",
+  "why": "both controls move the rest share q of the tiles by construction (p moves little: the speed is the median of the gaps below rest_ms). That q moves is recorded separately from whether an observable detects it (tallies: tiles whose q changed, median |change of q| per person in five-number summaries). 'gathered' is strong by design; the scaled rows are milder and graded, keep the place of every gap, and can be weakened by the saturation of q and the clipping of the relief. They are operations on the times, not a known shift of q at fixed tiles.",
+  "scaled": "positive control 2, graded, sentence unit only (rows 'rests_x1.5/before', 'rests_x2/before', 'rests_x3/before'): every rest gap multiplied by 1.5, 2 or 3 (the other gaps kept), to see at which strength each observable reads above 0.60. Not in windows, where the series gets longer and positions shift."
+ },
+ "stages": {
+  "kept": "S0, S1, S2, SEQ (halves only) and LOC as v6b (LOC on the persons with LOC for 'text' and the row; text/none has no LOC)",
+  "IMG_pq": "the tile sequence: per tile the pair (p, q), in the order of the tiles (a sequence of the numbers of each tile in its place, not a model of what a viewer perceives). Distance between two sequences x and y of the same length, paired position by position: sqrt(mean over k of ||x_k - y_k||^2) (the root mean square per tile; its spread still depends on the length). Standardised per cell by the standard deviation of each of the two numbers over all tiles of the row text of the cell's persons (ddof 0); a number whose standard deviation is 0 is dropped and recorded (if both are, the run stops).",
+  "IMG_df": "as IMG_pq with the pair (depth, fineness) of each tile (v5's numbers of the form, field 42), the form the viewer sees as in S2.",
+  "pixels": "not used, as in v6 (the pixel difference of two tiles measures the phase of the field rather than the form)",
+  "image": "S1, S2, SEQ, IMG_pq and IMG_df are the image observables; S0 and LOC are at the stage of times"
+ },
+ "count": {
+  "summaries": "v6b's one() for S0, S1, S2, SEQ and LOC: base = d(text A, text B); change = (d(R A, text A) + d(R B, text B)) / 2; share of persons with change > base (ties 1/2); 95% CI from 2000 bootstrap resamples of persons; v6's reading (detection: lower end above 0.5; size: upper end below 0.60 'below', lower end above 0.60 'above', else 'undecided')",
+  "IMG": "the same form with the IMG distance. Parts as v6b's baselines (oddeven: A the even tiles, B the odd; halves: A the first floor(n / 2), B the rest). base pairs the k-th tile of A with the k-th tile of B for k below the shorter length (oddeven: tiles 2k and 2k + 1, neighbours; halves: tiles k and floor(n / 2) + k, half a record apart); a tile without a partner is left out of base only. change compares R and text at the same positions over every tile of the part. So the two baselines ask different questions (an operation's displacement of a tile against the difference of neighbouring tiles, or of tiles half a record apart) and are read separately. A row with a different number of tiles from text stops the run. Ties are exact equality, as v6b.",
+  "reproduction": "for the kept rows and stages, the counts are made with v6b's keys (KUPA) and v6e's keys (LWP) and must equal their records (persons, share_vs_own, its CI); the run stops otherwise",
+  "keys": "new counts: numpy.random.default_rng([20261031, 70, dataset, task, unit, stage, row index, baseline]); dataset KUPA 0, LWP 2; task copy 0, essay 1, LWP 0; stage S0 0, S1 1, S2 2, SEQ 3, LOC 4, IMG_pq 7, IMG_df 8; row index = place in the row list of the unit (gathered after shuffled_in_halves, rests_x1.5, rests_x2 and rests_x3 after gathered); baseline oddeven 0, halves 1; the reference quarters use row index 90 for share0 and the key of R for share_R - share0"
+ },
+ "reference_quarters": {
+  "what": "a reference outside the rule (Codex's points 1 and 5): the share seen when the row text is cut into four parts and one quarter is compared with another of the same series. It does not calibrate the null of an operation (an operated series shares its events with the original, two quarters do not; drift enters), so it is reported as an internal resampling reference only. Same formula on half-size parts: base0 = d(Q_a, Q_b), change0 = (d(Q_c, Q_a) + d(Q_d, Q_b)) / 2, the structure of a mean of two distances against one (Codex's point 2 of the pre-review).",
+  "oddeven": "Q_j = tiles with k mod 4 = j; A = Q0 + Q2, B = Q1 + Q3; base0 = d(Q0, Q1), change0 = (d(Q2, Q0) + d(Q3, Q1)) / 2",
+  "halves": "A = [0, h) cut into Q0 = [0, floor(h / 2)) and Q1 = the rest of A; B = [h, n) cut into Q2 = its first floor((n - h) / 2) tiles and Q3 = the rest (h = floor(n / 2), so Q0 + Q1 is A exactly); base0 = d(Q0, Q2), change0 = (d(Q1, Q0) + d(Q3, Q2)) / 2",
+  "stages": "S0, S1, S2, IMG_pq and IMG_df under both baselines; not SEQ (a quarter often has fewer than 3 tiles) and not LOC (a quarter often lacks a label). IMG pairs the k-th tiles of the two quarters up to the shorter.",
+  "persons": "the count persons with at least 16 tiles (quarters of at least 4), with their number; main cells only (KUPA essay and LWP, sentence unit, both baselines)",
+  "standardisation": "per cell and stage by the standard deviation over the persons' quarter vectors of text (as v6b's one() on part vectors)",
+  "paired": "for each operation row R and image stage: share_R - share0 on the same persons, with a 95% CI from the same bootstrap resamples (the key of R's count)",
+  "reading": "reported as share0 with its CI and share_R - share0 with a CI from the same resamples; no bar is applied (0.10 = 0.60 - 0.5 is an arithmetical carry-over without the same meaning)"
+ },
+ "prediction": "Claude's, written before running. P1: 'gathered' reads above 0.60 at S1, S2, IMG_pq and IMG_df in every main cell (both baselines), and at SEQ under halves. P2: rests_x2 and rests_x3 read above 0.60 at S1, S2, IMG_pq and IMG_df in every main cell; rests_x1.5 is not above 0.60 in at least one of these cells. P3: inside, shuffled and shuffled_in_halves read below 0.60 at IMG_pq and IMG_df in every main cell under halves; under oddeven at least one of these cells is not below 0.60 (neighbouring tiles differ less than a tile and its shuffled self). P4: the reference share0 lies between 0.40 and 0.60 at every image stage of the main cells. No value of v6f had been seen.",
+ "confirmation_rule": "fixed before running, on the main cells only (KUPA essay and LWP, sentence unit, oddeven and halves). (a) The positive control of the image stages is called met if 'gathered' reads above 0.60 (lower end of the CI above 0.60) in all 18 of its cells, partly met if in at least 15 (five sixths, rounded up), not met otherwise. (b) Finding 1 is called extended to the tile sequence if (a) is met and inside, shuffled and shuffled_in_halves read below 0.60 (upper end) at IMG_pq and IMG_df in all 24 of their cells; partly extended if (a) is at least partly met and at least 20 of the 24 hold; not evaluable if (a) is not met; not extended otherwise. The denominators are fixed: no cell is dropped. An IMG cell of (b) whose observable is not sensitive in that cell ('gathered' not above 0.60 at the same dataset, baseline and IMG stage) is named in the record as 'not sensitive' whatever its reading. The scaled rows, copy, windows and the reference quarters are reported but do not enter the rule. The cells that do not hold are named in the record.",
+ "cells": {
+  "main": "KUPA essay and LWP, sentence unit, oddeven and halves",
+  "a": "'gathered' at S1, S2, IMG_pq, IMG_df under both baselines and SEQ under halves: 4 x 2 + 1 = 9 per dataset, 18 in all",
+  "b": "IMG_pq and IMG_df x inside, shuffled, shuffled_in_halves x 2 baselines x 2 datasets = 24",
+  "secondary": "the same rows and stages for KUPA copy in sentences (every sentence row, the scaled rows included) and for windows of KUPA essay, KUPA copy and LWP (kept rows and 'gathered'; no scaled rows); reported in the order of this file",
+  "handling": "a cell with fewer than 2 persons stops the run (v6b's one()); every cell of the rule must be computed"
+ },
+ "main_cells": "fixed before running, shown first: KUPA essay and LWP, sentence unit, oddeven: 'gathered' and rests_x1.5, rests_x2, rests_x3 at S1, S2, IMG_pq, IMG_df; then inside, shuffled, shuffled_in_halves at IMG_pq and IMG_df; then the same under halves (with SEQ). Then the reference quarters, the secondary cells and everything else in the order of this file.",
+ "record": {
+  "public": "results/prototype_v6f/record.json: counts and summaries over persons and the provenance. No press time, gap, key, text, per-person vector, per-person value or id; ids only as the SHA-256 of their sorted list. LWP is not redistributed.",
+  "tallies": "per dataset-task and unit: rests moved and left by 'gathered', rests scaled, tiles whose q changed (five-number summaries over persons, no per-person value)",
+  "provenance": "git commit and dirty state of the conditions, code and lock; SHA-256 of the conditions, the code, the data files, the earlier conditions and records; versions"
+ },
+ "limits_written_before": "The positive controls are made to move q; they show that the procedure can read 'above' at the image observables, not that the image shows every change of the times. IMG pairs tiles by position; it does not model how a viewer compares two images (a viewer may not look tile by tile), and a distance that tolerates small shifts of position would miss the loss of order. The reference quarters do not calibrate the null of an operation. The many correlated cells are read descriptively; the share of cells that hold is not a share of independent replications. The persons, rows and observables of v6b and v6e were chosen before; the new observables and controls were chosen after seeing their results and the pre-review.",
+ "rerun_rule": "if a defect of the code is found after the first run, the first record is kept unchanged, the fix and the reason are committed, and the rerun is reported separately beside the first; the conditions are not changed after the first run except by such a recorded amendment.",
+ "earlier": {
+  "works/conditions/prototype_v4.json": "c334f89543fc84bd90e02f6d3eae105d0e285643628aeda809dc4bc7ef731e8e",
+  "works/conditions/prototype_v6.json": "afc4c330c7a3862ca9f2d6a1ad6d0c1d84ff68ff3b2baf4b39acdd0b6085b078",
+  "works/conditions/prototype_v6b.json": "ae52effd10d6235051839df1ebfa35249e283846090805213b5b3c0e6272ba7a",
+  "works/conditions/prototype_v6e.json": "6cf2cfabcf2bcf44841380f2d78e89ef0b6dc6a121f60309e8a0f58e746b45d8",
+  "results/prototype_v6b/record.json": "94d3feda2b4a499738e2711821f930a88443ddca05e02c31782ad564c9cacb6f",
+  "results/prototype_v6e/record.json": "aca8d16a950b365c77f2f8f82eaeecec10c07e781a9bdba14bd7ff3dbbf7ee29"
+ },
+ "generator": {
+  "requirement": "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+  "commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+  "library_sha256": {
+   "__init__.py": "d5980876e37cb7a1f5dc379028ab50f7a0c1d77d84c7651ee5d1beefd623b6ab",
+   "field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
+   "lexicon.py": "36cad1e49a25b352a7ae04868c6693ef349e8276d51909061eeb378085065e81",
+   "mapping.py": "83a50faaa664ddcb99004392e13a73fb096a85588a8b3c423b2c8b71ce626d26",
+   "transform.py": "5d35c9c10dfa6c8d5d3b2a9e8126ab45b895a1be14e05650c3ef60ffd3431bd1"
+  }
+ },
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1"
+}
