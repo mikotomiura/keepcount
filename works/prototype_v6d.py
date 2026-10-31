@@ -66,10 +66,7 @@ def count(halves: dict, rows: list[str], task: str, unit: str, how: str, v6b_cel
         first, sel = [halves[rows[0]][i] for i in ok], [halves[row][i] for i in ok]
         key = [20261031, 66, v6.TASK[task], v6.UNIT[unit], v6b.STAGE["LOC"], ri, v6b.BASELINE[how]]
         loc = v6b.one(first, sel, "LOC", key)
-        ref = v6b_cell[row]["LOC"]
-        for k in ("share_vs_own", "median_change_over_base"):
-            if not abs(loc[k] - ref[k]) < CHECK_TOL:
-                raise SystemExit(f"{task} {unit} {how} {row} LOC {k}: {loc[k]} differs from v6b's {ref[k]}")
+        same_as_v6b(loc, v6b_cell[row]["LOC"], f"{task} {unit} {how} {row}")
         res = {"LOC": loc}
         for part, code in PART.items():
             res[part] = v6b.one(first, sel, part,
@@ -77,6 +74,31 @@ def count(halves: dict, rows: list[str], task: str, unit: str, how: str, v6b_cel
         out[row] = res
     out["persons"] = n_all
     return out
+
+
+def same_as_v6b(loc: dict, ref: dict, where: str) -> None:
+    """LOC counted again equals v6b's record: persons, share_vs_own and median_change_over_base (null only if both)."""
+    if loc["persons"] != ref["persons"]:
+        raise SystemExit(f"{where} LOC: {loc['persons']} persons, v6b {ref['persons']}")
+    for k in ("share_vs_own", "median_change_over_base"):
+        a, b = loc[k], ref[k]
+        if a is None or b is None:
+            if a is not b:
+                raise SystemExit(f"{where} LOC {k}: {a} against v6b's {b}")
+        elif not abs(a - b) < CHECK_TOL:
+            raise SystemExit(f"{where} LOC {k}: {a} differs from v6b's {b}")
+
+
+def half_counts(t, idx: np.ndarray) -> tuple[int, int, int]:
+    """Tiles, held gaps and pairs of adjacent held gaps of the tiles idx (the pairs of v6b.loc's lag-1)."""
+    held = np.unique(np.concatenate([t.held[i] for i in idx]))
+    hs = set(held.tolist())
+    return int(idx.size), int(held.size), sum(1 for j in held if j + 1 in hs)
+
+
+def aalto_presses(sentences: list) -> int:
+    """Counted presses of a part: the sum over its sentences (aalto_series drops one press per join)."""
+    return int(sum(s.size for s in sentences))
 
 
 def five(values: list[float]) -> dict:
@@ -137,7 +159,8 @@ def run_v6b(c6: dict, m: dict, r: dict, rec6: dict, rec6b: dict) -> tuple[dict, 
         for unit in v6.UNIT:
             rows = v6.ROWS["kupa"][unit]
             hv: dict = {how: {row: [] for row in rows} for how in v6b.BASELINE}
-            tiles_all, tiles_count, half_sizes = [], [], {how: [] for how in v6b.BASELINE}
+            tiles_all, tiles_count = [], []
+            halves_info = {how: {h: {"tiles": [], "gaps": [], "pairs": []} for h in "AB"} for how in v6b.BASELINE}
             for pid in chosen:
                 s, kinds = series[pid][task]
                 tt = v6.Tiles(s, unit, "before", m, r, rest_ms)
@@ -153,7 +176,10 @@ def run_v6b(c6: dict, m: dict, r: dict, rec6: dict, rec6b: dict) -> tuple[dict, 
                 lab = v6b.labels(s, kinds)
                 for how in v6b.BASELINE:
                     A, B = v6b.parts(tt.n, how)
-                    half_sizes[how].append(min(A.size, B.size))
+                    for h, idx in (("A", A), ("B", B)):
+                        nt, ng, npair = half_counts(tt, idx)
+                        for k, v in (("tiles", nt), ("gaps", ng), ("pairs", npair)):
+                            halves_info[how][h][k].append(v)
                     for row, t in rw.items():
                         if t.n < tt.n:
                             raise SystemExit(f"{task} {unit} {row}: fewer tiles than the first row")
@@ -163,7 +189,11 @@ def run_v6b(c6: dict, m: dict, r: dict, rec6: dict, rec6b: dict) -> tuple[dict, 
                          for how in v6b.BASELINE}
             lengths[task][f"tiles_{unit}"] = five(tiles_all)
             lengths[task][f"tiles_{unit}_count_persons"] = five(tiles_count)
-            lengths[task][f"smaller_half_{unit}"] = {how: five(v) for how, v in half_sizes.items()}
+            lengths[task][f"halves_{unit}"] = {
+                how: {**{h: {k: five(v) for k, v in d.items()} for h, d in hi.items()},
+                      "persons_with_fewer_than_3_pairs_in_a_half": int(sum(
+                          1 for a, b in zip(hi["A"]["pairs"], hi["B"]["pairs"]) if min(a, b) < 3))}
+                for how, hi in halves_info.items()}
     return res, lengths
 
 
@@ -224,7 +254,7 @@ def lengths_v6(c6: dict, m: dict, r: dict, rec6: dict) -> dict:
         raise SystemExit("Aalto: the persons differ from v6's")
     for part, sl in (("first7", slice(0, 7)), ("last8", slice(7, 15))):
         sps = [v6.aalto_series(a_series[p][sl]) for p in a_chosen]
-        out["aalto"][part] = {"presses": five([sp.times.size for sp in sps]),
+        out["aalto"][part] = {"presses": five([aalto_presses(a_series[p][sl]) for p in a_chosen]),
                               "sentences": five([len(a_series[p][sl]) for p in a_chosen]),
                               "windows_10s": five([v6.Tiles(sp, "window_10s", "before", m, r, rest_ms).n for sp in sps])}
     return out
@@ -259,7 +289,7 @@ def main() -> None:
     f6 = c6b["data"]["v6_conditions"]
     raw6 = cm.check_file(ROOT / f6["file"], f6["sha256"], "v6's conditions")
     c6 = json.loads(raw6)
-    rawr6 = (ROOT / "results/prototype_v6/record.json").read_bytes()
+    rawr6 = cm.check_file(ROOT / c["v6"]["record"]["file"], c["v6"]["record"]["sha256"], "v6's record")
     rec6 = json.loads(rawr6)
     for rec in (rec6b, rec6):
         for p, h in rec["provenance"]["code_sha256"].items():
