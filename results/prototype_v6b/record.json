@@ -1,0 +1,5192 @@
+{
+ "persons": {
+  "ids_looked_at": 437,
+  "ids_sha256": "969283ce4dd0338ead466c76356ef0b290f1674efedcc46b68d99c004068d371",
+  "overlap_with_v6": 0
+ },
+ "count": {
+  "essay_sentence": {
+   "left_out": {
+    "fewer_than_8": 22,
+    "part_without_gap": 0
+   },
+   "oddeven": {
+    "text/after": {
+     "S0": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.011235955056179775,
+      "share_vs_own_ci": [
+       0.0,
+       0.028089887640449437
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6506380411278341,
+      "median_change": 0.08496098270960131,
+      "median_between": 2.81878010104873,
+      "median_change_over_base": 0.12186280445710271,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.10112359550561797,
+      "share_vs_own_ci": [
+       0.056179775280898875,
+       0.15168539325842698
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0056179775280898875,
+      "share_vs_another_ci": [
+       0.0,
+       0.016853932584269662
+      ],
+      "median_base": 1.4944787551357237,
+      "median_change": 0.7027466905868343,
+      "median_between": 2.4679729373102313,
+      "median_change_over_base": 0.5035600953181304,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.1348314606741573,
+      "share_vs_own_ci": [
+       0.08426966292134831,
+       0.1853932584269663
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0056179775280898875,
+      "share_vs_another_ci": [
+       0.0,
+       0.016853932584269662
+      ],
+      "median_base": 1.3759983328431384,
+      "median_change": 0.6878049567352181,
+      "median_between": 2.5089055394304083,
+      "median_change_over_base": 0.5009109446263376,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 156,
+      "dropped_features": [],
+      "share_vs_own": 0.10256410256410256,
+      "share_vs_own_ci": [
+       0.057692307692307696,
+       0.14743589743589744
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.04487179487179487,
+      "share_vs_another_ci": [
+       0.01282051282051282,
+       0.07692307692307693
+      ],
+      "median_base": 1.849488641790559,
+      "median_change": 1.3045116668980417,
+      "median_between": 3.2454903890946785,
+      "median_change_over_base": 0.7748435915136683,
+      "base_zero": 0,
+      "left_out_no_vector": 22
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 156,
+       "dropped_features": [],
+       "share_vs_own": 0.08974358974358974,
+       "share_vs_own_ci": [
+        0.04487179487179487,
+        0.1346153846153846
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.00641025641025641,
+       "share_vs_another_ci": [
+        0.0,
+        0.019230769230769232
+       ],
+       "median_base": 1.448534063877237,
+       "median_change": 0.6854029093443461,
+       "median_between": 2.478010204554705,
+       "median_change_over_base": 0.5038186063063554,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 156,
+       "dropped_features": [],
+       "share_vs_own": 0.14102564102564102,
+       "share_vs_own_ci": [
+        0.08974358974358974,
+        0.19230769230769232
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.00641025641025641,
+       "share_vs_another_ci": [
+        0.0,
+        0.019230769230769232
+       ],
+       "median_base": 1.361200766899978,
+       "median_change": 0.6786506397252547,
+       "median_between": 2.502515306886017,
+       "median_change_over_base": 0.4932855407558746,
+       "base_zero": 0
+      }
+     }
+    },
+    "text/none": {
+     "S0": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.0449438202247191,
+      "share_vs_own_ci": [
+       0.016853932584269662,
+       0.07865168539325842
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6506380411278341,
+      "median_change": 0.2083895331363427,
+      "median_between": 2.81878010104873,
+      "median_change_over_base": 0.31548358521335573,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.12359550561797752,
+      "share_vs_own_ci": [
+       0.07865168539325842,
+       0.17415730337078653
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.4944787551357237,
+      "median_change": 0.5778888276727598,
+      "median_between": 2.4679729373102313,
+      "median_change_over_base": 0.3907543863207579,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.14606741573033707,
+      "share_vs_own_ci": [
+       0.09550561797752809,
+       0.19662921348314608
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.3759983328431384,
+      "median_change": 0.5974737764422003,
+      "median_between": 2.5089055394304083,
+      "median_change_over_base": 0.41569799826579834,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "defined": false,
+      "persons": 0
+     }
+    },
+    "inside/before": {
+     "S0": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6506380411278341,
+      "median_change": 0.0,
+      "median_between": 2.81878010104873,
+      "median_change_over_base": 0.0,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.4944787551357237,
+      "median_change": 0.0,
+      "median_between": 2.4679729373102313,
+      "median_change_over_base": 0.0,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.3759983328431384,
+      "median_change": 0.0,
+      "median_between": 2.5089055394304083,
+      "median_change_over_base": 0.0,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 156,
+      "dropped_features": [],
+      "share_vs_own": 0.6025641025641025,
+      "share_vs_own_ci": [
+       0.5256410256410257,
+       0.6794871794871795
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "undecided"
+      },
+      "share_vs_another": 0.2564102564102564,
+      "share_vs_another_ci": [
+       0.19230769230769232,
+       0.3269230769230769
+      ],
+      "median_base": 1.849488641790559,
+      "median_change": 2.590376554338552,
+      "median_between": 3.2454903890946785,
+      "median_change_over_base": 1.1993833186725622,
+      "base_zero": 0,
+      "left_out_no_vector": 22
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 156,
+       "dropped_features": [],
+       "share_vs_own": 0.0,
+       "share_vs_own_ci": [
+        0.0,
+        0.0
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.448534063877237,
+       "median_change": 0.0,
+       "median_between": 2.478010204554705,
+       "median_change_over_base": 0.0,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 156,
+       "dropped_features": [],
+       "share_vs_own": 0.0,
+       "share_vs_own_ci": [
+        0.0,
+        0.0
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.361200766899978,
+       "median_change": 0.0,
+       "median_between": 2.502515306886017,
+       "median_change_over_base": 0.0,
+       "base_zero": 0
+      }
+     }
+    },
+    "shuffled/before": {
+     "S0": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.16853932584269662,
+      "share_vs_own_ci": [
+       0.11235955056179775,
+       0.2247191011235955
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6506380411278341,
+      "median_change": 0.4492069863945564,
+      "median_between": 2.81878010104873,
+      "median_change_over_base": 0.7124451249114461,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.4101123595505618,
+      "share_vs_own_ci": [
+       0.3425561797752809,
+       0.48314606741573035
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.07303370786516854,
+      "share_vs_another_ci": [
+       0.03932584269662921,
+       0.11797752808988764
+      ],
+      "median_base": 1.4944787551357237,
+      "median_change": 1.3107245379229868,
+      "median_between": 2.4679729373102313,
+      "median_change_over_base": 0.8689529227690336,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.47752808988764045,
+      "share_vs_own_ci": [
+       0.398876404494382,
+       0.550561797752809
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.03932584269662921,
+      "share_vs_another_ci": [
+       0.011235955056179775,
+       0.07303370786516854
+      ],
+      "median_base": 1.3759983328431384,
+      "median_change": 1.3431813331843805,
+      "median_between": 2.5089055394304083,
+      "median_change_over_base": 0.9524005079699718,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 156,
+      "dropped_features": [],
+      "share_vs_own": 0.9294871794871795,
+      "share_vs_own_ci": [
+       0.8846153846153846,
+       0.967948717948718
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.7756410256410257,
+      "share_vs_another_ci": [
+       0.7115384615384616,
+       0.8397435897435898
+      ],
+      "median_base": 1.849488641790559,
+      "median_change": 4.031973034709404,
+      "median_between": 3.2454903890946785,
+      "median_change_over_base": 2.1023363755215154,
+      "base_zero": 0,
+      "left_out_no_vector": 22
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 156,
+       "dropped_features": [],
+       "share_vs_own": 0.4230769230769231,
+       "share_vs_own_ci": [
+        0.3524038461538462,
+        0.5
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.057692307692307696,
+       "share_vs_another_ci": [
+        0.02564102564102564,
+        0.09615384615384616
+       ],
+       "median_base": 1.448534063877237,
+       "median_change": 1.3023630664132226,
+       "median_between": 2.478010204554705,
+       "median_change_over_base": 0.8892486953465779,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 156,
+       "dropped_features": [],
+       "share_vs_own": 0.4935897435897436,
+       "share_vs_own_ci": [
+        0.4166666666666667,
+        0.5769230769230769
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.03205128205128205,
+       "share_vs_another_ci": [
+        0.00641025641025641,
+        0.0641025641025641
+       ],
+       "median_base": 1.361200766899978,
+       "median_change": 1.3247907956535345,
+       "median_between": 2.502515306886017,
+       "median_change_over_base": 0.9936997703216872,
+       "base_zero": 0
+      }
+     }
+    },
+    "shuffled_in_halves/before": {
+     "S0": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.24719101123595505,
+      "share_vs_own_ci": [
+       0.1797752808988764,
+       0.3146067415730337
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6506380411278341,
+      "median_change": 0.4545603833668478,
+      "median_between": 2.81878010104873,
+      "median_change_over_base": 0.7417439701856884,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.37640449438202245,
+      "share_vs_own_ci": [
+       0.3089887640449438,
+       0.449438202247191
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0449438202247191,
+      "share_vs_another_ci": [
+       0.016853932584269662,
+       0.07303370786516854
+      ],
+      "median_base": 1.4944787551357237,
+      "median_change": 1.2859134862915238,
+      "median_between": 2.4679729373102313,
+      "median_change_over_base": 0.8585751104815118,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.38764044943820225,
+      "share_vs_own_ci": [
+       0.3146067415730337,
+       0.4606741573033708
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.033707865168539325,
+      "share_vs_another_ci": [
+       0.011235955056179775,
+       0.06179775280898876
+      ],
+      "median_base": 1.3759983328431384,
+      "median_change": 1.2474739233407897,
+      "median_between": 2.5089055394304083,
+      "median_change_over_base": 0.8870199919118136,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 156,
+      "dropped_features": [],
+      "share_vs_own": 0.9487179487179487,
+      "share_vs_own_ci": [
+       0.9102564102564102,
+       0.9807692307692307
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.7564102564102564,
+      "share_vs_another_ci": [
+       0.6858974358974359,
+       0.8269230769230769
+      ],
+      "median_base": 1.849488641790559,
+      "median_change": 4.027408637716539,
+      "median_between": 3.2454903890946785,
+      "median_change_over_base": 2.043160536400281,
+      "base_zero": 0,
+      "left_out_no_vector": 22
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 156,
+       "dropped_features": [],
+       "share_vs_own": 0.3974358974358974,
+       "share_vs_own_ci": [
+        0.3141025641025641,
+        0.46794871794871795
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.038461538461538464,
+       "share_vs_another_ci": [
+        0.01282051282051282,
+        0.07051282051282051
+       ],
+       "median_base": 1.448534063877237,
+       "median_change": 1.2890548909203137,
+       "median_between": 2.478010204554705,
+       "median_change_over_base": 0.8626197114446126,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 156,
+       "dropped_features": [],
+       "share_vs_own": 0.3974358974358974,
+       "share_vs_own_ci": [
+        0.32051282051282054,
+        0.46794871794871795
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.02564102564102564,
+       "share_vs_another_ci": [
+        0.00641025641025641,
+        0.05128205128205128
+       ],
+       "median_base": 1.361200766899978,
+       "median_change": 1.228399007616218,
+       "median_between": 2.502515306886017,
+       "median_change_over_base": 0.9124176540523334,
+       "base_zero": 0
+      }
+     }
+    },
+    "persons": 178
+   },
+   "halves": {
+    "text/after": {
+     "S0": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6683164182975024,
+      "median_change": 0.03245688694988416,
+      "median_between": 2.8336706499931408,
+      "median_change_over_base": 0.046438916403517216,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.056179775280898875,
+      "share_vs_own_ci": [
+       0.02247191011235955,
+       0.0898876404494382
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.5082555320549589,
+      "median_change": 0.5493474138235184,
+      "median_between": 2.459326445409857,
+      "median_change_over_base": 0.3741446616619981,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.06179775280898876,
+      "share_vs_own_ci": [
+       0.028089887640449437,
+       0.10112359550561797
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0056179775280898875,
+      "share_vs_another_ci": [
+       0.0,
+       0.016853932584269662
+      ],
+      "median_base": 1.510310625390005,
+      "median_change": 0.5675502960841776,
+      "median_between": 2.4617395073465067,
+      "median_change_over_base": 0.38913910847922684,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.11235955056179775,
+      "share_vs_own_ci": [
+       0.0728932584269663,
+       0.15730337078651685
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.033707865168539325,
+      "share_vs_another_ci": [
+       0.011235955056179775,
+       0.06179775280898876
+      ],
+      "median_base": 2.2101770640150895,
+      "median_change": 0.8434707777533378,
+      "median_between": 2.4175659891265866,
+      "median_change_over_base": 0.40545783011462094,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 164,
+      "dropped_features": [],
+      "share_vs_own": 0.024390243902439025,
+      "share_vs_own_ci": [
+       0.006097560975609756,
+       0.04878048780487805
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.9541733096615415,
+      "median_change": 0.36166657421994075,
+      "median_between": 3.309944104196763,
+      "median_change_over_base": 0.17817807796698346,
+      "base_zero": 0,
+      "left_out_no_vector": 14
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 164,
+       "dropped_features": [],
+       "share_vs_own": 0.04878048780487805,
+       "share_vs_own_ci": [
+        0.018292682926829267,
+        0.08536585365853659
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.4724906000137334,
+       "median_change": 0.5399419489815235,
+       "median_between": 2.4557629468190165,
+       "median_change_over_base": 0.3732804029211512,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 164,
+       "dropped_features": [],
+       "share_vs_own": 0.06097560975609756,
+       "share_vs_own_ci": [
+        0.024390243902439025,
+        0.10365853658536585
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.006097560975609756,
+       "share_vs_another_ci": [
+        0.0,
+        0.018292682926829267
+       ],
+       "median_base": 1.515045520079278,
+       "median_change": 0.5675321148744913,
+       "median_between": 2.4883081741510527,
+       "median_change_over_base": 0.3884301398035835,
+       "base_zero": 0
+      },
+      "SEQ": {
+       "persons": 164,
+       "dropped_features": [],
+       "share_vs_own": 0.11585365853658537,
+       "share_vs_own_ci": [
+        0.06707317073170732,
+        0.16463414634146342
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.036585365853658534,
+       "share_vs_another_ci": [
+        0.012195121951219513,
+        0.06707317073170732
+       ],
+       "median_base": 2.1977719094913026,
+       "median_change": 0.7848313735434317,
+       "median_between": 2.425406072375795,
+       "median_change_over_base": 0.40057826591105833,
+       "base_zero": 0
+      }
+     }
+    },
+    "text/none": {
+     "S0": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.016853932584269662,
+      "share_vs_own_ci": [
+       0.0,
+       0.03932584269662921
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6683164182975024,
+      "median_change": 0.20076098938560333,
+      "median_between": 2.8336706499931408,
+      "median_change_over_base": 0.28615168401204927,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.0898876404494382,
+      "share_vs_own_ci": [
+       0.05056179775280899,
+       0.1348314606741573
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.5082555320549589,
+      "median_change": 0.51881727194074,
+      "median_between": 2.459326445409857,
+      "median_change_over_base": 0.34837829737046067,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.10112359550561797,
+      "share_vs_own_ci": [
+       0.056179775280898875,
+       0.15168539325842698
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0056179775280898875,
+      "share_vs_another_ci": [
+       0.0,
+       0.016853932584269662
+      ],
+      "median_base": 1.510310625390005,
+      "median_change": 0.5487596349016544,
+      "median_between": 2.4617395073465067,
+      "median_change_over_base": 0.3726006938529641,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.06741573033707865,
+      "share_vs_own_ci": [
+       0.033707865168539325,
+       0.10112359550561797
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.016853932584269662,
+      "share_vs_another_ci": [
+       0.0,
+       0.03932584269662921
+      ],
+      "median_base": 2.2101770640150895,
+      "median_change": 0.6012888140041177,
+      "median_between": 2.4175659891265866,
+      "median_change_over_base": 0.295453529664797,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "defined": false,
+      "persons": 0
+     }
+    },
+    "inside/before": {
+     "S0": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6683164182975024,
+      "median_change": 0.0,
+      "median_between": 2.8336706499931408,
+      "median_change_over_base": 0.0,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.5082555320549589,
+      "median_change": 0.0,
+      "median_between": 2.459326445409857,
+      "median_change_over_base": 0.0,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.510310625390005,
+      "median_change": 0.0,
+      "median_between": 2.4617395073465067,
+      "median_change_over_base": 0.0,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 2.2101770640150895,
+      "median_change": 0.0,
+      "median_between": 2.4175659891265866,
+      "median_change_over_base": 0.0,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 164,
+      "dropped_features": [],
+      "share_vs_own": 0.5670731707317073,
+      "share_vs_own_ci": [
+       0.49390243902439024,
+       0.6463414634146342
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "undecided"
+      },
+      "share_vs_another": 0.2926829268292683,
+      "share_vs_another_ci": [
+       0.22560975609756098,
+       0.36585365853658536
+      ],
+      "median_base": 1.9541733096615415,
+      "median_change": 2.5292586475440184,
+      "median_between": 3.309944104196763,
+      "median_change_over_base": 1.1362574898624156,
+      "base_zero": 0,
+      "left_out_no_vector": 14
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 164,
+       "dropped_features": [],
+       "share_vs_own": 0.0,
+       "share_vs_own_ci": [
+        0.0,
+        0.0
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.4724906000137334,
+       "median_change": 0.0,
+       "median_between": 2.4557629468190165,
+       "median_change_over_base": 0.0,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 164,
+       "dropped_features": [],
+       "share_vs_own": 0.0,
+       "share_vs_own_ci": [
+        0.0,
+        0.0
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.515045520079278,
+       "median_change": 0.0,
+       "median_between": 2.4883081741510527,
+       "median_change_over_base": 0.0,
+       "base_zero": 0
+      },
+      "SEQ": {
+       "persons": 164,
+       "dropped_features": [],
+       "share_vs_own": 0.0,
+       "share_vs_own_ci": [
+        0.0,
+        0.0
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 2.1977719094913026,
+       "median_change": 0.0,
+       "median_between": 2.425406072375795,
+       "median_change_over_base": 0.0,
+       "base_zero": 0
+      }
+     }
+    },
+    "shuffled/before": {
+     "S0": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.2247191011235955,
+      "share_vs_own_ci": [
+       0.16839887640449439,
+       0.28651685393258425
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6683164182975024,
+      "median_change": 0.45729982253346046,
+      "median_between": 2.8336706499931408,
+      "median_change_over_base": 0.7073930162121601,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.29213483146067415,
+      "share_vs_own_ci": [
+       0.2247191011235955,
+       0.3595505617977528
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.05056179775280899,
+      "share_vs_another_ci": [
+       0.02247191011235955,
+       0.08426966292134831
+      ],
+      "median_base": 1.5082555320549589,
+      "median_change": 1.258319344506948,
+      "median_between": 2.459326445409857,
+      "median_change_over_base": 0.8081163137334586,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.3146067415730337,
+      "share_vs_own_ci": [
+       0.24719101123595505,
+       0.38202247191011235
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.056179775280898875,
+      "share_vs_another_ci": [
+       0.028089887640449437,
+       0.0898876404494382
+      ],
+      "median_base": 1.510310625390005,
+      "median_change": 1.1783968159516403,
+      "median_between": 2.4617395073465067,
+      "median_change_over_base": 0.8319028112090142,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.4550561797752809,
+      "share_vs_own_ci": [
+       0.38202247191011235,
+       0.5280898876404494
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.29775280898876405,
+      "share_vs_another_ci": [
+       0.2303370786516854,
+       0.3651685393258427
+      ],
+      "median_base": 2.2101770640150895,
+      "median_change": 2.1205326196222503,
+      "median_between": 2.4175659891265866,
+      "median_change_over_base": 0.94144790252161,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 164,
+      "dropped_features": [],
+      "share_vs_own": 0.9573170731707317,
+      "share_vs_own_ci": [
+       0.9207317073170732,
+       0.9878048780487805
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.7804878048780488,
+      "share_vs_another_ci": [
+       0.7195121951219512,
+       0.8414634146341463
+      ],
+      "median_base": 1.9541733096615415,
+      "median_change": 4.024562246036484,
+      "median_between": 3.309944104196763,
+      "median_change_over_base": 1.95593448474469,
+      "base_zero": 0,
+      "left_out_no_vector": 14
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 164,
+       "dropped_features": [],
+       "share_vs_own": 0.2926829268292683,
+       "share_vs_own_ci": [
+        0.22560975609756098,
+        0.36585365853658536
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.04878048780487805,
+       "share_vs_another_ci": [
+        0.018292682926829267,
+        0.08536585365853659
+       ],
+       "median_base": 1.4724906000137334,
+       "median_change": 1.2177115940428456,
+       "median_between": 2.4557629468190165,
+       "median_change_over_base": 0.7949271661833452,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 164,
+       "dropped_features": [],
+       "share_vs_own": 0.31097560975609756,
+       "share_vs_own_ci": [
+        0.24390243902439024,
+        0.38414634146341464
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.054878048780487805,
+       "share_vs_another_ci": [
+        0.024390243902439025,
+        0.09146341463414634
+       ],
+       "median_base": 1.515045520079278,
+       "median_change": 1.161707981534795,
+       "median_between": 2.4883081741510527,
+       "median_change_over_base": 0.8195766440897712,
+       "base_zero": 0
+      },
+      "SEQ": {
+       "persons": 164,
+       "dropped_features": [],
+       "share_vs_own": 0.43902439024390244,
+       "share_vs_own_ci": [
+        0.36585365853658536,
+        0.5121951219512195
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.29878048780487804,
+       "share_vs_another_ci": [
+        0.23170731707317074,
+        0.3719512195121951
+       ],
+       "median_base": 2.1977719094913026,
+       "median_change": 2.066122717419259,
+       "median_between": 2.425406072375795,
+       "median_change_over_base": 0.9181750986017243,
+       "base_zero": 0
+      }
+     }
+    },
+    "shuffled_in_halves/before": {
+     "S0": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6683164182975024,
+      "median_change": 0.0,
+      "median_between": 2.8336706499931408,
+      "median_change_over_base": 0.0,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.23595505617977527,
+      "share_vs_own_ci": [
+       0.17415730337078653,
+       0.30337078651685395
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.011235955056179775,
+      "share_vs_another_ci": [
+       0.0,
+       0.028089887640449437
+      ],
+      "median_base": 1.5082555320549589,
+      "median_change": 1.1079134885308872,
+      "median_between": 2.459326445409857,
+      "median_change_over_base": 0.6783876652582578,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.24719101123595505,
+      "share_vs_own_ci": [
+       0.19087078651685394,
+       0.3146067415730337
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.016853932584269662,
+      "share_vs_another_ci": [
+       0.0,
+       0.03384831460674081
+      ],
+      "median_base": 1.510310625390005,
+      "median_change": 1.0950605500115502,
+      "median_between": 2.4617395073465067,
+      "median_change_over_base": 0.6828258070542659,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 178,
+      "dropped_features": [],
+      "share_vs_own": 0.47191011235955055,
+      "share_vs_own_ci": [
+       0.398876404494382,
+       0.5449438202247191
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.30337078651685395,
+      "share_vs_another_ci": [
+       0.23595505617977527,
+       0.37640449438202245
+      ],
+      "median_base": 2.2101770640150895,
+      "median_change": 2.0948051530764205,
+      "median_between": 2.4175659891265866,
+      "median_change_over_base": 0.9485064047827899,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 164,
+      "dropped_features": [],
+      "share_vs_own": 0.9573170731707317,
+      "share_vs_own_ci": [
+       0.926829268292683,
+       0.9878048780487805
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.7987804878048781,
+      "share_vs_another_ci": [
+       0.7378048780487805,
+       0.8597560975609756
+      ],
+      "median_base": 1.9541733096615415,
+      "median_change": 4.102862044993798,
+      "median_between": 3.309944104196763,
+      "median_change_over_base": 1.950352172807249,
+      "base_zero": 0,
+      "left_out_no_vector": 14
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 164,
+       "dropped_features": [],
+       "share_vs_own": 0.23170731707317074,
+       "share_vs_own_ci": [
+        0.17073170731707318,
+        0.29878048780487804
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.012195121951219513,
+       "share_vs_another_ci": [
+        0.0,
+        0.03048780487804878
+       ],
+       "median_base": 1.4724906000137334,
+       "median_change": 1.0913451201331796,
+       "median_between": 2.4557629468190165,
+       "median_change_over_base": 0.6774310071660793,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 164,
+       "dropped_features": [],
+       "share_vs_own": 0.25,
+       "share_vs_own_ci": [
+        0.18292682926829268,
+        0.3170731707317073
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.018292682926829267,
+       "share_vs_another_ci": [
+        0.0,
+        0.042682926829268296
+       ],
+       "median_base": 1.515045520079278,
+       "median_change": 1.0831595527305882,
+       "median_between": 2.4883081741510527,
+       "median_change_over_base": 0.6774249794644099,
+       "base_zero": 0
+      },
+      "SEQ": {
+       "persons": 164,
+       "dropped_features": [],
+       "share_vs_own": 0.4878048780487805,
+       "share_vs_own_ci": [
+        0.4146341463414634,
+        0.5670731707317073
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.29878048780487804,
+       "share_vs_another_ci": [
+        0.2315548780487805,
+        0.3719512195121951
+       ],
+       "median_base": 2.1977719094913026,
+       "median_change": 2.0949767562755617,
+       "median_between": 2.425406072375795,
+       "median_change_over_base": 0.9725886170026822,
+       "base_zero": 0
+      }
+     }
+    },
+    "persons": 178
+   }
+  },
+  "essay_window_10s": {
+   "left_out": {
+    "fewer_than_8": 0,
+    "part_without_gap": 0
+   },
+   "oddeven": {
+    "inside": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.045,
+      "share_vs_own_ci": [
+       0.02,
+       0.075
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6224321105171395,
+      "median_change": 0.21877101455530829,
+      "median_between": 2.7809243412920726,
+      "median_change_over_base": 0.3203092107587995,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.16,
+      "share_vs_own_ci": [
+       0.11487500000000002,
+       0.21
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.8347905246481623,
+      "median_change": 0.41043312453109004,
+      "median_between": 2.2588825366859,
+      "median_change_over_base": 0.5023206080775632,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.18,
+      "share_vs_own_ci": [
+       0.13,
+       0.235
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.8245159575066996,
+      "median_change": 0.42200568985453435,
+      "median_between": 2.160873854427365,
+      "median_change_over_base": 0.5022459087877886,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 182,
+      "dropped_features": [],
+      "share_vs_own": 0.5879120879120879,
+      "share_vs_own_ci": [
+       0.5164835164835165,
+       0.6593406593406593
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "undecided"
+      },
+      "share_vs_another": 0.21978021978021978,
+      "share_vs_another_ci": [
+       0.15934065934065933,
+       0.2802197802197802
+      ],
+      "median_base": 1.9790361876406921,
+      "median_change": 2.408461317684668,
+      "median_between": 3.295030395634195,
+      "median_change_over_base": 1.1955621770915346,
+      "base_zero": 0,
+      "left_out_no_vector": 18
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 182,
+       "dropped_features": [],
+       "share_vs_own": 0.17032967032967034,
+       "share_vs_own_ci": [
+        0.12074175824175826,
+        0.23076923076923078
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 0.8401182057271148,
+       "median_change": 0.4170106111244622,
+       "median_between": 2.270878384008405,
+       "median_change_over_base": 0.5038964449325418,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 182,
+       "dropped_features": [],
+       "share_vs_own": 0.18681318681318682,
+       "share_vs_own_ci": [
+        0.13736263736263737,
+        0.24189560439560365
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 0.815240202173406,
+       "median_change": 0.4202152441260536,
+       "median_between": 2.20041996018854,
+       "median_change_over_base": 0.5059735215838035,
+       "base_zero": 0
+      }
+     }
+    },
+    "shuffled": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.25,
+      "share_vs_own_ci": [
+       0.19,
+       0.31
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6224321105171395,
+      "median_change": 0.4887758251886217,
+      "median_between": 2.7809243412920726,
+      "median_change_over_base": 0.7612855075667959,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.495,
+      "share_vs_own_ci": [
+       0.425,
+       0.56
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.025,
+      "share_vs_another_ci": [
+       0.005,
+       0.05
+      ],
+      "median_base": 0.8347905246481623,
+      "median_change": 0.8886735841946215,
+      "median_between": 2.2588825366859,
+      "median_change_over_base": 0.9927585120283977,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.495,
+      "share_vs_own_ci": [
+       0.43,
+       0.56
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.02,
+      "share_vs_another_ci": [
+       0.005,
+       0.04
+      ],
+      "median_base": 0.8245159575066996,
+      "median_change": 0.892664068503167,
+      "median_between": 2.160873854427365,
+      "median_change_over_base": 0.9914051473880678,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 170,
+      "dropped_features": [],
+      "share_vs_own": 0.9176470588235294,
+      "share_vs_own_ci": [
+       0.8764705882352941,
+       0.9529411764705882
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.7647058823529411,
+      "share_vs_another_ci": [
+       0.7,
+       0.8235294117647058
+      ],
+      "median_base": 1.961106196659498,
+      "median_change": 3.9679263425758053,
+      "median_between": 3.282716479943657,
+      "median_change_over_base": 1.9868844751929893,
+      "base_zero": 0,
+      "left_out_no_vector": 30
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 170,
+       "dropped_features": [],
+       "share_vs_own": 0.5058823529411764,
+       "share_vs_own_ci": [
+        0.4294117647058823,
+        0.5823529411764706
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.029411764705882353,
+       "share_vs_another_ci": [
+        0.0058823529411764705,
+        0.058823529411764705
+       ],
+       "median_base": 0.8190728479069274,
+       "median_change": 0.8816595228110721,
+       "median_between": 2.287320879107255,
+       "median_change_over_base": 1.0038287786141749,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 170,
+       "dropped_features": [],
+       "share_vs_own": 0.5,
+       "share_vs_own_ci": [
+        0.4235294117647059,
+        0.5705882352941176
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.023529411764705882,
+       "share_vs_another_ci": [
+        0.0058823529411764705,
+        0.047058823529411764
+       ],
+       "median_base": 0.8128051438635391,
+       "median_change": 0.8746817440089198,
+       "median_between": 2.1999499500002817,
+       "median_change_over_base": 1.000165838033741,
+       "base_zero": 0
+      }
+     }
+    },
+    "shuffled_in_halves": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.24,
+      "share_vs_own_ci": [
+       0.18,
+       0.3
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.6224321105171395,
+      "median_change": 0.4445282132828042,
+      "median_between": 2.7809243412920726,
+      "median_change_over_base": 0.7216597748836059,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.475,
+      "share_vs_own_ci": [
+       0.405,
+       0.54
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.005,
+      "share_vs_another_ci": [
+       0.0,
+       0.015
+      ],
+      "median_base": 0.8347905246481623,
+      "median_change": 0.8150949519956541,
+      "median_between": 2.2588825366859,
+      "median_change_over_base": 0.9687751397614042,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.43,
+      "share_vs_own_ci": [
+       0.365,
+       0.495
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.01,
+      "share_vs_another_ci": [
+       0.0,
+       0.025
+      ],
+      "median_base": 0.8245159575066996,
+      "median_change": 0.825256129316019,
+      "median_between": 2.160873854427365,
+      "median_change_over_base": 0.9406829287452245,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 175,
+      "dropped_features": [],
+      "share_vs_own": 0.9257142857142857,
+      "share_vs_own_ci": [
+       0.8857142857142857,
+       0.9657142857142857
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.7714285714285715,
+      "share_vs_another_ci": [
+       0.7085714285714285,
+       0.828714285714285
+      ],
+      "median_base": 1.968536677676097,
+      "median_change": 3.9431596128522814,
+      "median_between": 3.287845144481225,
+      "median_change_over_base": 1.9097760786183622,
+      "base_zero": 0,
+      "left_out_no_vector": 25
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 175,
+       "dropped_features": [],
+       "share_vs_own": 0.48,
+       "share_vs_own_ci": [
+        0.4,
+        0.5542857142857143
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.005714285714285714,
+       "share_vs_another_ci": [
+        0.0,
+        0.017142857142857144
+       ],
+       "median_base": 0.8287450407375547,
+       "median_change": 0.7952153996370592,
+       "median_between": 2.2771902633671623,
+       "median_change_over_base": 0.9727356159323832,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 175,
+       "dropped_features": [],
+       "share_vs_own": 0.44571428571428573,
+       "share_vs_own_ci": [
+        0.37142857142857144,
+        0.52
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.005714285714285714,
+       "share_vs_another_ci": [
+        0.0,
+        0.017142857142857144
+       ],
+       "median_base": 0.8143855159278275,
+       "median_change": 0.8163387349851892,
+       "median_between": 2.206280101707116,
+       "median_change_over_base": 0.941292032504339,
+       "base_zero": 0
+      }
+     }
+    },
+    "persons": 200
+   },
+   "halves": {
+    "inside": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.7153631215180921,
+      "median_change": 0.006254555500192109,
+      "median_between": 2.8081159553160697,
+      "median_change_over_base": 0.0038512347496346138,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.05,
+      "share_vs_own_ci": [
+       0.02,
+       0.08
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.374506602948268,
+      "median_change": 0.3111201664003871,
+      "median_between": 2.1313566675469104,
+      "median_change_over_base": 0.2482590398781354,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.085,
+      "share_vs_own_ci": [
+       0.05,
+       0.125
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.005,
+      "share_vs_another_ci": [
+       0.0,
+       0.015
+      ],
+      "median_base": 1.4041198382751545,
+      "median_change": 0.3314813858225698,
+      "median_between": 2.051026163886692,
+      "median_change_over_base": 0.2741428284157751,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.08,
+      "share_vs_own_ci": [
+       0.045,
+       0.12
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.9675098330045921,
+      "median_change": 0.6253149014615711,
+      "median_between": 2.267431195747032,
+      "median_change_over_base": 0.3225638010288955,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 185,
+      "dropped_features": [],
+      "share_vs_own": 0.5837837837837838,
+      "share_vs_own_ci": [
+       0.5135135135135135,
+       0.6486486486486487
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "undecided"
+      },
+      "share_vs_another": 0.16216216216216217,
+      "share_vs_another_ci": [
+       0.11351351351351352,
+       0.2163513513513506
+      ],
+      "median_base": 2.0053455870413073,
+      "median_change": 2.425274449721051,
+      "median_between": 3.3805928143090207,
+      "median_change_over_base": 1.1282837513419584,
+      "base_zero": 0,
+      "left_out_no_vector": 15
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 185,
+       "dropped_features": [],
+       "share_vs_own": 0.05405405405405406,
+       "share_vs_own_ci": [
+        0.021621621621621623,
+        0.08648648648648649
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.3684080442002247,
+       "median_change": 0.31217904216179576,
+       "median_between": 2.1191693865271697,
+       "median_change_over_base": 0.2500755840873979,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 185,
+       "dropped_features": [],
+       "share_vs_own": 0.08648648648648649,
+       "share_vs_own_ci": [
+        0.04864864864864865,
+        0.12972972972972974
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.005405405405405406,
+       "share_vs_another_ci": [
+        0.0,
+        0.016216216216216217
+       ],
+       "median_base": 1.3912168281021966,
+       "median_change": 0.31842228943925177,
+       "median_between": 2.0587204296325927,
+       "median_change_over_base": 0.27573926082711825,
+       "base_zero": 0
+      },
+      "SEQ": {
+       "persons": 185,
+       "dropped_features": [],
+       "share_vs_own": 0.08648648648648649,
+       "share_vs_own_ci": [
+        0.04864864864864865,
+        0.12972972972972974
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.9115440317852572,
+       "median_change": 0.6260951273229791,
+       "median_between": 2.2989032004618184,
+       "median_change_over_base": 0.3406867170235931,
+       "base_zero": 0
+      }
+     }
+    },
+    "shuffled": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.195,
+      "share_vs_own_ci": [
+       0.14,
+       0.255
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.7153631215180921,
+      "median_change": 0.5073954895752906,
+      "median_between": 2.8081159553160697,
+      "median_change_over_base": 0.7126472994110624,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.35,
+      "share_vs_own_ci": [
+       0.285,
+       0.42
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.085,
+      "share_vs_another_ci": [
+       0.05,
+       0.125
+      ],
+      "median_base": 1.374506602948268,
+      "median_change": 1.1209401291002916,
+      "median_between": 2.1313566675469104,
+      "median_change_over_base": 0.789734006669139,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.335,
+      "share_vs_own_ci": [
+       0.275,
+       0.4
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.095,
+      "share_vs_another_ci": [
+       0.055,
+       0.14
+      ],
+      "median_base": 1.4041198382751545,
+      "median_change": 1.165740509480628,
+      "median_between": 2.051026163886692,
+      "median_change_over_base": 0.8050830304290224,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.41,
+      "share_vs_own_ci": [
+       0.34,
+       0.475
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.17,
+      "share_vs_another_ci": [
+       0.12,
+       0.22
+      ],
+      "median_base": 1.9675098330045921,
+      "median_change": 1.7079103861043152,
+      "median_between": 2.267431195747032,
+      "median_change_over_base": 0.8778262830285692,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 185,
+      "dropped_features": [],
+      "share_vs_own": 0.9351351351351351,
+      "share_vs_own_ci": [
+       0.8972972972972973,
+       0.9675675675675676
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.772972972972973,
+      "share_vs_another_ci": [
+       0.7081081081081081,
+       0.8324324324324325
+      ],
+      "median_base": 2.0053455870413073,
+      "median_change": 3.962081163195951,
+      "median_between": 3.3805928143090207,
+      "median_change_over_base": 1.9141108449436892,
+      "base_zero": 0,
+      "left_out_no_vector": 15
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 185,
+       "dropped_features": [],
+       "share_vs_own": 0.34054054054054056,
+       "share_vs_own_ci": [
+        0.2702702702702703,
+        0.41081081081081083
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.08648648648648649,
+       "share_vs_another_ci": [
+        0.04864864864864865,
+        0.12972972972972974
+       ],
+       "median_base": 1.3684080442002247,
+       "median_change": 1.1085265556311223,
+       "median_between": 2.1191693865271697,
+       "median_change_over_base": 0.7797900973404753,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 185,
+       "dropped_features": [],
+       "share_vs_own": 0.32972972972972975,
+       "share_vs_own_ci": [
+        0.26472972972972975,
+        0.3945945945945946
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0972972972972973,
+       "share_vs_another_ci": [
+        0.05405405405405406,
+        0.14054054054054055
+       ],
+       "median_base": 1.3912168281021966,
+       "median_change": 1.1609657493353291,
+       "median_between": 2.0587204296325927,
+       "median_change_over_base": 0.7870112009291006,
+       "base_zero": 0
+      },
+      "SEQ": {
+       "persons": 185,
+       "dropped_features": [],
+       "share_vs_own": 0.40540540540540543,
+       "share_vs_own_ci": [
+        0.33513513513513515,
+        0.4704054054054047
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.16216216216216217,
+       "share_vs_another_ci": [
+        0.10810810810810811,
+        0.21621621621621623
+       ],
+       "median_base": 1.9115440317852572,
+       "median_change": 1.6930458531362296,
+       "median_between": 2.2989032004618184,
+       "median_change_over_base": 0.8786278388905916,
+       "base_zero": 0
+      }
+     }
+    },
+    "shuffled_in_halves": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.005,
+      "share_vs_own_ci": [
+       0.0,
+       0.015
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.7153631215180921,
+      "median_change": 0.054065904405993626,
+      "median_between": 2.8081159553160697,
+      "median_change_over_base": 0.08338828597336836,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.205,
+      "share_vs_own_ci": [
+       0.15,
+       0.26
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.03,
+      "share_vs_another_ci": [
+       0.01,
+       0.055
+      ],
+      "median_base": 1.374506602948268,
+      "median_change": 0.6751284444963025,
+      "median_between": 2.1313566675469104,
+      "median_change_over_base": 0.5924808369815969,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.2,
+      "share_vs_own_ci": [
+       0.145,
+       0.255
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.035,
+      "share_vs_another_ci": [
+       0.01,
+       0.06
+      ],
+      "median_base": 1.4041198382751545,
+      "median_change": 0.6802639303495197,
+      "median_between": 2.051026163886692,
+      "median_change_over_base": 0.5952923408161157,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.285,
+      "share_vs_own_ci": [
+       0.225,
+       0.35
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.08,
+      "share_vs_another_ci": [
+       0.045,
+       0.12
+      ],
+      "median_base": 1.9675098330045921,
+      "median_change": 1.4393034341015547,
+      "median_between": 2.267431195747032,
+      "median_change_over_base": 0.7663806227536025,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 185,
+      "dropped_features": [],
+      "share_vs_own": 0.9675675675675676,
+      "share_vs_own_ci": [
+       0.9405405405405406,
+       0.9891891891891892
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.7837837837837838,
+      "share_vs_another_ci": [
+       0.7243243243243244,
+       0.8432432432432433
+      ],
+      "median_base": 2.0053455870413073,
+      "median_change": 4.015580189877631,
+      "median_between": 3.3805928143090207,
+      "median_change_over_base": 1.8525392128882978,
+      "base_zero": 0,
+      "left_out_no_vector": 15
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 185,
+       "dropped_features": [],
+       "share_vs_own": 0.20540540540540542,
+       "share_vs_own_ci": [
+        0.14594594594594595,
+        0.2648648648648649
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.032432432432432434,
+       "share_vs_another_ci": [
+        0.010810810810810811,
+        0.05945945945945946
+       ],
+       "median_base": 1.3684080442002247,
+       "median_change": 0.6677452941788269,
+       "median_between": 2.1191693865271697,
+       "median_change_over_base": 0.5980532641726861,
+       "base_zero": 0
+      },
+      "S2": {
+       "persons": 185,
+       "dropped_features": [],
+       "share_vs_own": 0.1945945945945946,
+       "share_vs_own_ci": [
+        0.14054054054054055,
+        0.25405405405405407
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.03783783783783784,
+       "share_vs_another_ci": [
+        0.016216216216216217,
+        0.06499999999999927
+       ],
+       "median_base": 1.3912168281021966,
+       "median_change": 0.6569580370952968,
+       "median_between": 2.0587204296325927,
+       "median_change_over_base": 0.6040859947805078,
+       "base_zero": 0
+      },
+      "SEQ": {
+       "persons": 185,
+       "dropped_features": [],
+       "share_vs_own": 0.2972972972972973,
+       "share_vs_own_ci": [
+        0.23243243243243245,
+        0.3621621621621622
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.07567567567567568,
+       "share_vs_another_ci": [
+        0.03783783783783784,
+        0.11351351351351352
+       ],
+       "median_base": 1.9115440317852572,
+       "median_change": 1.431004936946211,
+       "median_between": 2.2989032004618184,
+       "median_change_over_base": 0.7778455761752077,
+       "base_zero": 0
+      }
+     }
+    },
+    "persons": 200
+   }
+  },
+  "copy_sentence": {
+   "left_out": {
+    "fewer_than_8": 0,
+    "part_without_gap": 0
+   },
+   "oddeven": {
+    "text/after": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.4180306281504965,
+      "median_change": 0.05496147711391125,
+      "median_between": 2.5478781758889246,
+      "median_change_over_base": 0.11650906401427533,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.0525,
+      "share_vs_own_ci": [
+       0.025,
+       0.0825
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.2515160220146093,
+      "median_change": 0.15859607784552532,
+      "median_between": 2.2745937916597523,
+      "median_change_over_base": 0.12269219890496241,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.045,
+      "share_vs_own_ci": [
+       0.02,
+       0.0725
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.0627541108438716,
+      "median_change": 0.16560717771366162,
+      "median_between": 2.3293721750899183,
+      "median_change_over_base": 0.18632287188544217,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.08,
+      "share_vs_own_ci": [
+       0.045,
+       0.12
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.005,
+      "share_vs_another_ci": [
+       0.0,
+       0.015
+      ],
+      "median_base": 1.335523404790412,
+      "median_change": 0.6258943907980161,
+      "median_between": 3.1939941471315274,
+      "median_change_over_base": 0.49666567493812264,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.0525,
+       "share_vs_own_ci": [
+        0.025,
+        0.0825
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.2515160220146093,
+       "median_change": 0.15859607784552532,
+       "median_between": 2.2745937916597523,
+       "median_change_over_base": 0.12269219890496241,
+       "base_zero": 6
+      },
+      "S2": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.045,
+       "share_vs_own_ci": [
+        0.02,
+        0.0725
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.0627541108438716,
+       "median_change": 0.16560717771366162,
+       "median_between": 2.3293721750899183,
+       "median_change_over_base": 0.18632287188544217,
+       "base_zero": 4
+      }
+     }
+    },
+    "text/none": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.04,
+      "share_vs_own_ci": [
+       0.015,
+       0.07
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.4180306281504965,
+      "median_change": 0.1325524070220505,
+      "median_between": 2.5478781758889246,
+      "median_change_over_base": 0.321417123774975,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.0925,
+      "share_vs_own_ci": [
+       0.0575,
+       0.1325
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.005,
+      "share_vs_another_ci": [
+       0.0,
+       0.015
+      ],
+      "median_base": 1.2515160220146093,
+      "median_change": 0.29434916739991424,
+      "median_between": 2.2745937916597523,
+      "median_change_over_base": 0.254340476550852,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.055,
+      "share_vs_own_ci": [
+       0.0275,
+       0.0875
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.0627541108438716,
+      "median_change": 0.2982427129037163,
+      "median_between": 2.3293721750899183,
+      "median_change_over_base": 0.29050181304957284,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "defined": false,
+      "persons": 0
+     }
+    },
+    "inside/before": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.4180306281504965,
+      "median_change": 0.0,
+      "median_between": 2.5478781758889246,
+      "median_change_over_base": 0.0,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.015,
+      "share_vs_own_ci": [
+       0.005,
+       0.0275
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.2515160220146093,
+      "median_change": 0.0,
+      "median_between": 2.2745937916597523,
+      "median_change_over_base": 0.0,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.01,
+      "share_vs_own_ci": [
+       0.0025,
+       0.02
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.0627541108438716,
+      "median_change": 0.0,
+      "median_between": 2.3293721750899183,
+      "median_change_over_base": 0.0,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.66,
+      "share_vs_own_ci": [
+       0.595,
+       0.725
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "undecided"
+      },
+      "share_vs_another": 0.105,
+      "share_vs_another_ci": [
+       0.065,
+       0.15
+      ],
+      "median_base": 1.335523404790412,
+      "median_change": 1.6689779287923963,
+      "median_between": 3.1939941471315274,
+      "median_change_over_base": 1.228919167735865,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.015,
+       "share_vs_own_ci": [
+        0.005,
+        0.0275
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.2515160220146093,
+       "median_change": 0.0,
+       "median_between": 2.2745937916597523,
+       "median_change_over_base": 0.0,
+       "base_zero": 6
+      },
+      "S2": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.01,
+       "share_vs_own_ci": [
+        0.0025,
+        0.02
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.0627541108438716,
+       "median_change": 0.0,
+       "median_between": 2.3293721750899183,
+       "median_change_over_base": 0.0,
+       "base_zero": 4
+      }
+     }
+    },
+    "shuffled/before": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.215,
+      "share_vs_own_ci": [
+       0.16,
+       0.275
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.4180306281504965,
+      "median_change": 0.3104536741721315,
+      "median_between": 2.5478781758889246,
+      "median_change_over_base": 0.7549837647783048,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.37,
+      "share_vs_own_ci": [
+       0.3025,
+       0.4375
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.02,
+      "share_vs_another_ci": [
+       0.005,
+       0.045
+      ],
+      "median_base": 1.2515160220146093,
+      "median_change": 1.179136928938398,
+      "median_between": 2.2745937916597523,
+      "median_change_over_base": 0.8184311561875306,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.4,
+      "share_vs_own_ci": [
+       0.335,
+       0.4675
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.02,
+      "share_vs_another_ci": [
+       0.005,
+       0.04
+      ],
+      "median_base": 1.0627541108438716,
+      "median_change": 1.0466614015462246,
+      "median_between": 2.3293721750899183,
+      "median_change_over_base": 0.8837014057769043,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.96,
+      "share_vs_own_ci": [
+       0.93,
+       0.985
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.61,
+      "share_vs_another_ci": [
+       0.544875,
+       0.675
+      ],
+      "median_base": 1.335523404790412,
+      "median_change": 3.502430768809372,
+      "median_between": 3.1939941471315274,
+      "median_change_over_base": 2.6411537510004957,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.37,
+       "share_vs_own_ci": [
+        0.3025,
+        0.4375
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.02,
+       "share_vs_another_ci": [
+        0.005,
+        0.045
+       ],
+       "median_base": 1.2515160220146093,
+       "median_change": 1.179136928938398,
+       "median_between": 2.2745937916597523,
+       "median_change_over_base": 0.8184311561875306,
+       "base_zero": 6
+      },
+      "S2": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.4,
+       "share_vs_own_ci": [
+        0.335,
+        0.4675
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.02,
+       "share_vs_another_ci": [
+        0.005,
+        0.04
+       ],
+       "median_base": 1.0627541108438716,
+       "median_change": 1.0466614015462246,
+       "median_between": 2.3293721750899183,
+       "median_change_over_base": 0.8837014057769043,
+       "base_zero": 4
+      }
+     }
+    },
+    "shuffled_in_halves/before": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.215,
+      "share_vs_own_ci": [
+       0.16,
+       0.275
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.4180306281504965,
+      "median_change": 0.30866371913427526,
+      "median_between": 2.5478781758889246,
+      "median_change_over_base": 0.7452831848832363,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.355,
+      "share_vs_own_ci": [
+       0.29,
+       0.4225
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.04,
+      "share_vs_another_ci": [
+       0.015,
+       0.065
+      ],
+      "median_base": 1.2515160220146093,
+      "median_change": 1.1099922025848377,
+      "median_between": 2.2745937916597523,
+      "median_change_over_base": 0.8472171457947331,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.395,
+      "share_vs_own_ci": [
+       0.33,
+       0.465
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.04,
+      "share_vs_another_ci": [
+       0.015,
+       0.07
+      ],
+      "median_base": 1.0627541108438716,
+      "median_change": 0.9674577509183941,
+      "median_between": 2.3293721750899183,
+      "median_change_over_base": 0.8471766617823183,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.97,
+      "share_vs_own_ci": [
+       0.945,
+       0.99
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.64,
+      "share_vs_another_ci": [
+       0.57,
+       0.7
+      ],
+      "median_base": 1.335523404790412,
+      "median_change": 3.4910479070031144,
+      "median_between": 3.1939941471315274,
+      "median_change_over_base": 2.6656838331796937,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.355,
+       "share_vs_own_ci": [
+        0.29,
+        0.4225
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.04,
+       "share_vs_another_ci": [
+        0.015,
+        0.065
+       ],
+       "median_base": 1.2515160220146093,
+       "median_change": 1.1099922025848377,
+       "median_between": 2.2745937916597523,
+       "median_change_over_base": 0.8472171457947331,
+       "base_zero": 6
+      },
+      "S2": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.395,
+       "share_vs_own_ci": [
+        0.33,
+        0.465
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.04,
+       "share_vs_another_ci": [
+        0.015,
+        0.07
+       ],
+       "median_base": 1.0627541108438716,
+       "median_change": 0.9674577509183941,
+       "median_between": 2.3293721750899183,
+       "median_change_over_base": 0.8471766617823183,
+       "base_zero": 4
+      }
+     }
+    },
+    "persons": 200
+   },
+   "halves": {
+    "text/after": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.5616587004043614,
+      "median_change": 0.01359092046398951,
+      "median_between": 2.576255514464571,
+      "median_change_over_base": 0.024986575827833056,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.03,
+      "share_vs_own_ci": [
+       0.012437500000000004,
+       0.055
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.6258467413570683,
+      "median_change": 0.10115307972284415,
+      "median_between": 2.368822669066381,
+      "median_change_over_base": 0.07438071454779874,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.04,
+      "share_vs_own_ci": [
+       0.0175,
+       0.0675
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.323241825337377,
+      "median_change": 0.10764964243160206,
+      "median_between": 2.4457467606961423,
+      "median_change_over_base": 0.08704992837276841,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.03,
+      "share_vs_own_ci": [
+       0.01,
+       0.055
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.01,
+      "share_vs_another_ci": [
+       0.0,
+       0.025
+      ],
+      "median_base": 2.4130332913529737,
+      "median_change": 0.29108954200860526,
+      "median_between": 2.537519860662151,
+      "median_change_over_base": 0.11020023771776766,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 199,
+      "dropped_features": [],
+      "share_vs_own": 0.010050251256281407,
+      "share_vs_own_ci": [
+       0.0,
+       0.02512562814070352
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.005025125628140704,
+      "share_vs_another_ci": [
+       0.0,
+       0.01507537688442211
+      ],
+      "median_base": 1.6220059500142638,
+      "median_change": 0.13982008810333718,
+      "median_between": 3.108798763571591,
+      "median_change_over_base": 0.10433774688291436,
+      "base_zero": 0,
+      "left_out_no_vector": 1
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.03015075376884422,
+       "share_vs_own_ci": [
+        0.010050251256281407,
+        0.05527638190954774
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.6262691120199455,
+       "median_change": 0.10152684689263036,
+       "median_between": 2.3697486475840095,
+       "median_change_over_base": 0.0757553532550948,
+       "base_zero": 4
+      },
+      "S2": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.04020100502512563,
+       "share_vs_own_ci": [
+        0.017587939698492462,
+        0.06538944723618056
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.3222935435940333,
+       "median_change": 0.10825147943401071,
+       "median_between": 2.438782443822679,
+       "median_change_over_base": 0.08748540560414671,
+       "base_zero": 4
+      },
+      "SEQ": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.03015075376884422,
+       "share_vs_own_ci": [
+        0.010050251256281407,
+        0.05527638190954774
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.010050251256281407,
+       "share_vs_another_ci": [
+        0.0,
+        0.02512562814070352
+       ],
+       "median_base": 2.410698800182791,
+       "median_change": 0.3032190989287682,
+       "median_between": 2.548731895516189,
+       "median_change_over_base": 0.11637803923421028,
+       "base_zero": 0
+      }
+     }
+    },
+    "text/none": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.025,
+      "share_vs_own_ci": [
+       0.005,
+       0.05
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.5616587004043614,
+      "median_change": 0.1430924457561874,
+      "median_between": 2.576255514464571,
+      "median_change_over_base": 0.2284506945147332,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.065,
+      "share_vs_own_ci": [
+       0.035,
+       0.0975
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.6258467413570683,
+      "median_change": 0.28534484525973186,
+      "median_between": 2.368822669066381,
+      "median_change_over_base": 0.2063109978795233,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.075,
+      "share_vs_own_ci": [
+       0.0425,
+       0.1125
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.323241825337377,
+      "median_change": 0.32095351257534377,
+      "median_between": 2.4457467606961423,
+      "median_change_over_base": 0.22601035497997674,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.005,
+      "share_vs_own_ci": [
+       0.0,
+       0.015
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.005,
+      "share_vs_another_ci": [
+       0.0,
+       0.015
+      ],
+      "median_base": 2.4130332913529737,
+      "median_change": 0.4203630415301661,
+      "median_between": 2.537519860662151,
+      "median_change_over_base": 0.1968175390816818,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "defined": false,
+      "persons": 0
+     }
+    },
+    "inside/before": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.5616587004043614,
+      "median_change": 0.0,
+      "median_between": 2.576255514464571,
+      "median_change_over_base": 0.0,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.01,
+      "share_vs_own_ci": [
+       0.0025,
+       0.02
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.6258467413570683,
+      "median_change": 0.0,
+      "median_between": 2.368822669066381,
+      "median_change_over_base": 0.0,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.01,
+      "share_vs_own_ci": [
+       0.0025,
+       0.02
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.323241825337377,
+      "median_change": 0.0,
+      "median_between": 2.4457467606961423,
+      "median_change_over_base": 0.0,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 2.4130332913529737,
+      "median_change": 0.0,
+      "median_between": 2.537519860662151,
+      "median_change_over_base": 0.0,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 199,
+      "dropped_features": [],
+      "share_vs_own": 0.5276381909547738,
+      "share_vs_own_ci": [
+       0.457286432160804,
+       0.5979899497487438
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.07537688442211055,
+      "share_vs_another_ci": [
+       0.04020100502512563,
+       0.11557788944723618
+      ],
+      "median_base": 1.6220059500142638,
+      "median_change": 1.6345818487940051,
+      "median_between": 3.108798763571591,
+      "median_change_over_base": 1.0297036033565217,
+      "base_zero": 0,
+      "left_out_no_vector": 1
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.010050251256281407,
+       "share_vs_own_ci": [
+        0.002512562814070352,
+        0.020100502512562814
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.6262691120199455,
+       "median_change": 0.0,
+       "median_between": 2.3697486475840095,
+       "median_change_over_base": 0.0,
+       "base_zero": 4
+      },
+      "S2": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.010050251256281407,
+       "share_vs_own_ci": [
+        0.002512562814070352,
+        0.020100502512562814
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.3222935435940333,
+       "median_change": 0.0,
+       "median_between": 2.438782443822679,
+       "median_change_over_base": 0.0,
+       "base_zero": 4
+      },
+      "SEQ": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.0,
+       "share_vs_own_ci": [
+        0.0,
+        0.0
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 2.410698800182791,
+       "median_change": 0.0,
+       "median_between": 2.548731895516189,
+       "median_change_over_base": 0.0,
+       "base_zero": 0
+      }
+     }
+    },
+    "shuffled/before": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.145,
+      "share_vs_own_ci": [
+       0.1,
+       0.195
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.5616587004043614,
+      "median_change": 0.3779181176599805,
+      "median_between": 2.576255514464571,
+      "median_change_over_base": 0.6600748019656814,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.25,
+      "share_vs_own_ci": [
+       0.1925,
+       0.3125
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.035,
+      "share_vs_another_ci": [
+       0.01,
+       0.065
+      ],
+      "median_base": 1.6258467413570683,
+      "median_change": 1.0958605550741953,
+      "median_between": 2.368822669066381,
+      "median_change_over_base": 0.6810092653494123,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.3,
+      "share_vs_own_ci": [
+       0.2399375,
+       0.3625
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.05,
+      "share_vs_another_ci": [
+       0.02,
+       0.085
+      ],
+      "median_base": 1.323241825337377,
+      "median_change": 1.1024420510895587,
+      "median_between": 2.4457467606961423,
+      "median_change_over_base": 0.7502281004916356,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.39,
+      "share_vs_own_ci": [
+       0.325,
+       0.46
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.29,
+      "share_vs_another_ci": [
+       0.23,
+       0.355
+      ],
+      "median_base": 2.4130332913529737,
+      "median_change": 2.210780852027552,
+      "median_between": 2.537519860662151,
+      "median_change_over_base": 0.8784515743784864,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 199,
+      "dropped_features": [],
+      "share_vs_own": 0.9396984924623115,
+      "share_vs_own_ci": [
+       0.9094221105527639,
+       0.9698492462311558
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.6080402010050251,
+      "share_vs_another_ci": [
+       0.5376884422110553,
+       0.678391959798995
+      ],
+      "median_base": 1.6220059500142638,
+      "median_change": 3.4731965817165404,
+      "median_between": 3.108798763571591,
+      "median_change_over_base": 2.0759563796713536,
+      "base_zero": 0,
+      "left_out_no_vector": 1
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.25125628140703515,
+       "share_vs_own_ci": [
+        0.1934673366834171,
+        0.31155778894472363
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.035175879396984924,
+       "share_vs_another_ci": [
+        0.01507537688442211,
+        0.06532663316582915
+       ],
+       "median_base": 1.6262691120199455,
+       "median_change": 1.0937992125587237,
+       "median_between": 2.3697486475840095,
+       "median_change_over_base": 0.6836095242112281,
+       "base_zero": 4
+      },
+      "S2": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.3015075376884422,
+       "share_vs_own_ci": [
+        0.24120603015075376,
+        0.36432160804020103
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.05025125628140704,
+       "share_vs_another_ci": [
+        0.020100502512562814,
+        0.08040201005025126
+       ],
+       "median_base": 1.3222935435940333,
+       "median_change": 1.1023076677305192,
+       "median_between": 2.438782443822679,
+       "median_change_over_base": 0.7542545058242299,
+       "base_zero": 4
+      },
+      "SEQ": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.39195979899497485,
+       "share_vs_own_ci": [
+        0.32663316582914576,
+        0.457286432160804
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.2914572864321608,
+       "share_vs_another_ci": [
+        0.23115577889447236,
+        0.35678391959798994
+       ],
+       "median_base": 2.410698800182791,
+       "median_change": 2.2095436040873175,
+       "median_between": 2.548731895516189,
+       "median_change_over_base": 0.8814464446152812,
+       "base_zero": 0
+      }
+     }
+    },
+    "shuffled_in_halves/before": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.5616587004043614,
+      "median_change": 0.0,
+      "median_between": 2.576255514464571,
+      "median_change_over_base": 0.0,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.2,
+      "share_vs_own_ci": [
+       0.1475,
+       0.255
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.01,
+      "share_vs_another_ci": [
+       0.0,
+       0.025
+      ],
+      "median_base": 1.6258467413570683,
+      "median_change": 0.9637491851973381,
+      "median_between": 2.368822669066381,
+      "median_change_over_base": 0.6115444030077448,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.22,
+      "share_vs_own_ci": [
+       0.1625,
+       0.27506249999999965
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.005,
+      "share_vs_another_ci": [
+       0.0,
+       0.015
+      ],
+      "median_base": 1.323241825337377,
+      "median_change": 0.8835878240778408,
+      "median_between": 2.4457467606961423,
+      "median_change_over_base": 0.6230932065689483,
+      "base_zero": 4,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.37,
+      "share_vs_own_ci": [
+       0.3,
+       0.435
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.3,
+      "share_vs_another_ci": [
+       0.235,
+       0.365
+      ],
+      "median_base": 2.4130332913529737,
+      "median_change": 2.1612558264499215,
+      "median_between": 2.537519860662151,
+      "median_change_over_base": 0.8884705689224515,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 199,
+      "dropped_features": [],
+      "share_vs_own": 0.9396984924623115,
+      "share_vs_own_ci": [
+       0.9045226130653267,
+       0.9699748743718586
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.6532663316582915,
+      "share_vs_another_ci": [
+       0.5879396984924623,
+       0.7185929648241206
+      ],
+      "median_base": 1.6220059500142638,
+      "median_change": 3.549897123322708,
+      "median_between": 3.108798763571591,
+      "median_change_over_base": 2.194266344724641,
+      "base_zero": 0,
+      "left_out_no_vector": 1
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.20100502512562815,
+       "share_vs_own_ci": [
+        0.14321608040201006,
+        0.2562814070351759
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.010050251256281407,
+       "share_vs_another_ci": [
+        0.0,
+        0.02512562814070352
+       ],
+       "median_base": 1.6262691120199455,
+       "median_change": 0.9696972833173109,
+       "median_between": 2.3697486475840095,
+       "median_change_over_base": 0.6158842891914641,
+       "base_zero": 4
+      },
+      "S2": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.22110552763819097,
+       "share_vs_own_ci": [
+        0.1658291457286432,
+        0.2814070351758794
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.005025125628140704,
+       "share_vs_another_ci": [
+        0.0,
+        0.01507537688442211
+       ],
+       "median_base": 1.3222935435940333,
+       "median_change": 0.8847461286403473,
+       "median_between": 2.438782443822679,
+       "median_change_over_base": 0.6274252510160897,
+       "base_zero": 4
+      },
+      "SEQ": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.37185929648241206,
+       "share_vs_own_ci": [
+        0.3015075376884422,
+        0.4371859296482412
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.3015075376884422,
+       "share_vs_another_ci": [
+        0.23618090452261306,
+        0.36683417085427134
+       ],
+       "median_base": 2.410698800182791,
+       "median_change": 2.16435174267934,
+       "median_between": 2.548731895516189,
+       "median_change_over_base": 0.8915785932547092,
+       "base_zero": 0
+      }
+     }
+    },
+    "persons": 200
+   }
+  },
+  "copy_window_10s": {
+   "left_out": {
+    "fewer_than_8": 0,
+    "part_without_gap": 0
+   },
+   "oddeven": {
+    "inside": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.01,
+      "share_vs_own_ci": [
+       0.0,
+       0.025
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.4750536511896622,
+      "median_change": 0.08906973738958465,
+      "median_between": 2.591904872321134,
+      "median_change_over_base": 0.1832343102159689,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.085,
+      "share_vs_own_ci": [
+       0.05,
+       0.1225
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.5596081499523904,
+      "median_change": 0.15848777829468885,
+      "median_between": 1.7495420323151558,
+      "median_change_over_base": 0.30147827162758184,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.105,
+      "share_vs_own_ci": [
+       0.0675,
+       0.1475
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.5589022425207031,
+      "median_change": 0.15055904871491227,
+      "median_between": 1.7873283444270516,
+      "median_change_over_base": 0.30576869655342076,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.57,
+      "share_vs_own_ci": [
+       0.5,
+       0.635
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "undecided"
+      },
+      "share_vs_another": 0.115,
+      "share_vs_another_ci": [
+       0.075,
+       0.16
+      ],
+      "median_base": 1.3762681402157617,
+      "median_change": 1.8039786630226458,
+      "median_between": 3.176878580185872,
+      "median_change_over_base": 1.1518346676276274,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.085,
+       "share_vs_own_ci": [
+        0.05,
+        0.1225
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 0.5596081499523904,
+       "median_change": 0.15848777829468885,
+       "median_between": 1.7495420323151558,
+       "median_change_over_base": 0.30147827162758184,
+       "base_zero": 6
+      },
+      "S2": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.105,
+       "share_vs_own_ci": [
+        0.0675,
+        0.1475
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 0.5589022425207031,
+       "median_change": 0.15055904871491227,
+       "median_between": 1.7873283444270516,
+       "median_change_over_base": 0.30576869655342076,
+       "base_zero": 6
+      }
+     }
+    },
+    "shuffled": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.23,
+      "share_vs_own_ci": [
+       0.175,
+       0.29
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.4750536511896622,
+      "median_change": 0.32799401877688356,
+      "median_between": 2.591904872321134,
+      "median_change_over_base": 0.741178120774683,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.415,
+      "share_vs_own_ci": [
+       0.3475,
+       0.48
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.01,
+      "share_vs_another_ci": [
+       0.0,
+       0.025
+      ],
+      "median_base": 0.5596081499523904,
+      "median_change": 0.4862023471664329,
+      "median_between": 1.7495420323151558,
+      "median_change_over_base": 0.85918871757884,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.385,
+      "share_vs_own_ci": [
+       0.32,
+       0.4525
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.005,
+      "share_vs_another_ci": [
+       0.0,
+       0.015
+      ],
+      "median_base": 0.5589022425207031,
+      "median_change": 0.5171839608092133,
+      "median_between": 1.7873283444270516,
+      "median_change_over_base": 0.8518289873633565,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.95,
+      "share_vs_own_ci": [
+       0.915,
+       0.98
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.605,
+      "share_vs_another_ci": [
+       0.535,
+       0.67
+      ],
+      "median_base": 1.3762681402157617,
+      "median_change": 3.52333380265357,
+      "median_between": 3.176878580185872,
+      "median_change_over_base": 2.2270175001146137,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.415,
+       "share_vs_own_ci": [
+        0.3475,
+        0.48
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.01,
+       "share_vs_another_ci": [
+        0.0,
+        0.025
+       ],
+       "median_base": 0.5596081499523904,
+       "median_change": 0.4862023471664329,
+       "median_between": 1.7495420323151558,
+       "median_change_over_base": 0.85918871757884,
+       "base_zero": 6
+      },
+      "S2": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.385,
+       "share_vs_own_ci": [
+        0.32,
+        0.4525
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.005,
+       "share_vs_another_ci": [
+        0.0,
+        0.015
+       ],
+       "median_base": 0.5589022425207031,
+       "median_change": 0.5171839608092133,
+       "median_between": 1.7873283444270516,
+       "median_change_over_base": 0.8518289873633565,
+       "base_zero": 6
+      }
+     }
+    },
+    "shuffled_in_halves": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.23,
+      "share_vs_own_ci": [
+       0.17,
+       0.29
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.4750536511896622,
+      "median_change": 0.3317683133079762,
+      "median_between": 2.591904872321134,
+      "median_change_over_base": 0.7140380630619392,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.41,
+      "share_vs_own_ci": [
+       0.34493749999999995,
+       0.475
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.01,
+      "share_vs_another_ci": [
+       0.0,
+       0.025
+      ],
+      "median_base": 0.5596081499523904,
+      "median_change": 0.5458958304567112,
+      "median_between": 1.7495420323151558,
+      "median_change_over_base": 0.9166034276522277,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.46,
+      "share_vs_own_ci": [
+       0.395,
+       0.5275
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.005,
+      "share_vs_another_ci": [
+       0.0,
+       0.015
+      ],
+      "median_base": 0.5589022425207031,
+      "median_change": 0.5599390238693789,
+      "median_between": 1.7873283444270516,
+      "median_change_over_base": 0.9375921001704517,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.945,
+      "share_vs_own_ci": [
+       0.91,
+       0.975
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.615,
+      "share_vs_another_ci": [
+       0.545,
+       0.68
+      ],
+      "median_base": 1.3762681402157617,
+      "median_change": 3.503686181626027,
+      "median_between": 3.176878580185872,
+      "median_change_over_base": 2.432821104200354,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.41,
+       "share_vs_own_ci": [
+        0.34493749999999995,
+        0.475
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.01,
+       "share_vs_another_ci": [
+        0.0,
+        0.025
+       ],
+       "median_base": 0.5596081499523904,
+       "median_change": 0.5458958304567112,
+       "median_between": 1.7495420323151558,
+       "median_change_over_base": 0.9166034276522277,
+       "base_zero": 6
+      },
+      "S2": {
+       "persons": 200,
+       "dropped_features": [],
+       "share_vs_own": 0.46,
+       "share_vs_own_ci": [
+        0.395,
+        0.5275
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.005,
+       "share_vs_another_ci": [
+        0.0,
+        0.015
+       ],
+       "median_base": 0.5589022425207031,
+       "median_change": 0.5599390238693789,
+       "median_between": 1.7873283444270516,
+       "median_change_over_base": 0.9375921001704517,
+       "base_zero": 6
+      }
+     }
+    },
+    "persons": 200
+   },
+   "halves": {
+    "inside": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.0,
+      "share_vs_own_ci": [
+       0.0,
+       0.0
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.497596653102119,
+      "median_change": 0.005041224242187512,
+      "median_between": 2.597493584205588,
+      "median_change_over_base": 0.010999875106528816,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.06,
+      "share_vs_own_ci": [
+       0.0325,
+       0.0925
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.7457173121503704,
+      "median_change": 0.1662119620667803,
+      "median_between": 1.7010672307451875,
+      "median_change_over_base": 0.21756018614240918,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.05,
+      "share_vs_own_ci": [
+       0.025,
+       0.08
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.8100961133563072,
+      "median_change": 0.15472677365549864,
+      "median_between": 1.7291545848422807,
+      "median_change_over_base": 0.21455525087667418,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.03,
+      "share_vs_own_ci": [
+       0.01,
+       0.0525
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 1.8100022856058149,
+      "median_change": 0.3173825000212682,
+      "median_between": 2.430276759373016,
+      "median_change_over_base": 0.18841423164704252,
+      "base_zero": 2,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 199,
+      "dropped_features": [],
+      "share_vs_own": 0.5226130653266332,
+      "share_vs_own_ci": [
+       0.45226130653266333,
+       0.592964824120603
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.06030150753768844,
+      "share_vs_another_ci": [
+       0.03015075376884422,
+       0.09547738693467336
+      ],
+      "median_base": 1.682018913816345,
+      "median_change": 1.6966424587713778,
+      "median_between": 3.1712934252235883,
+      "median_change_over_base": 1.0369395554090615,
+      "base_zero": 0,
+      "left_out_no_vector": 1
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.06030150753768844,
+       "share_vs_own_ci": [
+        0.032663316582914576,
+        0.09296482412060302
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 0.7486963691842526,
+       "median_change": 0.1654774989816165,
+       "median_between": 1.698309677761292,
+       "median_change_over_base": 0.21655000207975428,
+       "base_zero": 6
+      },
+      "S2": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.05025125628140704,
+       "share_vs_own_ci": [
+        0.02512562814070352,
+        0.08040201005025126
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 0.8089634720497694,
+       "median_change": 0.15277772805167236,
+       "median_between": 1.7095629639510097,
+       "median_change_over_base": 0.20725659372187533,
+       "base_zero": 6
+      },
+      "SEQ": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.03015075376884422,
+       "share_vs_own_ci": [
+        0.010050251256281407,
+        0.052763819095477386
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 1.812628195734719,
+       "median_change": 0.3158715205789113,
+       "median_between": 2.4294961843577294,
+       "median_change_over_base": 0.1878829317587225,
+       "base_zero": 2
+      }
+     }
+    },
+    "shuffled": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.145,
+      "share_vs_own_ci": [
+       0.1,
+       0.19
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.497596653102119,
+      "median_change": 0.3298521844433817,
+      "median_between": 2.597493584205588,
+      "median_change_over_base": 0.6760071369993909,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.28,
+      "share_vs_own_ci": [
+       0.22,
+       0.3425
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.04,
+      "share_vs_another_ci": [
+       0.015,
+       0.07
+      ],
+      "median_base": 0.7457173121503704,
+      "median_change": 0.5673070835839693,
+      "median_between": 1.7010672307451875,
+      "median_change_over_base": 0.7341871034931335,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.24,
+      "share_vs_own_ci": [
+       0.1825,
+       0.3
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.045,
+      "share_vs_another_ci": [
+       0.02,
+       0.075
+      ],
+      "median_base": 0.8100961133563072,
+      "median_change": 0.5788334750059525,
+      "median_between": 1.7291545848422807,
+      "median_change_over_base": 0.7385893712658942,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.42,
+      "share_vs_own_ci": [
+       0.35493749999999996,
+       0.4875
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.165,
+      "share_vs_another_ci": [
+       0.115,
+       0.22
+      ],
+      "median_base": 1.8100022856058149,
+      "median_change": 1.6489957987586978,
+      "median_between": 2.430276759373016,
+      "median_change_over_base": 0.9090019040254222,
+      "base_zero": 2,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 199,
+      "dropped_features": [],
+      "share_vs_own": 0.9396984924623115,
+      "share_vs_own_ci": [
+       0.9045226130653267,
+       0.9698492462311558
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.5829145728643216,
+      "share_vs_another_ci": [
+       0.5175879396984925,
+       0.6532663316582915
+      ],
+      "median_base": 1.682018913816345,
+      "median_change": 3.4378297668982767,
+      "median_between": 3.1712934252235883,
+      "median_change_over_base": 2.0518777881786376,
+      "base_zero": 0,
+      "left_out_no_vector": 1
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.27638190954773867,
+       "share_vs_own_ci": [
+        0.2185929648241206,
+        0.3392587939698489
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.04020100502512563,
+       "share_vs_another_ci": [
+        0.01507537688442211,
+        0.07035175879396985
+       ],
+       "median_base": 0.7486963691842526,
+       "median_change": 0.5656142013406595,
+       "median_between": 1.698309677761292,
+       "median_change_over_base": 0.7283584380467798,
+       "base_zero": 6
+      },
+      "S2": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.24120603015075376,
+       "share_vs_own_ci": [
+        0.1884422110552764,
+        0.2989949748743719
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.04522613065326633,
+       "share_vs_another_ci": [
+        0.020100502512562814,
+        0.07537688442211055
+       ],
+       "median_base": 0.8089634720497694,
+       "median_change": 0.5778378524682636,
+       "median_between": 1.7095629639510097,
+       "median_change_over_base": 0.7367609710860233,
+       "base_zero": 6
+      },
+      "SEQ": {
+       "persons": 199,
+       "dropped_features": [],
+       "share_vs_own": 0.41708542713567837,
+       "share_vs_own_ci": [
+        0.3492462311557789,
+        0.4849246231155779
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.1708542713567839,
+       "share_vs_another_ci": [
+        0.12060301507537688,
+        0.22613065326633167
+       ],
+       "median_base": 1.812628195734719,
+       "median_change": 1.6486673988256502,
+       "median_between": 2.4294961843577294,
+       "median_change_over_base": 0.9077114983857053,
+       "base_zero": 2
+      }
+     }
+    },
+    "shuffled_in_halves": {
+     "S0": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.01,
+      "share_vs_own_ci": [
+       0.0,
+       0.025
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.497596653102119,
+      "median_change": 0.03344455651159693,
+      "median_between": 2.597493584205588,
+      "median_change_over_base": 0.06845381795323682,
+      "base_zero": 0,
+      "left_out_no_vector": 0
+     },
+     "S1": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.18,
+      "share_vs_own_ci": [
+       0.1325,
+       0.23006249999999967
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.005,
+      "share_vs_another_ci": [
+       0.0,
+       0.015
+      ],
+      "median_base": 0.7457173121503704,
+      "median_change": 0.4336781168830418,
+      "median_between": 1.7010672307451875,
+      "median_change_over_base": 0.5671361790387968,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "S2": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.185,
+      "share_vs_own_ci": [
+       0.135,
+       0.24
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.0,
+      "share_vs_another_ci": [
+       0.0,
+       0.0
+      ],
+      "median_base": 0.8100961133563072,
+      "median_change": 0.42890987979446615,
+      "median_between": 1.7291545848422807,
+      "median_change_over_base": 0.5917730156703668,
+      "base_zero": 6,
+      "left_out_no_vector": 0
+     },
+     "SEQ": {
+      "persons": 200,
+      "dropped_features": [],
+      "share_vs_own": 0.385,
+      "share_vs_own_ci": [
+       0.32,
+       0.4525
+      ],
+      "reading": {
+       "detection": "not detected",
+       "size": "below 0.60"
+      },
+      "share_vs_another": 0.1,
+      "share_vs_another_ci": [
+       0.06,
+       0.145
+      ],
+      "median_base": 1.8100022856058149,
+      "median_change": 1.5850188833350354,
+      "median_between": 2.430276759373016,
+      "median_change_over_base": 0.8539583297855864,
+      "base_zero": 2,
+      "left_out_no_vector": 0
+     },
+     "LOC": {
+      "persons": 198,
+      "dropped_features": [],
+      "share_vs_own": 0.9595959595959596,
+      "share_vs_own_ci": [
+       0.9292929292929293,
+       0.9848484848484849
+      ],
+      "reading": {
+       "detection": "detectable",
+       "size": "above 0.60"
+      },
+      "share_vs_another": 0.6464646464646465,
+      "share_vs_another_ci": [
+       0.5806818181818182,
+       0.7121212121212122
+      ],
+      "median_base": 1.675997650524462,
+      "median_change": 3.5717237696511344,
+      "median_between": 3.175023510520113,
+      "median_change_over_base": 2.1902389584043194,
+      "base_zero": 0,
+      "left_out_no_vector": 2
+     },
+     "same_persons_as_LOC": {
+      "S1": {
+       "persons": 198,
+       "dropped_features": [],
+       "share_vs_own": 0.17676767676767677,
+       "share_vs_own_ci": [
+        0.12626262626262627,
+        0.23232323232323232
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.005050505050505051,
+       "share_vs_another_ci": [
+        0.0,
+        0.015151515151515152
+       ],
+       "median_base": 0.7791704575787297,
+       "median_change": 0.4570783175065911,
+       "median_between": 1.7557505066362342,
+       "median_change_over_base": 0.5613106221007124,
+       "base_zero": 6
+      },
+      "S2": {
+       "persons": 198,
+       "dropped_features": [],
+       "share_vs_own": 0.1717171717171717,
+       "share_vs_own_ci": [
+        0.12121212121212122,
+        0.2222222222222222
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.0,
+       "share_vs_another_ci": [
+        0.0,
+        0.0
+       ],
+       "median_base": 0.8349015865715868,
+       "median_change": 0.444990634356565,
+       "median_between": 1.800657475057801,
+       "median_change_over_base": 0.5823419709857522,
+       "base_zero": 6
+      },
+      "SEQ": {
+       "persons": 198,
+       "dropped_features": [],
+       "share_vs_own": 0.3838383838383838,
+       "share_vs_own_ci": [
+        0.31559343434343434,
+        0.45454545454545453
+       ],
+       "reading": {
+        "detection": "not detected",
+        "size": "below 0.60"
+       },
+       "share_vs_another": 0.1111111111111111,
+       "share_vs_another_ci": [
+        0.06565656565656566,
+        0.15656565656565657
+       ],
+       "median_base": 1.8433937451320686,
+       "median_change": 1.601498888504826,
+       "median_between": 2.447305535053732,
+       "median_change_over_base": 0.8427113348767197,
+       "base_zero": 2
+      }
+     }
+    },
+    "persons": 200
+   }
+  }
+ },
+ "provenance": {
+  "run_at": "2026-10-31T13:28:25+00:00",
+  "git_commit": "e74c8804f94ea652a981dabf6274ef8b42fa104c",
+  "git_dirty": false,
+  "conditions_sha256": "ae52effd10d6235051839df1ebfa35249e283846090805213b5b3c0e6272ba7a",
+  "v6_conditions_sha256": "afc4c330c7a3862ca9f2d6a1ad6d0c1d84ff68ff3b2baf4b39acdd0b6085b078",
+  "data_sha256": {
+   "copy": "b26ad0fca7e34f8f4e87dccd0c04b95adc082cc8db4f87dc6be8d6224f5f10f2",
+   "essay": "4ad24cbf78879f2fb45c1334eb827f2c8c2fada09a957252a4c86b8e20f28aef"
+  },
+  "code_sha256": {
+   "works/prototype_v6b.py": "226b2172ca51d185932bd2ace41779897fbe5062a0d1d1dbf8a95df4fcfad22d",
+   "works/prototype_v6.py": "c2f3142e593599ca8825fe1d436267a7e451626c2d5db4800e8747ed8fa84a96",
+   "works/prototype_v5.py": "887f8e9ddd3d9fd24cc8b7889fb1263fe0aa4d71ddf4176d78c9c6a2852eacc1",
+   "works/prototype_v4.py": "a93bae142d88b46c5b6e929fe086a64078c88b4a0063f15639f4d3b09ee401f0",
+   "works/_common.py": "5f840d73e8b2ecbf092cab8fa7b06d8ab74eb25c1742a21d979d68c4b0c48ed1",
+   "src/keystroke.py": "41b90369344f0a73d8b329913de93d3242a513c8d35ba7093ab60c8fccbc68bd",
+   "uv.lock": "8ff28b2154b6dc1d3ad3dc45c193dc501390501d1cde1a91d0959c07ac9b43a3"
+  },
+  "versions": {
+   "python": "3.13.12",
+   "platform": "Darwin arm64",
+   "atact_commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+   "numpy": "2.5.4",
+   "pillow": "13.0.0",
+   "scipy": "1.18.1"
+  },
+  "same_persons_rng": "the same-person counts (S1, S2 and, under halves, SEQ on the persons of LOC) reuse the bootstrap keys of their stage and row"
+ }
+}
