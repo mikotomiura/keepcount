@@ -206,6 +206,12 @@ def test_rests_inside_keeps_the_gaps_of_every_sentence():
             # the gap before the sentence and the gap before one of its own word starts changed places
             assert len(moved) == 2 and moved[0] == a - 1 and labels[moved[1] + 1] == "word_start"
             assert h[moved[0]] == g[moved[1]] and h[moved[1]] == g[moved[0]]
+    b0 = starts[1]
+    assert h[:b0 - 1].tolist() == g[:b0 - 1].tolist()  # the first sentence does not move
+    # so every sentence's tile is that of from_text under the counting 'before'
+    for x, y in zip(ks.segments_counted(u, starts, 2000.0, "before"), ks.segments_counted(t, starts, 2000.0, "before")):
+        assert (x.presses, x.gaps) == (y.presses, y.gaps) and x.rest_share == pytest.approx(y.rest_share)
+        assert x.speed_ms == pytest.approx(y.speed_ms)
     assert ks.rests_inside(t, text, np.random.default_rng(5)).tolist() == u.tolist()
     with pytest.raises(ValueError):
         ks.rests_inside(t[:-1], text, np.random.default_rng(5))
@@ -234,3 +240,43 @@ def test_reordered_by_runs_puts_each_class_in_runs():
     c1 = ["f" if x in fast else "s" for x in u1 if x < 2000.0]
     k = 2 * min(c1.count("f"), c1.count("s"))
     assert all(x != y for x, y in zip(c1[:k], c1[1:k]))
+
+
+def test_reordered_by_runs_places_rests_uniformly():
+    # rests at places chosen uniformly: over many seeds their mean place is near the middle, and with two long
+    # blocks of short gaps rests fall inside both blocks and between them
+    text, t = _text_series("rule")
+    n = t.size - 1
+    means = []
+    for i in range(200):
+        u = np.diff(ks.reordered_by_runs(t, text, 2000.0, 30.0, 8.0, np.random.default_rng(100 + i)))
+        means.append(np.mean(np.flatnonzero(u >= 2000.0)))
+    assert abs(np.mean(means) - (n - 1) / 2) < 0.05 * n
+    g = _r(np.diff(t))
+    labels = ks.positions(text)[1:]
+    fast = {x for x, lab in zip(g, labels) if lab == "within_word" and x < 2000.0}
+    u = _r(np.diff(ks.reordered_by_runs(t, text, 2000.0, 1e9, 1e9, np.random.default_rng(9))))
+    short = np.flatnonzero(u < 2000.0)
+    cls = np.array(["f" if u[i] in fast else "s" for i in short])
+    edge = short[np.flatnonzero(cls[1:] != cls[:-1])[0]]  # last place of the first block
+    rests = np.flatnonzero(u >= 2000.0)
+    assert (rests < edge).any() and (rests > edge).any()
+
+
+def test_v4_functions_at_their_edges():
+    t = np.concatenate([[0.0], np.cumsum([100.0, 3000.0, 100.0])])  # presses 0 1 | 2 3
+    with pytest.raises(ValueError):
+        ks.segments_counted(t, [0, 1, 2], 2000.0, "none")  # sentence [0, 1) holds no gap without its boundary
+    with pytest.raises(ValueError):
+        ks.segments_counted(t, [0, 2, 3], 2000.0, "after")  # the last sentence [3, 4) has no gap after its start
+    with pytest.raises(ValueError):
+        ks.rests_inside(ks.from_text("Ab cd. Ef\n\nGh", _timing(), np.random.default_rng(0)), "Ab cd. Ef\n\nGh",
+                        np.random.default_rng(0))  # "Ef." has no word start inside it
+    one = ks.Lognormal(100.0, 0.0)
+    timing = ks.TextTiming(one, ks.Lognormal(200.0, 0.0), ks.Lognormal(300.0, 0.0), ks.Lognormal(400.0, 0.0))
+    text = "ab cd. ef gh"
+    t0 = ks.from_text(text, timing, np.random.default_rng(0))  # no rest at all
+    u = ks.reordered_by_runs(t0, text, 2000.0, 2.0, 2.0, np.random.default_rng(1))
+    assert np.sort(_r(np.diff(u))).tolist() == np.sort(_r(np.diff(t0))).tolist()
+    t1 = ks.from_text("abcd", timing, np.random.default_rng(0))  # only fast gaps
+    assert _r(np.diff(ks.reordered_by_runs(t1, "abcd", 2000.0, 2.0, 2.0, np.random.default_rng(1)))).tolist() == [100.0] * 3

@@ -395,13 +395,15 @@ def reordered_by_runs(times: np.ndarray, text: str, rest_ms: float, mean_run_fas
     places = np.flatnonzero(~rest_at)
     order: list[str] = []
     while len(order) < places.size:
-        if left[cur] == 0:
-            cur = "slow" if cur == "fast" else "fast"
+        other = "slow" if cur == "fast" else "fast"
+        if left[cur] == 0:  # one class is used up: the remaining places take the other, in one block
+            order.extend([other] * left[other])
+            break
         length = int(rng.geometric(1.0 / (mean_run_fast if cur == "fast" else mean_run_slow)))
         take = min(length, left[cur])
         order.extend([cur] * take)
         left[cur] -= take
-        cur = "slow" if cur == "fast" else "fast"
+        cur = other
     kind[places] = order
     out = np.empty(n)
     for c in ("rest", "fast", "slow"):

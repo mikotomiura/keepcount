@@ -126,7 +126,8 @@ def middle_half(v: np.ndarray) -> float:
 
 
 def correlation(x: np.ndarray, y: np.ndarray) -> float | None:
-    if x.size < 3 or np.std(x) == 0 or np.std(y) == 0:
+    """Pearson; None when x or y does not vary (all values equal, compared exactly)."""
+    if x.size < 2 or np.ptp(x) == 0 or np.ptp(y) == 0:
         return None
     return float(np.corrcoef(x, y)[0, 1])
 
@@ -139,8 +140,11 @@ def summary(v: list) -> dict:
 
 
 def tile_diff(a: list[np.ndarray], b: list[np.ndarray]) -> float:
-    """Mean over tiles (paired by index up to the smaller number) of the mean absolute difference of grey."""
+    """Mean over tiles (paired by index up to the smaller number) of the mean absolute difference of grey, on the
+    clipped floats before the 8-bit figures."""
     n = min(len(a), len(b))
+    if n == 0:
+        raise ValueError("no tiles to compare")
     return float(np.mean([np.mean(np.abs(a[j] - b[j])) for j in range(n)]))
 
 
@@ -151,6 +155,8 @@ def row_name(row) -> str:
 def run(c: dict, texts: dict[str, str], out_dir: Path) -> dict:
     u, m, r = c["units"], c["mapping"], c["relief"]
     rest_ms, fields = u["rest_ms"], r["seeds"]
+    if not fields or fields[0] != 42:
+        raise SystemExit("the first field seed must be 42 (the field of v1 to v3, the base of the differences between fields)")
     sent_rows = [tuple(x) for x in u["sentence"]["rows"]]
     win_rows = list(u["windows"]["rows"])
     fig_w = u["windows"]["figure_width_ms"]
@@ -181,6 +187,8 @@ def run(c: dict, texts: dict[str, str], out_dir: Path) -> dict:
             for w in u["windows"]["widths_ms"]:
                 for s in win_rows:
                     ws, tail = ks.full_windows(ser[s], w, rest_ms)
+                    if not ws:
+                        raise SystemExit(f"{name} {s} seed {k}: no full window of {w} ms")
                     p, q, no_speed = pq(ws, m, "external")
                     if w == fig_w:
                         tiles_pq[f"window_{int(fig_w / 1000)}s"][s] = {"external": (p, q),
@@ -255,7 +263,7 @@ def main() -> None:
                          "rng": "numpy.random.default_rng([seed_base, sha256(text name)[:8], generator id, seed index])",
                          "bit_generator": type(np.random.default_rng(0).bit_generator).__name__,
                          "text_seeds": {n: text_seed(n) for n in texts}}
-    (tmp / "record.json").write_text(json.dumps(rec, indent=1, ensure_ascii=False) + "\n")
+    (tmp / "record.json").write_text(json.dumps(rec, indent=1, ensure_ascii=False, allow_nan=False) + "\n")
     if OUT_DIR.exists():
         raise SystemExit(f"{OUT_DIR} appeared during the run; the result is left in {tmp}")
     tmp.rename(OUT_DIR)
