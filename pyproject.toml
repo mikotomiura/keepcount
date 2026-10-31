@@ -8,6 +8,7 @@ dependencies = [
     # the generator, pinned to the same commit as the works of words (cited as Zenodo 10.5281/zenodo.23681773)
     "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
     "numpy==2.5.4",
+    "pillow==13.0.0",
 ]
 
 [dependency-groups]

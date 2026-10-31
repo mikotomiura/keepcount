@@ -1,0 +1,5 @@
+A keystroke has a time and nothing else that we keep. From the times alone we can count a few things. The interval is the gap between one key and the next. Half the gaps in a stretch of typing are shorter than the median interval, and half are longer.
+
+A pause is a gap of two seconds or more. People pause between sentences, before a hard word, or when they look away. A burst is a run of keys with no pause in it.
+
+These counts describe how the typing went, not what was typed and not how the typist felt. A slow stretch may be careful thought, a phone call, or a cup of tea. The numbers cannot tell them apart, and we do not ask them to.

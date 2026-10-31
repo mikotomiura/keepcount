@@ -1,0 +1,5 @@
+The rule takes two numbers and gives three. The first number sets how fine the pattern is: more waves, closer together. The second sets how deep it is: higher hills and lower valleys. Both together set how sharp the edges are.
+
+The rule does not say where the numbers come from. Here they come from typing: how quickly the keys follow one another, and how long the hands rest. Nothing about the words themselves goes in.
+
+A seed draws the phases of the waves. The same numbers with another seed give another surface of the same kind. So a tile is not a picture of the typing. It is one surface the rule allows for that typing.
