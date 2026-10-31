@@ -1,0 +1,40 @@
+{
+ "purpose": "Prototype v6c: the identification of v6 (count 2) reported with the measures of keystroke biometrics and its dependence on the number of persons. Asked for by the keystroke-biometrics reviewer of the pre-review of paper A's outline (rank_auc is not the field's measure; top-1 is 0.010 against chance 0.005; no dependence on the number of persons) and decided by the researcher (decision 8 of .steering/20261031-paper-a-outline). Nothing else of v6 is changed: the same persons, stages, units, directions and the main standardisation.",
+ "fixed_before_running": "Written on 2026-11-01 after seeing v6's record (results/prototype_v6/record.json, SHA-256 4672ad73eb24d0716ff52ec31f9e000b0027c4663949668e0cfe598568dc11d3): its rank_auc, top1 and the stage differences per cell, and the count 1 shares. Not seen before writing: any Rank-n rate above 1, any EER, any value for a subset of the persons.",
+ "version": "6c",
+ "v6": {
+  "conditions": {"file": "works/conditions/prototype_v6.json", "sha256": "afc4c330c7a3862ca9f2d6a1ad6d0c1d84ff68ff3b2baf4b39acdd0b6085b078"},
+  "record": {"file": "results/prototype_v6/record.json", "sha256": "4672ad73eb24d0716ff52ec31f9e000b0027c4663949668e0cfe598568dc11d3"},
+  "reuse": "data, eligibility, draw order, series, tiles, stages S0/S1/S2, units and the three directions exactly as v6 (the functions of works/prototype_v6.py, unchanged since v6's run at f07a394). Only count 2 is made; count 1 and the figures are not."
+ },
+ "persons": "the 200 KUPA and 200 Aalto persons of v6, drawn again as v6 does; stop unless the SHA-256 of the sorted ids equals v6's record (kupa a062fddb..., aalto 1ab07285...).",
+ "standardise": "v6's main standardisation only (per set, per feature, over the persons of the set in use; features with standard deviation 0 in either set dropped). In a subset (population below) the sets are the subset's persons.",
+ "check": "at N = 200, for every direction, unit and stage, top1 and rank_auc computed here equal v6's record (absolute difference below 1e-12); otherwise stop before writing anything.",
+ "counts": {
+  "rank_n": "per evaluation person i, with r = 1 + (number of impostor distances below the genuine one) and t = (number of impostor distances equal to it): the rate of identification within rank n is min(1, max(0, (n - r + 1) / (t + 1))) (ties broken at random in expectation; n = 1 gives v6's top1). n = 1, 5, 10, 20; chance n / N. Mean over i with the 95% percentile interval of 2000 bootstrap resamples of the evaluation persons, numpy.random.default_rng([20261031, 63, 1, dataset, direction, stage, unit]).",
+  "eer": "pooled over persons: genuine distances (N) against all impostor distances (N (N - 1)). For each threshold among the distinct distances, FAR = share of impostor distances at or below it and FRR = share of genuine distances above it; EER = (FAR + FRR) / 2 at the threshold where |FAR - FRR| is smallest (the first such threshold in increasing order). Reported with that threshold's FAR and FRR. No interval.",
+  "population": "N = 25, 50, 100 and 200. For N below 200: 200 subsets of N persons drawn without replacement from the 200, numpy.random.default_rng([20261031, 63, 2, dataset, direction, N]).choice(200, N, replace=False) for each subset in turn; the same persons are the registration and the evaluation set; standardised within the subset; top1, rank-5 rate and rank_auc of the subset. Reported: mean and the 2.5 and 97.5 percentiles over the 200 subsets, and the chance 1 / N and 5 / N. N = 200 is the full set (one value).",
+  "rng_codes": "as v6: dataset KUPA 0, Aalto 1; direction copy->essay 0, essay->copy 1, Aalto A->B 0; stage S0 0, S1 1, S2 2; unit sentence 0, window_10s 1. The subsets of a dataset and direction are the same for every stage and unit."
+ },
+ "main_cells": "fixed before running, shown first: KUPA copy -> essay, sentence unit, S0 / S1 / S2: rank-1 / 5 / 10 / 20 rates against chance, EER, and the population table. Everything else follows in the order of this file and is read descriptively; there is no threshold or test in v6c.",
+ "record": {
+  "public": "results/prototype_v6c/record.json holds counts over persons and subsets and the provenance. No press time, gap, key, per-person vector, per-person value or person id is written; the ids are recorded only as the SHA-256 of their sorted list.",
+  "provenance": "git commit and dirty state of the conditions, code and lock; SHA-256 of the conditions, v6's conditions and record, the code and the three data files; versions"
+ },
+ "prediction": "Claude's, written before running. (a) rank_auc is nearly flat over N at every stage (means within 0.03 of each other), since it is a rank normalised by the number of impostors. (b) top1 falls as N grows, and its ratio to chance (top1 times N) stays of the same order: at S1 in KUPA about 2 at N = 200 and between 1 and 5 for N = 25-100; at S0 far above chance (ratio above 20 at N = 200). (c) The rank-n rate at S1 in KUPA stays within a few times n / 200 (rank-20 below 0.4). (d) EER at S1 in KUPA between 0.25 and 0.40, at S0 below 0.20; Aalto below KUPA at every stage. No value of v6c had been seen.",
+ "limits_written_before": "as v6 (browser recordings, mostly English learners in KUPA, one sitting, S0 a summary, Aalto within one session). The nearest-neighbour match of standardised summaries is one attack, not the strongest: the rates are lower bounds for what an attacker with a registration record could do with these observables, not the information the observables carry. The subsets are drawn from the same 200 persons, so the population table shows how the rates change with N among these persons, not for a larger population; subsets overlap and are not independent. Only identification is counted, not impersonation.",
+ "generator": {
+  "requirement": "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+  "commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+  "library_sha256": {
+   "__init__.py": "d5980876e37cb7a1f5dc379028ab50f7a0c1d77d84c7651ee5d1beefd623b6ab",
+   "field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
+   "lexicon.py": "36cad1e49a25b352a7ae04868c6693ef349e8276d51909061eeb378085065e81",
+   "mapping.py": "83a50faaa664ddcb99004392e13a73fb096a85588a8b3c423b2c8b71ce626d26",
+   "transform.py": "5d35c9c10dfa6c8d5d3b2a9e8126ab45b895a1be14e05650c3ef60ffd3431bd1"
+  }
+ },
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1"
+}
