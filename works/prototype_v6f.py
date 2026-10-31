@@ -53,6 +53,7 @@ QUARTER_ROW = 90
 MIN_TILES_QUARTERS = 16
 PREFIX = 70
 MAIN = (("kupa", "essay"), ("lwp", "lwp"))
+DQ_TOL = 1e-9  # a change of q below this is the rounding of times rebuilt by cumsum, not a change
 
 
 # ---------------------------------------------------------------- operations
@@ -105,7 +106,10 @@ def paired(x: np.ndarray, y: np.ndarray) -> float:
 
 def img_scale(first: list[np.ndarray], where: str) -> tuple[np.ndarray, np.ndarray]:
     """The standard deviation of each number over all tiles of text of the persons, and the numbers kept (sd > 0)."""
-    sd = np.concatenate(first).std(axis=0)
+    allt = np.concatenate(first)
+    if not np.all(np.isfinite(allt)):
+        raise SystemExit(f"a non-finite tile number for {where}")
+    sd = allt.std(axis=0)
     keep = sd > 0
     if not keep.any():
         raise SystemExit(f"every number of the tiles is constant for {where}")
@@ -138,6 +142,8 @@ def img_terms(first: list[np.ndarray], sel: list[np.ndarray], how: str, where: s
     if n < 2:
         raise SystemExit(f"fewer than 2 persons for {where}")
     sd, keep = img_scale(first, where)
+    if not np.all(np.isfinite(np.concatenate(sel))):
+        raise SystemExit(f"a non-finite tile number for {where}")
     zt = [x[:, keep] / sd[keep] for x in first]
     zr = [x[:, keep] / sd[keep] for x in sel]
     parts = []
@@ -192,8 +198,9 @@ def quarters(n: int, how: str) -> list[np.ndarray]:
 QUARTER_PAIRS = {"oddeven": (0, 1, 2, 3), "halves": (0, 2, 1, 3)}  # base0 = d(Qa, Qb), change0 = (d(Qc, Qa) + d(Qd, Qb)) / 2
 
 
-def quarter_terms(vq: list[list[np.ndarray]], how: str, img: bool, where: str) -> np.ndarray:
-    """own0 per person from the four quarter vectors (summaries) or tile arrays (IMG) of text."""
+def quarter_terms(vq: list[list[np.ndarray]], how: str, img: bool, where: str) -> tuple[np.ndarray, list[int]]:
+    """own0 per person from the four quarter vectors (summaries) or tile arrays (IMG) of text, and the dropped
+    numbers."""
     a, b, c, d = QUARTER_PAIRS[how]
     if img:
         sd, keep = img_scale([np.concatenate(q) for q in vq], where)
@@ -201,6 +208,8 @@ def quarter_terms(vq: list[list[np.ndarray]], how: str, img: bool, where: str) -
         dist = paired
     else:
         allv = np.array([x for q in vq for x in q])
+        if not np.all(np.isfinite(allv)):
+            raise SystemExit(f"a non-finite value for {where}")
         sd = allv.std(axis=0)
         keep = sd > 0
         if not keep.any():
@@ -213,7 +222,7 @@ def quarter_terms(vq: list[list[np.ndarray]], how: str, img: bool, where: str) -
     change0 = np.array([(dist(q[c], q[a]) + dist(q[d], q[b])) / 2 for q in z])
     if not (np.all(np.isfinite(base0)) and np.all(np.isfinite(change0))):
         raise SystemExit(f"a non-finite value for {where}")
-    return win(change0, base0)
+    return win(change0, base0), [int(j) for j in np.flatnonzero(~keep)]
 
 
 # ---------------------------------------------------------------- persons
@@ -316,7 +325,7 @@ def build(ds: str, task: str, unit: str, chosen: list[str], series: dict, place:
                 raise SystemExit(f"{ds} {task} {unit} {row}: {rw[row].n} tiles, not {tt.n}")
             if row not in kept:
                 dq = np.abs(rw[row].q - tt.q)
-                tal[f"q_changed_{row}"].append(int((dq > 0).sum()))
+                tal[f"q_changed_{row}"].append(int((dq > DQ_TOL).sum()))
                 tal[f"median_abs_dq_{row}"].append(float(np.median(dq)))
         lab = v6b.labels(s, kinds)
         for how in v6b.BASELINE:
@@ -327,32 +336,54 @@ def build(ds: str, task: str, unit: str, chosen: list[str], series: dict, place:
             for row in rows:
                 img[st][row].append(features(rw[row], st))
         text_tiles.append(tt)
+    empty = [k for k, v in tal.items() if not v and not (k == "rests" and unit != "sentence")]
+    if empty:
+        raise SystemExit(f"{ds} {task} {unit}: no value for {empty}")
     return {"hv": hv, "img": img, "text_tiles": text_tiles, "left_out": left,
             "tallies": {k: v6d.five(v) for k, v in tal.items() if v}}
 
 
-def reproduce(b: dict, ds: str, task: str, unit: str, ref: dict) -> int:
-    """The kept rows counted as v6b (KUPA) or v6e (LWP) must equal their records; the number of counts compared."""
+def expected_stages(ds: str, how: str, row: str) -> set[str]:
+    """The stages of a kept row in v6b's (KUPA) or v6e's (LWP) record."""
+    st = {"S0", "S1", "S2", "LOC"} | ({"SEQ"} if how == "halves" else set())
+    if ds == "lwp":
+        st |= {"R_pos", "R_lag"}
+    if row == "text/none":
+        st -= {"LOC", "R_pos", "R_lag"}
+    return st
+
+
+def reproduce(b: dict, ds: str, task: str, unit: str, ref: dict) -> tuple[int, dict]:
+    """The kept rows counted as v6b (KUPA) or v6e (LWP) must equal their records; the number of counts compared and
+    the counts (share, CI, reading and medians of each kept row and stage), per baseline."""
     kept = v6.ROWS["kupa"][unit]
-    n = 0
+    n, out = 0, {}
     for how in v6b.BASELINE:
         hv = {row: b["hv"][how][row] for row in kept}
         if ds == "kupa":
             got = v6b.count(hv, kept, task, unit, how)
         else:
             got = v6e.count(hv, kept, unit, how, tuple(v6e.STAGE), 69)
+        out[how] = {}
         for row in kept[1:]:
-            for st, x in ref[how][row].items():
-                if not (isinstance(x, dict) and "share_vs_own" in x):
-                    continue
-                y = got[row][st]
+            have = {st for st, x in ref[how][row].items() if isinstance(x, dict) and "share_vs_own" in x}
+            if have != expected_stages(ds, how, row):
+                raise SystemExit(f"{ds} {task} {unit} {how} {row}: the record holds stages {sorted(have)}")
+            out[how][row] = {}
+            for st in sorted(have):
+                x, y = ref[how][row][st], got[row][st]
                 for f in ("persons", "share_vs_own", "share_vs_own_ci"):
                     if y[f] != x[f]:
                         raise SystemExit(f"{ds} {task} {unit} {how} {row} {st}: {f} differs from the record")
+                out[how][row][st] = {k: y[k] for k in ("persons", "share_vs_own", "share_vs_own_ci", "reading",
+                                                       "median_base", "median_change", "median_change_over_base")}
                 n += 1
         if got["persons"] != ref[how]["persons"]:
             raise SystemExit(f"{ds} {task} {unit} {how}: count persons differ from the record")
-    return n
+    want = sum(len(expected_stages(ds, how, row)) for how in v6b.BASELINE for row in kept[1:])
+    if n != want:
+        raise SystemExit(f"{ds} {task} {unit}: {n} counts compared, not {want}")
+    return n, out
 
 
 def key_of(ds: str, task: str, unit: str, st: str, ri: int, how: str) -> list[int]:
@@ -402,7 +433,10 @@ def reference_quarters(b: dict, ds: str, task: str, unit: str) -> dict:
     kept = v6.ROWS["kupa"][unit]
     tt = b["text_tiles"]
     sel = [i for i, t in enumerate(tt) if t.n >= MIN_TILES_QUARTERS]
-    out: dict = {"persons": len(sel)}
+    out: dict = {"persons": len(sel),
+                 "keys": "share0: [20261031, 70, dataset, task, unit, stage, 90, baseline]; share_R and the CI of "
+                         "share_R - share0: the key of R's count (v6b's or v6e's for the summaries of the kept rows, "
+                         "prefix 70 otherwise)"}
     if len(sel) < 2:
         raise SystemExit(f"{ds} {task} {unit}: fewer than 2 persons with 16 tiles")
     for how in v6b.BASELINE:
@@ -414,17 +448,17 @@ def reference_quarters(b: dict, ds: str, task: str, unit: str) -> dict:
             else:
                 vq = [[tt[i].vectors(q)[st] for q in quarters(tt[i].n, how)] for i in sel]
             where = f"{ds} {task} {unit} {how} {st} quarters"
-            own0 = quarter_terms(vq, how, img, where)
+            own0, dropped0 = quarter_terms(vq, how, img, where)
             k0 = key_of(ds, task, unit, st, QUARTER_ROW, how)
             idx0 = np.random.default_rng(k0).integers(0, len(sel), (v6.N_BOOT, len(sel)))
             c0 = v6.ci(own0, idx0)
-            st_res = {"share0": float(own0.mean()), "share0_ci": c0, "paired": {}}
+            st_res = {"share0": float(own0.mean()), "share0_ci": c0, "dropped_features": dropped0, "paired": {}}
             if st != "S0":
                 for ri, row in enumerate(rows[1:], start=1):
                     if row.startswith("text/"):
                         continue
                     if img:
-                        _, own_r = one_img([b["img"][st][rows[0]][i] for i in sel], [b["img"][st][row][i] for i in sel],
+                        res_r, own_r = one_img([b["img"][st][rows[0]][i] for i in sel], [b["img"][st][row][i] for i in sel],
                                            how, key_of(ds, task, unit, st, ri, how))
                         kr = key_of(ds, task, unit, st, ri, how)
                     else:
@@ -437,6 +471,7 @@ def reference_quarters(b: dict, ds: str, task: str, unit: str) -> dict:
                             raise SystemExit(f"{where} {row}: own_summary differs from v6b's one()")
                     idx = np.random.default_rng(kr).integers(0, len(sel), (v6.N_BOOT, len(sel)))
                     st_res["paired"][row] = {"share_R": float(own_r.mean()),
+                                             "dropped_features": res_r["dropped_features"] if img else chk["dropped_features"],
                                              "share_R_minus_share0": float((own_r - own0).mean()),
                                              "ci": v6.ci(own_r - own0, idx)}
             res[st] = st_res
@@ -536,8 +571,12 @@ def run(c: dict, c6: dict, m: dict, r: dict, recs: dict) -> dict:
             for unit in v6.UNIT:
                 b = build(ds, task, unit, chosen, series, place, m, r, rest_ms)
                 ref = recs["v6b"]["count"][f"{task}_{unit}"] if ds == "kupa" else recs["v6e"]["count"][unit]
-                rec["reproduced_counts"][f"{name}_{unit}"] = reproduce(b, ds, task, unit, ref)
+                n_rep, kept_counts = reproduce(b, ds, task, unit, ref)
+                rec["reproduced_counts"][f"{name}_{unit}"] = n_rep
                 rec["count"][name][unit] = count(b, ds, task, unit)
+                for how, rows in kept_counts.items():
+                    for row, sts in rows.items():
+                        rec["count"][name][unit][how][row].update(sts)
                 rec["left_out"][name][unit] = b["left_out"]
                 rec["tallies"][name][unit] = b["tallies"]
                 if (ds, task) in MAIN and unit == "sentence":
@@ -545,7 +584,21 @@ def run(c: dict, c6: dict, m: dict, r: dict, recs: dict) -> dict:
                 del b
         del series
     rec["rule"] = evaluate(rec["count"], rec["reference_quarters"])
-    return rec
+    return {"main_cells": main_cells(rec), **rec}
+
+
+def main_cells(rec: dict) -> dict:
+    """The main cells of the conditions, in their order (copies of the counts below)."""
+    out: dict = {}
+    for how in ("oddeven", "halves"):
+        for ds, task in MAIN:
+            cell = rec["count"][f"{ds}_{task}"]["sentence"][how]
+            img = ("S1", "S2", "SEQ", *IMG) if how == "halves" else ("S1", "S2", *IMG)
+            out[f"{ds}_{task} | {how}"] = {
+                row: {st: {k: cell[row][st][k] for k in ("share_vs_own", "share_vs_own_ci")}
+                      for st in (img if row in (GATHERED["sentence"], *SCALES) else IMG)}
+                for row in [GATHERED["sentence"], *SCALES, *OPERATIONS["sentence"]]}
+    return out
 
 
 def main() -> None:
@@ -562,9 +615,9 @@ def main() -> None:
     for p, h in c["earlier"].items():
         cm.check_file(ROOT / p, h, p)
     c6 = json.loads((ROOT / "works/conditions/prototype_v6.json").read_bytes())
-    c4 = json.loads((ROOT / c6["mapping"]["v4_conditions"]["file"]).read_bytes())
     if c6["mapping"]["v4_conditions"]["file"] != "works/conditions/prototype_v4.json":
         raise SystemExit("v4's conditions are not the file named in v6f's conditions")
+    c4 = json.loads((ROOT / c6["mapping"]["v4_conditions"]["file"]).read_bytes())
     if c6["generator"] != c["generator"] or c6["units"]["rest_ms"] != 2000.0:
         raise SystemExit("the generator or rest_ms of v6's conditions differs")
     recs = {"v6": json.loads((ROOT / "results/prototype_v6/record.json").read_text()),
