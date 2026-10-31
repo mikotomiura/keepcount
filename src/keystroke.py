@@ -315,3 +315,95 @@ def segments(times: np.ndarray, starts: list[int], rest_ms: float) -> list[Segme
         out.append(Segment(a, b - a, int(g.size), float(np.median(g[~rest])) if (~rest).any() else None,
                            float(g[rest].sum() / g.sum())))
     return out
+
+
+# ---------------------------------------------------------------- v4 (prototype_v4; the atlas. The functions above stay as v1-v3 used them)
+
+
+def _sentence_bounds(starts: list[int], n_presses: int) -> list[tuple[int, int]]:
+    if not starts or starts[0] != 0 or any(b <= a for a, b in zip(starts, starts[1:])) or starts[-1] >= n_presses:
+        raise ValueError("sentence starts must begin at 0, rise strictly and lie inside the series")
+    return list(zip(starts, [*starts[1:], n_presses]))
+
+
+def segments_counted(times: np.ndarray, starts: list[int], rest_ms: float, counting: str) -> list[Segment]:
+    """One segment per sentence, with the gap before a sentence counted in it ('before', as segments()), in the
+    previous sentence ('after') or in none ('none'). gaps[j] is the gap before press j + 1; sentence [a, b) holds
+    gaps[a - 1 .. b - 2] ('before'), gaps[a .. b - 1] ('after'; the last sentence gaps[a .. n - 2]) or
+    gaps[a .. b - 2] ('none'). presses is b - a under every counting."""
+    t = check_times(times)
+    if not (np.isfinite(rest_ms) and rest_ms > 0):
+        raise ValueError("the rest threshold must be positive")
+    if counting not in ("before", "after", "none"):
+        raise ValueError(f"unknown counting {counting!r}")
+    gaps = np.diff(t)
+    out = []
+    for a, b in _sentence_bounds(starts, t.size):
+        lo = max(a - 1, 0) if counting == "before" else a
+        hi = min(b, gaps.size) if counting == "after" else b - 1
+        g = gaps[lo:hi]
+        if g.size == 0:
+            raise ValueError("a sentence holds no gap under this counting")
+        rest = g >= rest_ms - TOL_MS
+        out.append(Segment(a, b - a, int(g.size), float(np.median(g[~rest])) if (~rest).any() else None,
+                           float(g[rest].sum() / g.sum())))
+    return out
+
+
+def rests_inside(times: np.ndarray, text: str, rng: np.random.Generator) -> np.ndarray:
+    """The series with, in every sentence but the first, the gap before the sentence swapped with the gap before one
+    of its own word starts, chosen uniformly. The gaps of each sentence (under the counting 'before') keep their
+    multiset; only the place of the gap before the sentence changes."""
+    t = check_times(times)
+    labels = positions(text)
+    if len(labels) != t.size:
+        raise ValueError("the series and the text differ in the number of presses")
+    gaps = np.diff(t).copy()
+    for a, b in _sentence_bounds(sentence_starts(text), t.size)[1:]:
+        inner = [i for i in range(a + 1, b) if labels[i] == "word_start"]
+        if not inner:
+            raise ValueError(f"the sentence starting at press {a} has no word start inside it")
+        j = inner[int(rng.integers(len(inner)))] - 1
+        gaps[a - 1], gaps[j] = gaps[j], gaps[a - 1]
+    return np.concatenate([[0.0], np.cumsum(gaps)])
+
+
+def reordered_by_runs(times: np.ndarray, text: str, rest_ms: float, mean_run_fast: float, mean_run_slow: float,
+                      rng: np.random.Generator) -> np.ndarray:
+    """The gaps of a series from the text put in the order of the regimes: rests (>= rest_ms) at places chosen
+    uniformly; the other places in runs alternating fast (gaps labelled within_word) and slow (the other labels),
+    geometric run lengths with the given means, a run cut when its class is used up and the remaining places given to
+    the other class; each class filled with a random permutation of its own gaps. The multiset of gaps is kept."""
+    t = check_times(times)
+    labels = positions(text)[1:]
+    if len(labels) != t.size - 1:
+        raise ValueError("the series and the text differ in the number of presses")
+    if not (np.isfinite(rest_ms) and rest_ms > 0 and np.isfinite(mean_run_fast) and mean_run_fast >= 1
+            and np.isfinite(mean_run_slow) and mean_run_slow >= 1):
+        raise ValueError("rest_ms must be positive and the mean runs at least 1")
+    gaps = np.diff(t)
+    is_rest = gaps >= rest_ms - TOL_MS
+    is_fast = np.array([lab == "within_word" for lab in labels]) & ~is_rest
+    pools = {"rest": gaps[is_rest], "fast": gaps[is_fast], "slow": gaps[~is_rest & ~is_fast]}
+    n = gaps.size
+    rest_at = np.zeros(n, dtype=bool)
+    rest_at[rng.choice(n, size=pools["rest"].size, replace=False)] = True
+    left = {"fast": pools["fast"].size, "slow": pools["slow"].size}
+    kind = np.empty(n, dtype=object)
+    kind[rest_at] = "rest"
+    cur = "fast" if rng.random() < mean_run_fast / (mean_run_fast + mean_run_slow) else "slow"
+    places = np.flatnonzero(~rest_at)
+    order: list[str] = []
+    while len(order) < places.size:
+        if left[cur] == 0:
+            cur = "slow" if cur == "fast" else "fast"
+        length = int(rng.geometric(1.0 / (mean_run_fast if cur == "fast" else mean_run_slow)))
+        take = min(length, left[cur])
+        order.extend([cur] * take)
+        left[cur] -= take
+        cur = "slow" if cur == "fast" else "fast"
+    kind[places] = order
+    out = np.empty(n)
+    for c in ("rest", "fast", "slow"):
+        out[kind == c] = rng.permutation(pools[c])
+    return np.concatenate([[0.0], np.cumsum(out)])

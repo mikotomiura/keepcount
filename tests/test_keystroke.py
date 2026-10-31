@@ -153,3 +153,84 @@ def test_matched_regimes_check_inputs():
         ks.matched_regimes("a", _timing(), 2000.0, 30.0)
     with pytest.raises(ValueError):
         ks.matched_regimes("ab cd", _timing(), 2000.0, 0.5)
+
+
+# ---------------------------------------------------------------- v4
+
+
+def _r(x):
+    """Gaps compared after a round trip through cumsum and diff (which moves them by about 1e-12 ms)."""
+    return np.round(np.asarray(x), 6)
+
+
+def _text_series(name: str = "elements", seed: int = 3):
+    text = open(TEXTS / f"{name}.en.txt").read()
+    return text, ks.from_text(text, _timing(), np.random.default_rng(seed))
+
+
+def test_segments_counted_before_is_segments():
+    text, t = _text_series()
+    starts = ks.sentence_starts(text)
+    assert ks.segments_counted(t, starts, 2000.0, "before") == ks.segments(t, starts, 2000.0)
+
+
+def test_segments_counted_moves_the_gap_before_a_sentence():
+    # presses 0 1 | 2 3 4 | 5 6 ; gaps before presses 1..6
+    t = np.concatenate([[0.0], np.cumsum([100.0, 3000.0, 100.0, 200.0, 5000.0, 300.0])])
+    starts = [0, 2, 5]
+    b = ks.segments_counted(t, starts, 2000.0, "before")
+    a = ks.segments_counted(t, starts, 2000.0, "after")
+    n = ks.segments_counted(t, starts, 2000.0, "none")
+    assert [s.gaps for s in b] == [1, 3, 2] and [s.gaps for s in a] == [2, 3, 1] and [s.gaps for s in n] == [1, 2, 1]
+    assert [s.presses for s in b] == [s.presses for s in a] == [s.presses for s in n] == [2, 3, 2]
+    assert b[1].rest_share == pytest.approx(3000.0 / 3300.0) and b[0].rest_share == 0.0
+    assert a[0].rest_share == pytest.approx(3000.0 / 3100.0) and a[1].rest_share == pytest.approx(5000.0 / 5300.0)
+    assert all(s.rest_share == 0.0 for s in n) and n[1].speed_ms == 150.0
+    with pytest.raises(ValueError):
+        ks.segments_counted(t, starts, 2000.0, "middle")
+
+
+def test_rests_inside_keeps_the_gaps_of_every_sentence():
+    text, t = _text_series()
+    u = ks.rests_inside(t, text, np.random.default_rng(5))
+    starts = ks.sentence_starts(text)
+    bounds = list(zip(starts, [*starts[1:], t.size]))
+    g, h = _r(np.diff(t)), _r(np.diff(u))
+    labels = ks.positions(text)
+    assert u[-1] == pytest.approx(t[-1])
+    for i, (a, b) in enumerate(bounds):
+        lo = max(a - 1, 0)
+        assert sorted(g[lo:b - 1]) == sorted(h[lo:b - 1])
+        if i > 0:
+            moved = [j for j in range(a - 1, b - 1) if h[j] != g[j]]
+            # the gap before the sentence and the gap before one of its own word starts changed places
+            assert len(moved) == 2 and moved[0] == a - 1 and labels[moved[1] + 1] == "word_start"
+            assert h[moved[0]] == g[moved[1]] and h[moved[1]] == g[moved[0]]
+    assert ks.rests_inside(t, text, np.random.default_rng(5)).tolist() == u.tolist()
+    with pytest.raises(ValueError):
+        ks.rests_inside(t[:-1], text, np.random.default_rng(5))
+
+
+def test_reordered_by_runs_keeps_the_gaps_and_the_rests():
+    text, t = _text_series("rule")
+    u = ks.reordered_by_runs(t, text, 2000.0, 30.0, 8.0, np.random.default_rng(6))
+    assert np.sort(_r(np.diff(u))).tolist() == np.sort(_r(np.diff(t))).tolist()
+    assert np.sum(np.diff(u) >= 2000.0) == np.sum(np.diff(t) >= 2000.0)
+    with pytest.raises(ValueError):
+        ks.reordered_by_runs(t, text, 2000.0, 0.5, 8.0, np.random.default_rng(6))
+
+
+def test_reordered_by_runs_puts_each_class_in_runs():
+    text, t = _text_series("rule")
+    g = _r(np.diff(t))
+    labels = ks.positions(text)[1:]
+    fast = {x for x, lab in zip(g, labels) if lab == "within_word" and x < 2000.0}
+    # very long runs: the short gaps form one fast block and one slow block
+    u = _r(np.diff(ks.reordered_by_runs(t, text, 2000.0, 1e9, 1e9, np.random.default_rng(7))))
+    cls = ["f" if x in fast else "s" for x in u if x < 2000.0]
+    assert sum(1 for x, y in zip(cls, cls[1:]) if x != y) == 1
+    # runs of one: no two short gaps of the same class next to each other while both classes last
+    u1 = _r(np.diff(ks.reordered_by_runs(t, text, 2000.0, 1.0, 1.0, np.random.default_rng(8))))
+    c1 = ["f" if x in fast else "s" for x in u1 if x < 2000.0]
+    k = 2 * min(c1.count("f"), c1.count("s"))
+    assert all(x != y for x, y in zip(c1[:k], c1[1:k]))
