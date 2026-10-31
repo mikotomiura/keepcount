@@ -1,0 +1,42 @@
+{
+ "purpose": "Prototype v6d: v6b's reference observable of the place of the pauses (R, called LOC in v6b) split into its position part and its order part, and the lengths of the records of v6 and v6b. Asked for by the keystroke-biometrics reviewer of round 2 of the pre-review of paper A's outline (R holds the lag-1 correlation of the gaps, an order statistic that shuffling breaks by construction, so R's detection of shuffling may not be about the place of the pauses; the dependence on the length of the records is not stated) and decided by the researcher (decisions 10 and 11 of .steering/20261031-paper-a-outline). Nothing of v6b is changed: the same persons, tasks, units, parts, rows, baselines and the count.",
+ "fixed_before_running": "Written on 2026-11-01 after seeing v6b's record (results/prototype_v6b/record.json, SHA-256 94d3feda2b4a499738e2711821f930a88443ddca05e02c31782ad564c9cacb6f): every share of S0, S1, S2, SEQ and LOC, and its notes. Not seen before writing: any share of a part of LOC, any length of a record (beyond v6's tile medians and person counts in its record).",
+ "version": "6d",
+ "v6b": {
+  "conditions": {"file": "works/conditions/prototype_v6b.json", "sha256": "ae52effd10d6235051839df1ebfa35249e283846090805213b5b3c0e6272ba7a"},
+  "record": {"file": "results/prototype_v6b/record.json", "sha256": "94d3feda2b4a499738e2711821f930a88443ddca05e02c31782ad564c9cacb6f"},
+  "reuse": "persons (the 200 new KUPA persons of v6b, ids checked against v6b's SHA-256), labels, LOC and the count (works/prototype_v6b.py, unchanged since v6b's run at e74c880; the SHA-256 of each code file recorded in v6b's record must equal the file read now)."
+ },
+ "split": {
+  "R_pos": "the first six numbers of LOC: the median ln gap of sentence, subsentence, word and within gaps, sentence minus within, and the share of rest time (gaps of 2 s or more) at sentence and subsentence gaps. They depend on which gaps carry which label, not on the order of the gaps.",
+  "R_lag": "the seventh number of LOC alone: the lag-1 Pearson correlation of ln gaps over adjacent held gaps (v6b's definition, 0 with fewer than 3 pairs or a constant side). It depends on the order of the gaps.",
+  "count": "v6b's count 1 (works/prototype_v6b.py one()) on R_pos and on R_lag, for every task (essay, copy), unit (sentence, window_10s), baseline (oddeven, halves) and row but text/none (where LOC is not defined), on the persons of LOC of that row (the same persons as v6b's LOC). Standardisation as in one(): each kept feature divided by its standard deviation over the 'text' halves of those persons; a feature with standard deviation 0 is dropped and recorded; if every feature is dropped the run stops. Bootstrap key [20261031, 67, task, unit, part, row index, baseline] with part R_pos 0, R_lag 1, and v6b's codes for task, unit, row index and baseline.",
+  "check": "LOC itself is counted again with v6b's key; its share_vs_own and median_change_over_base must equal v6b's record for every cell and row (absolute difference below 1e-12), otherwise stop before writing."
+ },
+ "lengths": {
+  "persons": "v6's 200 KUPA and 200 Aalto persons (drawn as v6; ids checked against v6's record) and v6b's 200 KUPA persons.",
+  "counts": "per person and part: counted presses, sentences (KUPA: cut at the full-stop keys as v6; Aalto: the presented sentences of the part) and full 10 s windows; for v6b's persons also the number of tiles of each unit and the number in each half under each baseline. KUPA parts: copy, essay; Aalto parts: sentences 1-7, 8-15.",
+  "summary": "per dataset, set of persons and part: minimum, 25th, 50th and 75th percentile and maximum over persons (numpy.percentile, method linear). No per-person value is written."
+ },
+ "main_cells": "fixed before running, shown first: v6b's main cell (KUPA essay, sentence unit, odd/even baseline), rows inside, shuffled and shuffled_in_halves: share_vs_own of LOC, R_pos and R_lag. Everything else follows in the order of this file and is read descriptively, with v6's two-axis reading (detection against 0.5, size against 0.60).",
+ "record": {
+  "public": "results/prototype_v6d/record.json holds counts and summaries over persons and the provenance. No press time, gap, key, per-person vector, per-person value or person id is written; ids only as the SHA-256 of their sorted list.",
+  "provenance": "git commit and dirty state of the conditions, code and lock; SHA-256 of the conditions, v6b's conditions and record, v6's conditions and record, the code and the three data files; versions"
+ },
+ "prediction": "Claude's, written before running. (a) R_pos: shuffled and shuffled_in_halves above 0.60 in every cell (shuffling moves gaps away from their labels, so the medians per label converge); inside about as LOC (0.5-0.7, undecided in most cells). (b) R_lag: shuffled and shuffled_in_halves below or undecided in most cells (one noisy number, whose own difference between halves is large against the drop of a small lag-1 to about 0); inside below 0.60. (c) The KUPA essay has a median of 10-15 sentences per person and the copy about 22; Aalto parts 7 and 8 sentences by design. No value of v6d had been seen.",
+ "limits_written_before": "as v6b (one dataset, mostly English learners, one sitting, LOC chosen after the exploration and confirmed on new persons of the same dataset, LOC follows Conijn et al.'s locations roughly). R_pos and R_lag are parts of an observable chosen after seeing v6; this split is chosen after seeing v6b's record and is read as a decomposition of v6b's result, not as a new confirmation. The six numbers of R_pos are not independent.",
+ "generator": {
+  "requirement": "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+  "commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+  "library_sha256": {
+   "__init__.py": "d5980876e37cb7a1f5dc379028ab50f7a0c1d77d84c7651ee5d1beefd623b6ab",
+   "field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
+   "lexicon.py": "36cad1e49a25b352a7ae04868c6693ef349e8276d51909061eeb378085065e81",
+   "mapping.py": "83a50faaa664ddcb99004392e13a73fb096a85588a8b3c423b2c8b71ce626d26",
+   "transform.py": "5d35c9c10dfa6c8d5d3b2a9e8126ab45b895a1be14e05650c3ef60ffd3431bd1"
+  }
+ },
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1"
+}
