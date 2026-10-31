@@ -1,0 +1,52 @@
+{
+ "purpose": "Prototype v5 of the works from keystrokes: the difference between images of v4 measured again with numbers that do not depend on the phase of the field's lattice (decision 5 of .steering/20261031-atlas-v4). The tiles are those of v4 (the same series, random keys, rows, units and fields, made by the functions of works/prototype_v4.py); only the counts are new: the depth and the fineness of each tile, compared between rows, between fields and between seed indices of the same row.",
+ "fixed_before_running": "Written on 2026-10-31 after seeing the results of v1 to v4 (results/prototype_v4, commit 7afc35b). The numbers (decision 1 of .steering/20261031-atlas-v5), the baselines (decision 2) and the rows and units (decision 3) are changes made after seeing v4's pixel-by-pixel difference and three of its figures. Before writing, the two numbers were computed on a 6 x 6 grid of p and q on the four fields only (no series): depth rises with q (0.03 to 0.29) and fineness with p (6 to 15 cycles). No count of v5 on any series had been made.",
+ "version": 5,
+ "tiles": {
+  "from": "works/conditions/prototype_v4.json and the functions series, pq, tile and figure of works/prototype_v4.py (imported, not copied); every key of v4 below is read from v4's conditions file, whose SHA-256 is given",
+  "v4_conditions": {
+   "file": "works/conditions/prototype_v4.json",
+   "sha256": "c334f89543fc84bd90e02f6d3eae105d0e285643628aeda809dc4bc7ef731e8e"
+  },
+  "v4_record": {
+   "file": "results/prototype_v4/record.json",
+   "sha256": "d8c6ab6a842bcde50eb11bae9eb0974b6d6307b65f27bcaebeaea1831472c195"
+  },
+  "check": "for seed index 0, the figures of v4 (external scale, fields 42-45, and min-max on 42) are built in memory from the same tiles and their PNG bytes must have the SHA-256 given in v4's record; the run stops otherwise. No figure is written.",
+  "units": [
+   "sentence",
+   "window_10s"
+  ],
+  "note": "the 30 s windows have no tiles in v4 and get none here"
+ },
+ "numbers": {
+  "grey": "the tile of v4 (clipped floats before 8 bits), origin lower left as v4",
+  "depth": "standard deviation of the grey over the pixels of a tile (population, ddof 0)",
+  "fineness": "radial centroid of the power spectrum of the tile: G = grey - mean(grey); P = |FFT2(G)|^2 over the n x n bins; k = numpy.fft.fftfreq(n) * n on both axes; r = sqrt(kx^2 + ky^2) in cycles per tile; fineness = sum(r P) / sum(P), the zero bin having r = 0; the run stops if sum(P) = 0",
+  "not_mixed": "depth and fineness are compared separately (different units)"
+ },
+ "counts": {
+  "pairing": "tiles are paired by index up to the smaller number of tiles of the two (as v4)",
+  "difference": "for a pair of rows of tiles A and B and a number d: mean over paired tiles j of |d(A_j) - d(B_j)|",
+  "between_rows": "per text, unit and seed index: for each row R other than the first and each field, the difference between R and the first row on that field; mean over the four fields (as v4)",
+  "between_fields": "per text, unit, row and seed index: the mean over fields 43-45 of the difference between the row on that field and on 42 (as v4)",
+  "between_seeds": "per text, unit, row and field: the difference between seed index k and k + 1 of the same row on the same field, k = 0..8; mean over the four fields; one value per k (nine)",
+  "summary": "between_rows and between_fields by median, min and max over the ten seed indices; between_seeds by median, min and max over the nine pairs",
+  "map_check": "the handoff's point that the numbers may be a monotone image of p and q: (1) depth and fineness on the grid p, q in {0, 0.2, .., 1} on each field (sentence tile size and window tile size), and (2) per text and unit, the Spearman correlation over all tiles of all rows, fields and seed indices of depth with q, depth with p, fineness with p and fineness with q",
+  "prediction": "Claude's, written before running: between_fields is small against between_seeds for every row and both numbers (the numbers do not depend on the phase); among the rows, those that differ from the first by clearly more than between_seeds are reordered and regimes in fineness (their p spread per sentence and per 10 s window was about twice that of the text in v4) and none in depth (q = 1 in most sentences in v4); inside equals the first per sentence (difference 0). No threshold: the atlas describes, it does not test."
+ },
+ "generator": {
+  "requirement": "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+  "commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+  "library_sha256": {
+   "__init__.py": "d5980876e37cb7a1f5dc379028ab50f7a0c1d77d84c7651ee5d1beefd623b6ab",
+   "field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
+   "lexicon.py": "36cad1e49a25b352a7ae04868c6693ef349e8276d51909061eeb378085065e81",
+   "mapping.py": "83a50faaa664ddcb99004392e13a73fb096a85588a8b3c423b2c8b71ce626d26",
+   "transform.py": "5d35c9c10dfa6c8d5d3b2a9e8126ab45b895a1be14e05650c3ef60ffd3431bd1"
+  }
+ },
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1"
+}
