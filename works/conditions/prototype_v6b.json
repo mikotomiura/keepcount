@@ -1,0 +1,57 @@
+{
+ "purpose": "Prototype v6b: does an operation on a person's keystroke series exceed the person's own variation once the baseline and the observables are chosen to show it? A confirmation, on KUPA-KEYS persons not used in v6, of what was explored on v6's 200 persons (decision 1 and record 1 of .steering/20261031-v6b-own-variation). v6 stays as it is; v6b adds observables beside it: the order of the tiles in the image (SEQ) and the place of the pauses at the stage of times (LOC, not in the image).",
+ "fixed_before_running": "Written on 2026-10-31 after v6 (results/prototype_v6, e3a7fc3) and after an exploration on v6's 200 KUPA persons only (.steering/20261031-v6b-own-variation/explore.py and explore_kupa.txt; the features SEQ and LOC and the odd/even baseline were tried there, and their shares are known for those persons). Literature for the features: survey-a.md and survey-b.md of the same folder (Conijn et al. 2019's definitions checked in the full text). No value of any person drawn below had been computed.",
+ "version": "6b",
+ "data": {
+  "from": "works/conditions/prototype_v6.json: data.kupa (files, SHA-256, counted presses, order, equal times, sentence starts, word starts); Aalto is not used",
+  "v6_conditions": {
+   "file": "works/conditions/prototype_v6.json",
+   "sha256": "afc4c330c7a3862ca9f2d6a1ad6d0c1d84ff68ff3b2baf4b39acdd0b6085b078"
+  }
+ },
+ "participants": {
+  "draw": "the permutation of v6 (numpy.random.default_rng([20261031, 6, 0]).permutation over KUPA's sorted essay ids); the first 217 ids of it (those v6 looked at, whose 200 eligible ids are v6's persons, checked against v6's ids_sha256) are skipped; walking on from the 218th, the first 200 ids eligible under v6's KUPA rule (participants.kupa_eligible of v6's conditions) are taken",
+  "n": 200,
+  "check": "none of the persons taken is among v6's 200 (stop otherwise)"
+ },
+ "units": "v6's: sentence (counting before as the first row) and window_10s; rest_ms 2000; v4's mapping and relief on field 42; tiles by works/prototype_v6.Tiles",
+ "rows": "v6's KUPA rows and their random keys (works/prototype_v6.make_rows): sentence text/before, text/after, text/none, inside/before, shuffled/before, shuffled_in_halves/before; window_10s text, inside, shuffled, shuffled_in_halves. Tasks essay (main) and copy.",
+ "persons_per_cell": "as v6's count 1: at least 8 tiles of the row 'text' in the unit, and each part of every baseline holds at least one gap; the persons left out are counted",
+ "baselines": {
+  "decision": "decision 2",
+  "oddeven": "main: part A = the tiles of even index (0, 2, 4, ..), part B = the tiles of odd index",
+  "halves": "as v6: part A = the first floor(n / 2) tiles, part B = the rest",
+  "shuffled_in_halves": "the row keeps v6's definition (its split at tile floor(n / 2)) under both baselines"
+ },
+ "stages": {
+  "S0": "v6's (7 quantiles of ln gap over the gaps held by the part)",
+  "S1": "v6's (median and IQR of p and of q over the tiles of the part)",
+  "S2": "v6's (median and IQR of depth and of fineness)",
+  "SEQ": "the order of the tiles in the image, under the baseline halves only (odd and even parts are not contiguous): 4 numbers over the tiles of the part in order, the lag-1 Pearson correlation of p, of q (0 when either side is constant or the part has fewer than 3 tiles), the mean of |p_k+1 - p_k| and of |q_k+1 - q_k|",
+  "LOC": "the place of the pauses at the stage of times (not carried by the image). Each gap is labelled by the press after it: sentence (the press starts a sentence: v6's sentence starts), subsentence (the first alphanumeric press after a press of ',', ';' or ':' that is not a sentence start), word (a word start of v6 that is neither), within (an alphanumeric press after an alphanumeric press), other. After Conijn et al. 2019 (within words, between words, between subsentences, between sentences; their subsentences 'indicated by commas, semicolons, and colons, as in Baaijen et al. (2012)'). 7 numbers over the gaps held by the part: the median of ln gap at sentence, subsentence, word and within; the median at sentence minus the median within; the share of the time in gaps >= 2000 ms that lies in gaps labelled sentence or subsentence (0 if no such gap); the lag-1 Pearson correlation of ln gap over the pairs of consecutive gaps both held by the part (Condrey 2026: shuffled timings have a lag-1 autocorrelation near 0). A part without a gap of some label has no LOC vector; the person is left out of LOC in that cell and counted.",
+  "image": "S1, S2 and SEQ are what the image carries (S2 as a proxy of the image as in v6); S0 and LOC are at the stage of times"
+ },
+ "count": {
+  "as": "v6's count 1 (works/conditions/prototype_v6.json count_1_operations): standardise per cell and stage by the standard deviation over the persons' two part vectors of the row 'text'; base = d(text A, text B); change = (d(R A, text A) + d(R B, text B)) / 2; between = median over j != i of d(text A of i, text B of j); share vs own = share of persons with change > base (ties 1/2), share vs another; 95% CI from 2000 bootstrap resamples of the persons",
+  "rng": "bootstrap numpy.random.default_rng([20261031, 66, task, unit, stage, row index, baseline]) with stage S0 0, S1 1, S2 2, SEQ 3, LOC 4 and baseline oddeven 0, halves 1; task and unit codes as v6",
+  "reading": "v6's two axes on the share vs own: detection (lower end above 0.5) and size against 0.60 (upper end below 0.60 'below 0.60', lower end above 0.60 'above 0.60', otherwise 'undecided'); with the median ratio change / base",
+  "main_cells": "fixed before running, in this order: KUPA essay, sentence unit, baseline oddeven, rows inside, shuffled and shuffled_in_halves, stages S1, S2 and LOC; then SEQ (halves); everything else after"
+ },
+ "prediction": "Claude's, from the exploration on v6's persons (record 1): at the stage of times, LOC reads 'above 0.60' for shuffled and shuffled_in_halves in every cell and for inside in the sentence unit; in the image, S1, S2 and SEQ read 'below 0.60' or 'undecided' for every row (none 'above 0.60'). If so, the operations leave a mark at the stage of times that the compression to the image removes.",
+ "limits_written_before": "The features and the baseline were chosen after seeing v6 and the exploration on v6's persons; v6b confirms them on other persons of the same dataset, not on another dataset or task. LOC reads the kind of key (end, comma-like, alphanumeric, space), as v6 did to cut sentences; no character is kept. The location labels follow Conijn et al. 2019 only roughly (their 'time between sentences' may be measured from the period; here it is the gap before the first letter of the sentence). Lag-1 autocorrelation in a part of odd/even tiles uses only consecutive gaps inside the part.",
+ "record": "results/prototype_v6b/record.json: counts and summaries over persons, the SHA-256 of the sorted ids taken, the number of ids looked at, persons left out per cell and stage, provenance. No press time, gap, key, per-person vector or id.",
+ "generator": {
+  "requirement": "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+  "commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+  "library_sha256": {
+   "__init__.py": "d5980876e37cb7a1f5dc379028ab50f7a0c1d77d84c7651ee5d1beefd623b6ab",
+   "field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
+   "lexicon.py": "36cad1e49a25b352a7ae04868c6693ef349e8276d51909061eeb378085065e81",
+   "mapping.py": "83a50faaa664ddcb99004392e13a73fb096a85588a8b3c423b2c8b71ce626d26",
+   "transform.py": "5d35c9c10dfa6c8d5d3b2a9e8126ab45b895a1be14e05650c3ef60ffd3431bd1"
+  }
+ },
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1"
+}
