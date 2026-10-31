@@ -84,7 +84,7 @@ def labels(s: v6.Series, kinds: list[str]) -> np.ndarray:
     st, ws = set(s.starts), set(s.word_starts)
     n = s.times.size
     lab = np.full(n - 1, "other", dtype=object)
-    after_sub = False
+    after_sub = kinds[0] == "sub"
     for p in range(1, n):
         k, prev = kinds[p], kinds[p - 1]
         if k == "alnum":
@@ -161,50 +161,75 @@ def vectors(t: v6.Tiles, idx: np.ndarray, lab: np.ndarray, how: str) -> dict:
 # ---------------------------------------------------------------- count
 
 
+def has(v: tuple, st: str) -> bool:
+    return v[0][st] is not None and v[1][st] is not None
+
+
+def one(first: list, sel: list, st: str, rng_key: list[int]) -> dict:
+    """v6's count 1 for one stage and row on given persons: first and sel are their (A, B) vectors of 'text' and R."""
+    n = len(first)
+    if n < 2:
+        raise SystemExit(f"fewer than 2 persons for {rng_key}")
+    t_all = np.array([v[h][st] for v in first for h in (0, 1)])
+    sd = t_all.std(axis=0)
+    keep = sd > 0
+    if not keep.any():
+        raise SystemExit(f"every feature is constant for {rng_key}")
+
+    def z(x):
+        return x[keep] / sd[keep]
+
+    tA = np.array([z(v[0][st]) for v in first])
+    tB = np.array([z(v[1][st]) for v in first])
+    rA = np.array([z(v[0][st]) for v in sel])
+    rB = np.array([z(v[1][st]) for v in sel])
+    for a in (tA, tB, rA, rB):
+        if not np.all(np.isfinite(a)):
+            raise SystemExit(f"a non-finite value for {rng_key}")
+    base = np.linalg.norm(tA - tB, axis=1)
+    dAB = v6.distances(tA, tB)
+    between = np.array([np.median(np.delete(dAB[i], i)) for i in range(n)])
+    change = (np.linalg.norm(rA - tA, axis=1) + np.linalg.norm(rB - tB, axis=1)) / 2
+    own = np.where(change > base, 1.0, np.where(change == base, 0.5, 0.0))
+    other = np.where(change > between, 1.0, np.where(change == between, 0.5, 0.0))
+    idx = np.random.default_rng(rng_key).integers(0, n, (v6.N_BOOT, n))
+    c_own = v6.ci(own, idx)
+    pos = base > 0
+    return {"persons": n, "dropped_features": [int(j) for j in np.flatnonzero(~keep)],
+            "share_vs_own": float(own.mean()), "share_vs_own_ci": c_own, "reading": v6.reading(*c_own),
+            "share_vs_another": float(other.mean()), "share_vs_another_ci": v6.ci(other, idx),
+            "median_base": float(np.median(base)), "median_change": float(np.median(change)),
+            "median_between": float(np.median(between)),
+            "median_change_over_base": float(np.median(change[pos] / base[pos])) if pos.any() else None,
+            "base_zero": int((~pos).sum())}
+
+
 def count(halves: dict, rows: list[str], task: str, unit: str, how: str) -> dict:
-    """v6's count 1 per stage, persons without a vector for the stage left out (in every row together)."""
+    """v6's count 1 per row and stage; for LOC the persons are those with LOC for 'text' and the row (decision 4),
+    and S1 and S2 are counted again on those persons (same-person sensitivity)."""
     out: dict = {}
     stages = [s for s in STAGE if s != "SEQ" or how == "halves"]
-    for st in stages:
-        ok = np.array([all(halves[r][i][h][st] is not None for r in rows for h in (0, 1))
-                       for i in range(len(halves[rows[0]]))])
-        n = int(ok.sum())
-        out.setdefault("persons", {})[st] = n
-        out.setdefault("left_out_no_vector", {})[st] = int((~ok).sum())
-        if n < 2:
-            raise SystemExit(f"{task} {unit} {how} {st}: fewer than 2 persons")
-        first = [halves[rows[0]][i] for i in np.flatnonzero(ok)]
-        t_all = np.array([v[h][st] for v in first for h in (0, 1)])
-        sd = t_all.std(axis=0)
-        keep = sd > 0
-        out.setdefault("dropped_features", {})[st] = [int(j) for j in np.flatnonzero(~keep)]
-
-        def z(x):
-            return x[keep] / sd[keep]
-
-        tA = np.array([z(v[0][st]) for v in first])
-        tB = np.array([z(v[1][st]) for v in first])
-        base = np.linalg.norm(tA - tB, axis=1)
-        dAB = v6.distances(tA, tB)
-        between = np.array([np.median(np.delete(dAB[i], i)) for i in range(n)])
-        for ri, row in enumerate(rows[1:], start=1):
-            sel = [halves[row][i] for i in np.flatnonzero(ok)]
-            rA = np.array([z(v[0][st]) for v in sel])
-            rB = np.array([z(v[1][st]) for v in sel])
-            change = (np.linalg.norm(rA - tA, axis=1) + np.linalg.norm(rB - tB, axis=1)) / 2
-            own = np.where(change > base, 1.0, np.where(change == base, 0.5, 0.0))
-            other = np.where(change > between, 1.0, np.where(change == between, 0.5, 0.0))
-            idx = np.random.default_rng([20261031, 66, v6.TASK[task], v6.UNIT[unit], STAGE[st], ri, BASELINE[how]]) \
-                .integers(0, n, (v6.N_BOOT, n))
-            c_own = v6.ci(own, idx)
-            pos = base > 0
-            out.setdefault(row, {})[st] = {
-                "share_vs_own": float(own.mean()), "share_vs_own_ci": c_own, "reading": v6.reading(*c_own),
-                "share_vs_another": float(other.mean()), "share_vs_another_ci": v6.ci(other, idx),
-                "median_base": float(np.median(base)), "median_change": float(np.median(change)),
-                "median_between": float(np.median(between)),
-                "median_change_over_base": float(np.median(change[pos] / base[pos])) if pos.any() else None,
-                "base_zero": int((~pos).sum())}
+    n_all = len(halves[rows[0]])
+    for ri, row in enumerate(rows[1:], start=1):
+        res: dict = {}
+        for st in stages:
+            key = [20261031, 66, v6.TASK[task], v6.UNIT[unit], STAGE[st], ri, BASELINE[how]]
+            ok = [i for i in range(n_all) if has(halves[rows[0]][i], st) and has(halves[row][i], st)]
+            if st == "LOC" and not ok:
+                res[st] = {"defined": False, "persons": 0}
+                continue
+            if st != "LOC" and len(ok) != n_all:
+                raise SystemExit(f"{task} {unit} {row} {st}: a vector is missing")
+            res[st] = one([halves[rows[0]][i] for i in ok], [halves[row][i] for i in ok], st, key)
+            res[st]["left_out_no_vector"] = n_all - len(ok)
+            if st == "LOC":
+                same = {}
+                for s2 in ("S1", "S2"):
+                    k2 = [20261031, 66, v6.TASK[task], v6.UNIT[unit], STAGE[s2], ri, BASELINE[how]]
+                    same[s2] = one([halves[rows[0]][i] for i in ok], [halves[row][i] for i in ok], s2, k2)
+                res["same_persons_as_LOC"] = same
+        out[row] = res
+    out["persons"] = n_all
     return out
 
 

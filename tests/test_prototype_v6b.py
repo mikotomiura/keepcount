@@ -80,3 +80,41 @@ def test_shuffle_moves_loc_but_not_s0():
     assert np.allclose(sh.vectors(idx)["S0"], tt.vectors(idx)["S0"])
     a, b = v6b.loc(tt, idx, lab), v6b.loc(sh, idx, lab)
     assert a[4] > 2.5 and abs(b[4]) < a[4] / 2  # sentence minus within collapses after a shuffle
+
+
+def test_labels_with_a_leading_comma():
+    s, kinds = series_of(list(",ab"))
+    assert v6b.labels(s, kinds).tolist() == ["subsentence", "within"]
+
+
+def test_oddeven_parts_hold_their_own_gaps_and_lag1_pairs_stay_inside():
+    keys = list(("The cat sat, on a mat. " * 12).strip())
+    s, kinds = series_of(keys)
+    tt = v6.Tiles(s, "sentence", "before", M, R, 2000.0)
+    a, b = v6b.parts(tt.n, "oddeven")
+    ha = set(np.concatenate([tt.held[i] for i in a]).tolist())
+    hb = set(np.concatenate([tt.held[i] for i in b]).tolist())
+    assert not ha & hb and ha | hb == set(range(s.times.size - 1))
+    # a pair (j, j + 1) with j in A and j + 1 in B is not used by A's lag-1: change B's gaps only
+    gaps = np.diff(s.times).copy()
+    rng = np.random.default_rng(5)
+    gaps[sorted(ha)] = rng.uniform(50, 5000, len(ha))  # A varied, so its lag-1 is not a correlation of rounding noise
+    gaps[sorted(hb)] = rng.uniform(50, 5000, len(hb))
+    lab = v6b.labels(s, kinds)
+    t2 = v6.Tiles(s.with_times(np.concatenate([[0.0], np.cumsum(gaps)])), "sentence", "before", M, R, 2000.0)
+    gaps[sorted(hb)] = rng.uniform(50, 5000, len(hb))
+    t3 = v6.Tiles(s.with_times(np.concatenate([[0.0], np.cumsum(gaps)])), "sentence", "before", M, R, 2000.0)
+    assert np.allclose(v6b.loc(t2, a, lab), v6b.loc(t3, a, lab))
+
+
+def test_count_leaves_loc_undefined_for_a_row_without_it():
+    rng = np.random.default_rng(0)
+    def vec(loc_ok=True):
+        return {"S0": rng.random(7), "S1": rng.random(4), "S2": rng.random(4), "LOC": rng.random(7) if loc_ok else None}
+    text = [(vec(), vec()) for _ in range(5)]
+    none = [(vec(False), vec(False)) for _ in range(5)]
+    shuf = [(vec(), vec()) for _ in range(5)]
+    out = v6b.count({"text": text, "none": none, "shuffled": shuf}, ["text", "none", "shuffled"], "essay", "sentence",
+                    "oddeven")
+    assert out["none"]["LOC"] == {"defined": False, "persons": 0}
+    assert out["shuffled"]["LOC"]["persons"] == 5 and "same_persons_as_LOC" in out["shuffled"]
