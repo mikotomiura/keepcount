@@ -1,0 +1,69 @@
+{
+ "purpose": "Prototype v6h: what the tile sequence's reading in v6g carries. v6g found that shuffling the gaps moves the tile sequence (IMG) beyond the sampling variation of each tile in 0.93-0.98 (mean over persons of the per-person win rate). The pre-review of the manuscript (round 2) pointed out that this yardstick is exceeded by construction whenever tiles differ from one another, that its positive control is an operation of the same kind, and that shuffling moves the speed p and the short gaps as well as the rests. Here (1) a null of exchangeable gaps: the same operations and yardstick applied to homogeneous series H (the person's gaps shuffled uniformly; 5 per person), read through the per-person difference from the real series; (2) operations that move only the place of the rests, only their lengths, only the short gaps, or only the order of the sentence tiles; (3) IMG split into p only and q only. Decided by the researcher (decision 4 of .steering/20261101-paper-a-draft).",
+ "fixed_before_running": "Written on 2026-11-01 after seeing the results of v6 to v6g (results/prototype_v6*/notes.md) and the pre-review of the manuscript (round 2). No value of H, of the new operations or of IMG_p and IMG_q has been computed for any person. A first draft was sent to Codex (codex-consult, the conditions text only, no data; .steering/20261101-v6h-what-tiles-carry/codex-consult-output.md) and changed after its seven points (decision 1 of the same folder): the order of the sentence tiles left out of the rule (a position-by-position distance does not identify order); 5 homogeneous series instead of 1, with their spread reported; an interval containing 0 read as 'not confirmed', not as absence; an operation that moves only the lengths of the rests added; medians of change and base reported for the real and the homogeneous series; degenerate cases listed; the fixed labels of the tiles and the small change of q under short_shuffled stated. The researcher confirmed the conditions as written.",
+ "version": "6h",
+ "status": "a decomposition on persons already used in v6b, v6e, v6f and v6g, on v6g's yardstick (chosen after v6f's positive control failed); prespecified for these new observables and operations, not a confirmation on new persons.",
+ "data": "as v6g: v6b's KUPA persons (task essay) and v6e's LWP persons, drawn and checked as in v6f",
+ "participants": "v6f's count persons in the sentence unit of KUPA essay and LWP (KUPA copy is not counted: it has few rests and gathered does not act there, v6f and v6g)",
+ "units": "sentence only, as v6g (counting before; rest_ms 2000; v4's mapping and relief). A tile k holds the gap indices held[k] fixed by the presses (the kinds of key); rebuilding the times never moves these labels. The gap before a sentence counts in the tile of the sentence it opens.",
+ "homogeneous": "H_h, h = 0..4: the person's gaps of text shuffled uniformly (a permutation of all gaps), numpy.random.default_rng([20261031, 6, 16, dataset, task, place, h]); times rebuilt from 0; tiles cut at the same gap indices as text. dataset KUPA 0, LWP 2; task essay 1, LWP 0; place as in v6f.",
+ "rows": {
+  "shuffled": "all gaps permuted uniformly. On text: the row shuffled/before of v6b (KUPA) and v6e (LWP) with their keys. On H_h: default_rng([20261031, 6, 17, dataset, task, place, h]).",
+  "tiles_permuted": "the gaps of each sentence tile (the gap before the sentence and its inner gaps) kept together in their order, and the order of the sentences permuted uniformly; times rebuilt from 0; position k then holds another sentence's gaps (the tile labels stay with positions, and a tile at position k now holds as many gaps as the moved sentence: the row is made by placing the moved blocks and cutting the tiles by the moved presses). Keys: text [20261031, 6, 13, dataset, task, place], H_h [.., 18, .., h]. Reported only (not in the rule).",
+  "rests_moved": "the positions of the rests (gaps >= rest_ms - TOL_MS of src/keystroke) drawn again uniformly without replacement among all gap positions; the rest values put there in their original order, the short gaps filling the other positions in their original order. Keys: text [.., 14, ..], H_h [.., 19, .., h].",
+  "rests_swapped": "positions of rests and all short gaps kept; only the rest values permuted uniformly among the rest positions (only the lengths of the rests move between sentences). Keys: text [.., 22, ..], H_h [.., 23, .., h].",
+  "short_shuffled": "rests kept in position and value; the short gaps permuted uniformly among the short positions. Keys: text [.., 15, ..], H_h [.., 20, .., h].",
+  "gathered": "v6f's definition and key, on text only (positive control, reported)."
+ },
+ "stages": {
+  "IMG_pq": "v6g's (the (p, q) of every tile in tile order; rms over positions of the standardised differences; standardised per cell by the standard deviation (ddof 0) of each number over all tiles of text of the cell's persons)",
+  "IMG_df": "the same with (depth, fineness)",
+  "IMG_p": "the same with p only",
+  "IMG_q": "the same with q only",
+  "scale": "the scale of every stage comes from text; H, the operations and the redraws are divided by it. A number with standard deviation 0 stops the run; non-finite values stop the run. tiles_permuted pairs positions as they are (equal numbers of tiles by construction; a row with a different number of tiles stops the run)."
+ },
+ "count": {
+  "base": "as v6g: d(resampled draw b, original) for b = 0..19, each tile re-made from its own gaps drawn with replacement. For text, v6g's draws (default_rng([20261031, 6, 9, dataset, task, place, b])). For H_h, default_rng([20261031, 6, 21, dataset, task, place, h, b]).",
+  "own": "per person and series, the mean over b of 1 if change > base_b, 1/2 if equal (exact equality of unrounded values), 0 otherwise. own_text from text; own_H the mean over h of own on H_h.",
+  "delta": "per person, delta = own_text - own_H.",
+  "cell": "share_text (mean of own_text over persons), share_H (mean of own_H), mean delta; each with a 95% percentile interval of 2000 bootstrap resamples of persons, the same resamples for the three (paired): numpy.random.default_rng([20261031, 72, dataset, task, stage, row index]) with stage IMG_pq 7, IMG_df 8, IMG_p 9, IMG_q 10 and row shuffled 1, tiles_permuted 2, rests_moved 3, short_shuffled 4, gathered 5, rests_swapped 6. Also: per draw b the share of persons with change > base_b on text (minimum and maximum over b), and on H the minimum and maximum over h of share_H.",
+  "medians": "five-number summaries over persons of the median change and the median base, on text and on H (the median over h), per cell: delta comes from both.",
+  "wording": "share_text and share_H are means of per-person win rates, not shares of persons detected; the per-draw shares of persons are reported beside them."
+ },
+ "degenerate": "Listed before running: a person with no rest (rests_moved and rests_swapped leave text unchanged, change 0); a person whose gaps are all rests (short_shuffled leaves it unchanged); one short gap or none; a base of 0 in a draw (a tie counts 1/2). Denominators are fixed (no person is dropped); per cell, the number of persons whose operated series equals the original and the number with a zero base in some draw are reported.",
+ "rule": "fixed before running; main cells KUPA essay and LWP. (Q1) If the lower end of the interval of mean delta for shuffled is above 0 in all 4 cells of IMG_pq and IMG_df: 'shuffling shows in the tile sequence beyond what exchangeable gaps give'. If all 4 intervals contain 0: 'a difference from exchangeable gaps is not confirmed' (no equivalence is claimed; no margin is set). A cell whose upper end is below 0 is named as 'below exchangeable gaps'. Otherwise 'mixed', with the cells named. (Q2) If, for rests_moved at IMG_q, the lower end of share_text is above 0.60 and the lower end of mean delta above 0 in both cells (KUPA essay, LWP): 'moving the rests to other sentences shows in the q tile sequence beyond exchangeable gaps'. If both delta intervals contain 0: 'not confirmed'. Otherwise 'mixed'. rests_moved is a compound operation (it also changes which tiles hold the short gaps), so rests_swapped and short_shuffled at IMG_q are reported beside it, outside the rule. tiles_permuted is outside the rule (a position-by-position distance grows with the variation between tiles even if the original order is random; it is read only as 'breaking the positional correspondence moves the sequence'). Unrounded values; denominators fixed.",
+ "prediction": "Claude's, written before running. P1: on H, shuffled reads share_H above 0.5 at IMG_pq and IMG_df (a redraw of the same tile is closer than another subset of the record). P2: the lower end of mean delta for shuffled is above 0 in all 4 cells. P3: rests_moved at IMG_q has share_text with a lower end above 0.60 and mean delta with a lower end above 0 in both cells. P4: short_shuffled at IMG_q does not read above 0.60. P5: rests_swapped at IMG_q reads below rests_moved. No value of v6h had been seen.",
+ "main_cells": "fixed before running, shown first: KUPA essay and LWP; shuffled at IMG_pq, IMG_df, IMG_p, IMG_q (share_text, share_H, mean delta); rests_moved, rests_swapped, short_shuffled at IMG_q and IMG_p; then tiles_permuted and gathered; then the medians.",
+ "record": {
+  "public": "results/prototype_v6h/record.json: counts and summaries over persons and the provenance; no press time, gap, key, text, per-person vector, per-person value or id (ids only as the SHA-256 of their sorted list)",
+  "provenance": "as v6g"
+ },
+ "limits_written_before": "The yardstick treats the gaps of a tile as exchangeable and holds the content of the sentence fixed (v6g). H keeps the distribution of the person's gaps over the record but also removes slow drift (warming up, fatigue, phases of the task), so delta > 0 does not separate differences between sentences from slow change within the record. tiles_permuted also moves the lengths of the sentences. rests_moved keeps the order of the short gaps but changes which short gaps a tile holds, so p moves too, by an amount not bounded in advance; under short_shuffled q moves a little through the duration of the tile. share and delta compare win rates and are not effect sizes; both have a ceiling near 1. Constrained permutations (within time bands, or sentence-initial versus inner gaps) are not used: they would narrow the null. A decomposition on the same persons (status d). IMG is a distance between the numbers of the tiles, not a difference of the drawn image nor what a viewer can tell apart. Many correlated cells read descriptively.",
+ "rerun_rule": "if a defect of the code is found after the first run, the first record is kept unchanged, the fix and the reason are committed, and the rerun is reported separately beside the first; the conditions are not changed after the first run except by such a recorded amendment.",
+ "earlier": {
+  "works/conditions/prototype_v4.json": "c334f89543fc84bd90e02f6d3eae105d0e285643628aeda809dc4bc7ef731e8e",
+  "works/conditions/prototype_v6.json": "afc4c330c7a3862ca9f2d6a1ad6d0c1d84ff68ff3b2baf4b39acdd0b6085b078",
+  "works/conditions/prototype_v6b.json": "ae52effd10d6235051839df1ebfa35249e283846090805213b5b3c0e6272ba7a",
+  "works/conditions/prototype_v6e.json": "6cf2cfabcf2bcf44841380f2d78e89ef0b6dc6a121f60309e8a0f58e746b45d8",
+  "results/prototype_v6b/record.json": "94d3feda2b4a499738e2711821f930a88443ddca05e02c31782ad564c9cacb6f",
+  "results/prototype_v6e/record.json": "aca8d16a950b365c77f2f8f82eaeecec10c07e781a9bdba14bd7ff3dbbf7ee29",
+  "works/conditions/prototype_v6f.json": "c756de3fe499d683219ede0a9e12aadc5895e3d30527e913a2513deda93ba66e",
+  "results/prototype_v6f/record.json": "cbca3ad1c579ea1495a9b6faf5c78553747ad9560324ba51333800cf93d7dbfb",
+  "works/conditions/prototype_v6g.json": "6c432a21b1a95e3d932edaad841cc5b6747a1c62edb524a88379ba8933af2204",
+  "results/prototype_v6g/record.json": "090f455b56055ddf5eb0eab0bfc7c5675292baa1e4246ba8d4cd193915a3e37a"
+ },
+ "generator": {
+  "requirement": "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+  "commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+  "library_sha256": {
+   "__init__.py": "d5980876e37cb7a1f5dc379028ab50f7a0c1d77d84c7651ee5d1beefd623b6ab",
+   "field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
+   "lexicon.py": "36cad1e49a25b352a7ae04868c6693ef349e8276d51909061eeb378085065e81",
+   "mapping.py": "83a50faaa664ddcb99004392e13a73fb096a85588a8b3c423b2c8b71ce626d26",
+   "transform.py": "5d35c9c10dfa6c8d5d3b2a9e8126ab45b895a1be14e05650c3ef60ffd3431bd1"
+  }
+ },
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1"
+}
