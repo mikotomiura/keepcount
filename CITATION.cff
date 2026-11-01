@@ -1,0 +1,68 @@
+cff-version: 1.2.0
+message: "If you use this archive, please cite it and the article it accompanies."
+type: software
+title: "KeepCount: conditions, code, records and history"
+abstract: >-
+  The conditions, code, records, notes and git history of an audit of what images of behavioral data keep, applied to
+  a transform that turns keystroke times into shaded tiles, one per sentence, through speed and rest. Every
+  computation ran a script on conditions committed before the script was first run. The keystroke data are not
+  redistributed. The code (src/, works/*.py, tools/, tests/) is under the MIT License (LICENSE); the documents,
+  conditions, records, texts and images are under CC BY-NC-SA 4.0 (LICENSE-docs).
+authors:
+  - family-names: Miura
+    given-names: Mikoto
+    affiliation: Independent Researcher
+    orcid: "https://orcid.org/0009-0000-4196-0508"
+  - family-names: Harada
+    given-names: Yuusuke
+    affiliation: "Graduate School of Humanities and Social Sciences, Hiroshima University, Japan"
+    orcid: "https://orcid.org/0009-0006-7252-5115"
+doi: 10.5281/zenodo.23858735
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23858736
+    description: Version 1.0.0, cited by the article.
+repository-code: "https://github.com/mikotomiura/keepcount"
+license-url: "https://github.com/mikotomiura/keepcount/blob/main/LICENSE-docs"
+version: 1.0.1
+date-released: 2026-11-02
+keywords:
+  - visualization evaluation
+  - keystroke dynamics
+  - personal data
+  - privacy
+  - data art
+  - positive controls
+references:
+  - type: article
+    title: "KeepCount: A Stage-by-Stage Audit of What Images of Behavioral Data Keep, with Keystroke Tiles as a Worked Example"
+    authors:
+      - family-names: Miura
+        given-names: Mikoto
+      - family-names: Harada
+        given-names: Yuusuke
+    year: 2026
+    status: preprint
+    publisher:
+      name: Zenodo
+    doi: 10.5281/zenodo.23858734
+    notes: "Submitted to Information Visualization. Preprint (not peer reviewed)."
+  - type: article
+    title: "Affective Tactility: Cross-Modal Translation from Natural Language to Procedural Height Maps"
+    authors:
+      - family-names: Harada
+        given-names: Yuusuke
+    year: 2026
+    publisher:
+      name: Research Square
+    doi: 10.21203/rs.3.rs-8696852/v1
+    notes: Preprint.
+  - type: software
+    title: "affective-relief-audit"
+    authors:
+      - family-names: Miura
+        given-names: Mikoto
+      - family-names: Harada
+        given-names: Yuusuke
+    doi: 10.5281/zenodo.23681773
+    notes: The generator atact, installed at a pinned commit.

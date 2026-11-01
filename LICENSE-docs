@@ -1,9 +1,10 @@
 Copyright (c) 2026 Mikoto Miura and Yuusuke Harada
 
-The documents, conditions, results and texts of this repository (README.md, works/conditions/, works/texts/,
-results/ and commit-map.tsv) are licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0
-International License (CC BY-NC-SA 4.0). The source code and the files of the environment (src/, works/*.py,
-tests/, pyproject.toml, uv.lock, .python-version and .gitignore) are licensed under the MIT License in LICENSE.
+The documents, conditions, results, texts and images of this repository (README.md, README.ja.md, CITATION.cff,
+works/conditions/, works/texts/, results/, docs/media/ and commit-map.tsv) are licensed under the Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0). The source code and the files of
+the environment (src/, works/*.py, tools/, tests/, pyproject.toml, uv.lock, .python-version and .gitignore) are
+licensed under the MIT License in LICENSE.
 
 The results of runs v6 to v6j count keystroke data of others and keep the terms of their sources: counts and values
 derived from KUPA-KEYS (Velentzas et al., LREC-COLING 2024) are under CC BY-NC-SA 4.0, those from 136M Keystrokes
