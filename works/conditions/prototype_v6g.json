@@ -1,0 +1,64 @@
+{
+ "purpose": "Prototype v6g: a yardstick for the tile sequence that is sensitive at fixed positions. In v6f the positive control was not met at the tile sequence (IMG), because the person's own variation there was the difference between different tiles (neighbours or tiles half a record apart), larger than a move of q by about 0.2. Here the own variation of a tile is its sampling variation at its own position: the tile made again from its own gaps drawn with replacement (the same person, the same sentence, the same place). Independent second draws are the control without operation and check the symmetry of the resampler (the share it gives when nothing is done). Decided by the researcher (decision 4 of .steering/20261101-v6f-image-level).",
+ "fixed_before_running": "Written on 2026-11-01 after seeing the results of v6 to v6f (results/prototype_v6*/notes.md). No tile made from resampled gaps has been computed for any person; the rows, persons and keys of v6f are reused, and their counts against the earlier baselines are known. A first draft was sent to Codex (codex-consult, the conditions text only, no data; .steering/20261101-v6g-tile-yardstick/codex-consult-output.md) and changed after its seven points (decision 1 of the same folder): 'calibrated' renamed to a symmetry check of the resampler with an interval rule; the comparison averaged over 20 draws; degenerate cases fixed; a sensitivity that keeps the gap before each sentence; the distinction between the tile numbers and the drawn image; the status of a yardstick chosen after a failed control.",
+ "version": "6g",
+ "status": "the yardstick was chosen after v6f's positive control failed, and before any value of it was computed; its counts are prespecified for this yardstick on persons already used in v6b, v6e and v6f. A confirmation on persons not used before is not part of v6g.",
+ "data": "as v6f: v6b's KUPA persons (tasks essay, main, and copy) and v6e's LWP persons, drawn and checked as in v6f (ids_sha256 of v6b's and v6e's records)",
+ "participants": "v6f's count persons in the sentence unit (at least 8 tiles and a held gap in every part under both baselines of v6b)",
+ "units": "sentence only (counting before for the tiles; rest_ms 2000; v4's mapping and relief). Not windows: resampling changes the times, and the windows would be cut elsewhere.",
+ "rows": {
+  "operations": "inside/before, shuffled/before, shuffled_in_halves/before (v6.make_rows, the keys of v6b for KUPA and v6e for LWP), gathered/before and rests_x1.5/before, rests_x2/before, rests_x3/before (v6f's definitions and keys)",
+  "redrawn": "the control without operation: for each draw b, a second resampled tile sequence independent of the base draw b; it plays the role of an operation that moves each tile only by its sampling variation. By construction its share has expectation 0.5; it checks the symmetry of the resampler and the code, not the null of the operations or the variation of typing the sentence again."
+ },
+ "resampling": "for the row text, tile k holds the contiguous gap indices held[k] (counting before: the gap before a sentence's first press and its inner gaps; the ranges are disjoint and cover every gap). In each tile, |held[k]| gaps are drawn uniformly with replacement from the tile's own gaps and put in its indices in the order drawn; the times are rebuilt from 0 and the tiles made again (the sentences are cut by presses, so the tiles keep their positions). B = 20 draws per person for the base, b = 0..19, numpy.random.default_rng([20261031, 6, 9, dataset, task, person place, b]), and 20 independent draws for the row redrawn, default_rng([20261031, 6, 10, dataset, task, person place, b]). dataset KUPA 0, LWP 2; task copy 0, essay 1, LWP 0; place as in v6f. Sensitivity (main cells, IMG only): the same with the gap before each sentence kept in its place and only the inner gaps of the tile resampled (keys with 11 for the base and 12 for redrawn in place of 9 and 10).",
+ "stages": {
+  "IMG_pq": "v6f's: the tile sequence of (p, q) per tile; distance rms over tiles paired by position; standardised per cell by the standard deviation of each number over all tiles of text of the cell's persons (ddof 0); a number with standard deviation 0 dropped and recorded; non-finite values stop the run",
+  "IMG_df": "the same with (depth, fineness)",
+  "S1": "secondary: the median and IQR of p and q over all tiles of the record (one vector per person and row); Euclidean distance; standardised per cell by the standard deviation over the persons' text vectors (ddof 0)",
+  "S2": "secondary: the same with depth and fineness"
+ },
+ "count": {
+  "base": "d(text resampled by draw b, text), b = 0..19: the tile sequence's sampling variation at its own positions, one distance over all tiles per draw",
+  "change": "d(R, text), one distance over all tiles; for the row redrawn, d(redrawn draw b, text)",
+  "own": "per person, the mean over b of 1 if change > base_b, 1/2 if equal (exact equality of the unrounded values), 0 otherwise (for redrawn, change_b against base_b, pair by pair). The share is the mean of own over persons.",
+  "ci": "95% percentile interval of 2000 bootstrap resamples of persons of the per-person own (v6's ci), numpy.random.default_rng([20261031, 71, dataset, task, stage, row index]) with stage IMG_pq 7, IMG_df 8, S1 1, S2 2 and row index inside/before 1, shuffled/before 2, shuffled_in_halves/before 3, gathered/before 4, rests_x1.5/before 5, rests_x2/before 6, rests_x3/before 7, redrawn 8 (the sensitivity adds 20 to the row index). The interval is over persons with the 20 draws fixed; the Monte Carlo spread is reported beside it as the minimum and maximum over b of the share computed with draw b alone.",
+  "reading": "v6's reading (detection against 0.5; size against 0.60) and the medians over persons of the median base over b, of change and of change / median base",
+  "standardisation": "fixed per cell from the tiles of text of the cell's persons (not estimated again per draw or per row)",
+  "degenerate": "a tile with one gap or equal gaps resamples to itself; a person whose base is 0 in a draw counts a tie (1/2) if change is also 0 and 1 if change > 0; the number of persons with any zero base is recorded; change / base is taken over base > 0. A number of the tiles with standard deviation 0 over text is dropped and recorded; if both are, the run stops. Non-finite values stop the run.",
+  "tiles": "every row and draw must have the same number of tiles as text (the run stops otherwise)"
+ },
+ "prediction": "Claude's, written before running. P1: gathered reads above 0.60 at IMG_pq and IMG_df in the 4 main cells. P2: rests_x2 and rests_x3 read above 0.60 at IMG_pq and IMG_df in the 4 main cells; rests_x1.5 is not above 0.60 in at least one. P3: redrawn lies within 0.45-0.55 and its interval within 0.40-0.60 in the 4 main cells. P4: shuffled and shuffled_in_halves read above 0.60 at IMG_pq and IMG_df in all 8 main cells (a shuffled tile draws its gaps from the whole record, which differs from its own gaps more than a redraw of them). P5: inside reads 0 at every stage (the sentence tiles are unchanged by construction). No value of v6g had been seen.",
+ "confirmation_rule": "fixed before running, on the main cells (KUPA essay and LWP; IMG_pq and IMG_df; base with the gap before each sentence resampled). (a) The positive control is called met if gathered reads above 0.60 (lower end above 0.60) in all 4 cells. (b) The symmetry check is called passed if the share of redrawn lies within 0.45-0.55 and its interval within 0.40-0.60 in all 4 cells; failed if a share lies outside 0.45-0.55; undetermined otherwise (an interval too wide). (c) If (a) is met and (b) passed: the tile sequence is said to show the shuffles beyond its sampling variation if shuffled and shuffled_in_halves read above 0.60 in all 8 cells; not to show them in most persons beyond it if all 8 read below 0.60 (upper end below 0.60); mixed otherwise, with the cells named. If (a) is not met or (b) not passed, (c) is not evaluable. The denominators are fixed; the readings use the unrounded values. S1, S2, KUPA copy, the scaled rows and the sensitivity are reported but do not enter the rule.",
+ "main_cells": "fixed before running, shown first: KUPA essay and LWP, IMG_pq and IMG_df: redrawn, gathered, rests_x1.5, rests_x2, rests_x3, inside, shuffled, shuffled_in_halves; then S1 and S2; then KUPA copy",
+ "record": {
+  "public": "results/prototype_v6g/record.json: counts and summaries over persons and the provenance; no press time, gap, key, text, per-person vector, per-person value or id (ids only as the SHA-256 of their sorted list)",
+  "tallies": "per dataset-task: five-number summaries over persons of the median |change of q| per tile under draw 0 (the size of the base in q), and the number of persons with a zero base in some draw",
+  "provenance": "as v6f"
+ },
+ "limits_written_before": "The base is the variation of a tile when its own gaps are drawn again with replacement: it treats the gaps of a tile as exchangeable and ignores their serial order, and it holds the content of the sentence fixed. It is narrower than the own variation of v6b, v6e and v6f (two parts of a record, which also differ in content), so 'beyond the base' here means beyond the sampling variation of the tile at its place, not beyond the person's variation across sentences; the two answer different questions and are reported as such. A tile with one gap or equal gaps has no sampling variation (base 0 there). The gap before a sentence is resampled with the inner gaps (the sensitivity keeps it in place). The yardstick was chosen after seeing v6f's failed positive control; it is a new choice, not a confirmation. Many correlated cells, read descriptively. IMG_pq and IMG_df are distances between the numbers of the tiles, not differences of the drawn image after rendering, nor what a viewer can tell apart. Resampling within a tile ignores serial dependence; block resampling and repeated typing of the same sentence would be other yardsticks and are not used.",
+ "rerun_rule": "if a defect of the code is found after the first run, the first record is kept unchanged, the fix and the reason are committed, and the rerun is reported separately beside the first; the conditions are not changed after the first run except by such a recorded amendment.",
+ "earlier": {
+  "works/conditions/prototype_v4.json": "c334f89543fc84bd90e02f6d3eae105d0e285643628aeda809dc4bc7ef731e8e",
+  "works/conditions/prototype_v6.json": "afc4c330c7a3862ca9f2d6a1ad6d0c1d84ff68ff3b2baf4b39acdd0b6085b078",
+  "works/conditions/prototype_v6b.json": "ae52effd10d6235051839df1ebfa35249e283846090805213b5b3c0e6272ba7a",
+  "works/conditions/prototype_v6e.json": "6cf2cfabcf2bcf44841380f2d78e89ef0b6dc6a121f60309e8a0f58e746b45d8",
+  "results/prototype_v6b/record.json": "94d3feda2b4a499738e2711821f930a88443ddca05e02c31782ad564c9cacb6f",
+  "results/prototype_v6e/record.json": "aca8d16a950b365c77f2f8f82eaeecec10c07e781a9bdba14bd7ff3dbbf7ee29",
+  "works/conditions/prototype_v6f.json": "c756de3fe499d683219ede0a9e12aadc5895e3d30527e913a2513deda93ba66e",
+  "results/prototype_v6f/record.json": "cbca3ad1c579ea1495a9b6faf5c78553747ad9560324ba51333800cf93d7dbfb"
+ },
+ "generator": {
+  "requirement": "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+  "commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+  "library_sha256": {
+   "__init__.py": "d5980876e37cb7a1f5dc379028ab50f7a0c1d77d84c7651ee5d1beefd623b6ab",
+   "field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
+   "lexicon.py": "36cad1e49a25b352a7ae04868c6693ef349e8276d51909061eeb378085065e81",
+   "mapping.py": "83a50faaa664ddcb99004392e13a73fb096a85588a8b3c423b2c8b71ce626d26",
+   "transform.py": "5d35c9c10dfa6c8d5d3b2a9e8126ab45b895a1be14e05650c3ef60ffd3431bd1"
+  }
+ },
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1"
+}
