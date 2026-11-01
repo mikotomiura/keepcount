@@ -64,6 +64,16 @@ NEEDS_5 = ("SEQ", "IMG5_pq", "IMG5_df", "IMG5_centred", "IMG3_pq", "IMG5_pq_NT",
 PAIRED = (("IMG5_pq", "S1"), ("IMG5_df", "S2"), ("SEQ", "S1"), ("IMG5_pq_NT", "IMG5_pq"),
           ("IMG5_pq", "IMG5_pq_scrambled"), ("DTW_pq", "S1"))
 PART = {"copy": 0, "essay": 1, "A": 0, "B": 1}
+CHOICES = {  # decisions of the code where the conditions are silent (decision 4 of the steering folder)
+    "bootstrap_key_mad": "statistic index 2 for M_raw (raw 0 and detrended 1 are in the conditions)",
+    "part_index": "the scramble key's part: KUPA copy 0, essay 1; Aalto A (sentences 1-7) 0, B (8-15) 1",
+    "H_gaps": "H and C use the permuted gaps directly (v6h rebuilt times by cumsum and took differences again): "
+              "the draws are v6h's, the values equal within rounding (q within about 1e-15)",
+    "dtw_standardisation": "z-scores per set (mean removed, as v6's main standardisation), so the level difference "
+                           "between the two tasks is removed",
+    "paired_resamples": "the resamples of the stage with the larger index",
+    "five_numbers": "the min and max of a five-number summary are single persons' values, as in v6h",
+}
 
 
 # ================================================================ part (a): dispersion against exchangeable series
@@ -134,6 +144,10 @@ def person_a(s: v6.Series, key: list[int], m: dict, rest_ms: float) -> dict:
                 for st, val in dispersion(v).items():
                     acc[x][st][k] = val
         out[null] = acc
+    vals = [v for d in (out["text"], out["gathered"]) for x in d.values() for v in x.values()]
+    if not (np.all(np.isfinite(vals)) and all(np.all(np.isfinite(out[nl][x][st])) for nl in NULLS for x in NUMBERS_A
+                                               for st in STAT)):
+        raise SystemExit("a dispersion that is not finite")
     return out
 
 
@@ -188,6 +202,7 @@ def r_cell(rs: np.ndarray, Rs: list, degenerate: np.ndarray, idx: np.ndarray) ->
                 meds.append(np.median(v))
         out["median_R"] = float(np.median(R[defined]))
         out["median_R_ci"] = [float(np.percentile(meds, 2.5)), float(np.percentile(meds, 97.5))]
+        out["median_R_resamples_used"] = len(meds)
     return out
 
 
@@ -218,7 +233,7 @@ def count_a(pp: list[dict], ds: str, task: str) -> dict:
 
 
 def label_half(ci: list[float]) -> str:
-    return "above 0.5" if ci[0] > 0.5 else ("below 0.5" if ci[1] < 0.5 else "contains 0.5")
+    return "above 0.5" if ci[0] > 0.5 else ("more even than exchangeable gaps" if ci[1] < 0.5 else "contains 0.5")
 
 
 def evaluate_a(cnt: dict) -> dict:
@@ -240,6 +255,9 @@ def evaluate_a(cnt: dict) -> dict:
             v = "not evaluable"
         else:
             v = "mixed"
+            ne = [nm for nm, lab in cells.items() if lab == "not evaluable"]
+            if ne:
+                v += " (not evaluable: " + ", ".join(ne) + ")"
         return v, cells
 
     a1, c1 = verdict("q", True)
@@ -253,7 +271,8 @@ def evaluate_a(cnt: dict) -> dict:
             and label_half(c["lwp_lwp"]["q"]["mean_r_ci"]) == "above 0.5",
             "P2": all(c[nm]["p"]["mean_r_ci"][0] > 0.5 for nm in names),
             "P3": all(c[nm]["r_p_minus_r_q"]["ci"][0] > 0 for nm in names),
-            "P4": all(0.9 <= c[nm]["q"]["median_R"] <= 1.2 for nm in names),
+            "P4": (all(0.9 <= c[nm]["q"]["median_R"] <= 1.2 for nm in names)
+                   if all("median_R" in c[nm]["q"] for nm in names) else None),
             "P9": all(control.values())}
     return {"A1": a1, "A1_cells": c1, "A2": a2, "A2_cells": c2, "A3": a3, "positive_control_met": control,
             "predictions": pred}
@@ -338,7 +357,7 @@ def dtw(a: np.ndarray, gs: list[np.ndarray]) -> np.ndarray:
     registrations are padded to the longest with an infinite cost, which only lies to the right of each end cell."""
     n, big_m = a.shape[0], max(g.shape[0] for g in gs)
     lens = np.array([g.shape[0] for g in gs])
-    pad = np.full((len(gs), big_m, 2), np.nan)
+    pad = np.full((len(gs), big_m, a.shape[1]), np.nan)
     for i, g in enumerate(gs):
         pad[i, :g.shape[0]] = g
     cost = np.sqrt(((a[None, :, None, :] - pad[:, None, :, :]) ** 2).sum(axis=3))  # (G, n, M)
@@ -359,17 +378,21 @@ def dtw(a: np.ndarray, gs: list[np.ndarray]) -> np.ndarray:
     return d[np.arange(len(gs)), lens - 1] / (n + lens)
 
 
-def dtw_matrix(reg: list[np.ndarray], ev: list[np.ndarray]) -> np.ndarray:
-    """d[i, j] = DTW of evaluation i to registration j, each number standardised over all tiles of its set."""
+def dtw_matrix(reg: list[np.ndarray], ev: list[np.ndarray]) -> tuple[np.ndarray | None, list[int]]:
+    """d[i, j] = DTW of evaluation i to registration j, each number standardised over all tiles of its set; a number
+    with standard deviation 0 over either set is dropped from both (as v6.standardise); None if every one is."""
+    span = [np.ptp(np.concatenate(x), axis=0) for x in (reg, ev)]  # exact: a constant's std can round above 0
+    drop = [j for j in range(span[0].size) if span[0][j] == 0 or span[1][j] == 0]
+    keep = [j for j in range(span[0].size) if j not in drop]
+    if not keep:
+        return None, drop
+
     def z(seqs):
-        allv = np.concatenate(seqs)
-        sd = allv.std(axis=0)
-        if np.any(sd == 0):
-            raise SystemExit("a number of DTW has standard deviation 0 over a set")
-        return [(s - allv.mean(axis=0)) / sd for s in seqs]
+        allv = np.concatenate(seqs)[:, keep]
+        return [(s[:, keep] - allv.mean(axis=0)) / allv.std(axis=0) for s in seqs]
 
     rz, ez = z(reg), z(ev)
-    return np.array([dtw(e, rz) for e in ez])
+    return np.array([dtw(e, rz) for e in ez]), drop
 
 
 def full_d(d: np.ndarray, key: list[int]) -> tuple[dict, np.ndarray, np.ndarray]:
@@ -490,9 +513,8 @@ def run_b(tiles: dict, v6crec: dict) -> dict:
             for st in stages:
                 key = [SEED, 64, 1, v6.DATASET[ds], direction, STAGE_B[st], v6.UNIT[unit]]
                 if st == "DTW_pq":
-                    d = dtw_matrix([np.column_stack([t.p, t.q]) for t in tiles[(ds, a)][unit]],
+                    d, drop = dtw_matrix([np.column_stack([t.p, t.q]) for t in tiles[(ds, a)][unit]],
                                    [np.column_stack([t.p, t.q]) for t in tiles[(ds, b)][unit]])
-                    drop = []
                 else:
                     d, drop = stage_vectors(reg[st], ev[st])
                 if d is None:
@@ -502,10 +524,15 @@ def run_b(tiles: dict, v6crec: dict) -> dict:
                 cell[st]["dropped_features"] = drop
             cell["paired"] = {}
             for x, y in PAIRED:
-                if x in raucs and y in raucs:
+                if not (x in cell and y in cell):
+                    continue
+                if x not in raucs or y not in raucs:
+                    cell["paired"][f"{x} - {y}"] = {"constant": True}
+                else:
                     diff = raucs[x] - raucs[y]
+                    later = x if STAGE_B[x] > STAGE_B[y] else y
                     cell["paired"][f"{x} - {y}"] = {"rank_auc_difference": float(diff.mean()),
-                                                    "ci": v6.ci(diff, idxs[x])}
+                                                    "ci": v6.ci(diff, idxs[later]), "resamples_of": later}
             cell["tiles_per_part"] = {p: v6d.five([t.n for t in tiles[(ds, p)][unit]]) for p in (a, b)}
             rec["count"][name][unit] = cell
     rec["predictions"] = predict_b(rec["count"])
@@ -513,20 +540,25 @@ def run_b(tiles: dict, v6crec: dict) -> dict:
 
 
 def predict_b(cnt: dict) -> dict:
+    """True / False, or None when a stage the prediction reads is constant (no rates: not evaluable)."""
     c = cnt["kupa_copy_to_essay"]["sentence"]
     ra = {st: c[st]["rank_auc"] for st in c if isinstance(c[st], dict) and "rank_auc" in c[st]}
-    s1, s2 = ra["S1"], ra["S2"]
+    s1, s2 = ra.get("S1"), ra.get("S2")
+    if list(v6.UNIT) != ["sentence", "window_10s"]:
+        raise SystemExit("P7 reads the units in the order sentence, window_10s")
     nt = [cnt[nm][u]["NT"] for nm in ("kupa_copy_to_essay", "kupa_essay_to_copy") for u in v6.UNIT]
 
-    def ci(x):  # a constant stage has no rates: it is not above 0.60 (its rank_auc would be 0.5)
-        return x.get("rank_auc_ci", [0.5, 0.5])
+    def ok(cells, f):
+        return None if any(x.get("constant") for x in cells) else f()
 
-    return {"P5": abs(ra["IMG5_pq"] - s1) <= 0.03 and abs(ra["IMG5_df"] - s2) <= 0.03,
-            "P6": all(ci(c[st])[1] < 0.60 for st in ("SEQ", "IMG5_centred")),
-            "P7": all(ci(x)[1] < 0.60 for x in nt[0::2]) and all(ci(x)[0] > 0.60 for x in nt[1::2]),
-            "P8": c["IMG5_pq"]["rank_n"]["1"]["rate"] < 0.05,
-            "P10": abs(ra["IMG5_pq_scrambled"] - ra["IMG5_pq"]) <= 0.03,
-            "P11": ra["DTW_pq"] < s1}
+    six = [c[st] for st in ("S1", "S2", "IMG5_pq", "IMG5_df", "IMG5_pq_scrambled", "DTW_pq", "SEQ", "IMG5_centred")]
+    return {"P5": ok(six[:4], lambda: abs(ra["IMG5_pq"] - s1) <= 0.03 and abs(ra["IMG5_df"] - s2) <= 0.03),
+            "P6": ok(six[6:], lambda: all(c[st]["rank_auc_ci"][1] < 0.60 for st in ("SEQ", "IMG5_centred"))),
+            "P7": ok(nt, lambda: all(x["rank_auc_ci"][1] < 0.60 for x in nt[0::2])
+                     and all(x["rank_auc_ci"][0] > 0.60 for x in nt[1::2])),
+            "P8": ok([c["IMG5_pq"]], lambda: c["IMG5_pq"]["rank_n"]["1"]["rate"] < 0.05),
+            "P10": ok([c["IMG5_pq"], c["IMG5_pq_scrambled"]], lambda: abs(ra["IMG5_pq_scrambled"] - ra["IMG5_pq"]) <= 0.03),
+            "P11": ok([c["S1"], c["DTW_pq"]], lambda: ra["DTW_pq"] < s1)}
 
 
 # ================================================================ run
@@ -608,6 +640,10 @@ def main() -> None:
     rec["provenance"] = {"run_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), **state,
                          "conditions_sha256": hashlib.sha256(raw).hexdigest(), "earlier_sha256": c["earlier"],
                          "code_sha256": {p: cm.sha256(ROOT / p) for p in CODE},
+                         "data_sha256": {"kupa_copy": c6["data"]["kupa"]["files"]["copy"]["sha256"],
+                                         "kupa_essay": c6["data"]["kupa"]["files"]["essay"]["sha256"],
+                                         "aalto": c6["data"]["aalto"]["sha256"], "lwp": d_lwp["sha256"]},
+                         "choices_in_code": CHOICES,
                          "versions": cm.versions("numpy", "pillow", "scipy")}
     tmp = Path(tempfile.mkdtemp(prefix="prototype_v6i-", dir=OUT_DIR.parent))
     (tmp / "record.json").write_text(json.dumps(rec, indent=1, ensure_ascii=False, allow_nan=False) + "\n")

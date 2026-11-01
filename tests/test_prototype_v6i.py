@@ -93,6 +93,9 @@ def test_h0_is_v6h_h0_and_keys():
     h0 = v6h.shuffle_all(s.times, real([v6i.SEED, 6, v6h.KEY_H, *key, 0]))
     p0, q0 = v6i.pq_of_gaps(h0, s.ranges("before"), M, REST)
     assert pa["H"]["q"]["raw"][0] == v6i.dispersion(q0)["raw"]
+    sh = v6h.from_gaps(h0)  # v6h's path: times rebuilt by cumsum, then differences again
+    p1, q1 = v6i.pq_of_gaps(np.diff(sh), s.ranges("before"), M, REST)
+    assert np.allclose(q1, q0, rtol=0, atol=1e-12) and np.allclose(p1, p0, rtol=0, atol=1e-12)
     assert [v6i.SEED, 6, 16, *key, 999] in seen and [v6i.SEED, 6, 30, *key, 999] in seen
     assert [v6i.SEED, 6, 8, *key] in seen
     assert sum(1 for k in seen if k[:3] == [v6i.SEED, 6, 16]) == v6i.K
@@ -109,6 +112,24 @@ def test_null_holds_gaps_per_tile_and_degenerate_person():
     x = pp[("q", "raw", "H")]
     assert x["degenerate"] and x["r"] == 0.5 and x["R"] is None and x["T"] == 0.0
     assert not pp[("p", "raw", "H")]["degenerate"]
+
+
+def test_non_finite_dispersion_stops(monkeypatch):
+    s = series(GAPS, RANGES)
+    real = v6i.dispersion
+    calls = {"n": 0}
+
+    def bad(x):
+        calls["n"] += 1
+        out = real(x)
+        if calls["n"] == 7:
+            out["mad"] = float("nan")
+        return out
+
+    monkeypatch.setattr(v6i, "dispersion", bad)
+    monkeypatch.setattr(v6i, "K", 5)
+    with pytest.raises(SystemExit):
+        v6i.person_a(s, [0, 1, 2], M, REST)
 
 
 def test_eligible_a():
@@ -142,13 +163,18 @@ def test_evaluate_a_rule_and_gate():
     e = v6i.evaluate_a({"kupa_essay": fake((0.45, 0.6), 0.7), "lwp_lwp": fake((0.5, 0.6), 0.7)})
     assert e["A1"] == "not confirmed"
     e = v6i.evaluate_a({"kupa_essay": fake((0.55, 0.6), 0.5), "lwp_lwp": fake((0.55, 0.6), 0.7)})
-    assert e["A1"] == "mixed" and e["A1_cells"]["kupa_essay"] == "not evaluable" and not e["predictions"]["P9"]
+    assert e["A1"] == "mixed (not evaluable: kupa_essay)" and e["A1_cells"]["kupa_essay"] == "not evaluable"
+    assert not e["predictions"]["P9"]
+    assert e["A2_cells"]["kupa_essay"] == "above 0.5"  # the gate is on q only
     e = v6i.evaluate_a({"kupa_essay": fake((0.3, 0.45), 0.7, d_ci=(-0.2, -0.1)), "lwp_lwp": fake((0.4, 0.6), 0.7,
                                                                                                     d_ci=(-0.1, 0.1))})
-    assert e["A1_cells"]["kupa_essay"] == "below 0.5" and e["A1"] == "mixed"
+    assert e["A1_cells"]["kupa_essay"] == "more even than exchangeable gaps" and e["A1"] == "mixed"
     assert e["A3"] == {"kupa_essay": "q above p", "lwp_lwp": "no difference confirmed"}
     e = v6i.evaluate_a({"kupa_essay": fake((0.45, 0.6), 0.7), "lwp_lwp": fake((0.55, 0.6), 0.7)})
     assert e["predictions"]["P1"]
+    nr = fake((0.45, 0.6), 0.7)
+    del nr["H"]["raw"]["q"]["median_R"]
+    assert v6i.evaluate_a({"kupa_essay": nr, "lwp_lwp": fake((0.55, 0.6), 0.7)})["predictions"]["P4"] is None
 
 
 # ---------------------------------------------------------------- part (b)
@@ -218,6 +244,20 @@ def test_dtw_against_reference_and_padding():
     assert v6i.dtw(a, [a])[0] == 0.0
 
 
+def test_dtw_matrix_drops_constant_numbers():
+    rng = np.random.default_rng(6)
+    reg = [np.column_stack([rng.random(k), np.full(k, 0.4)]) for k in (5, 7, 6)]
+    ev = [np.column_stack([rng.random(k), rng.random(k)]) for k in (6, 5, 8)]
+    d, drop = v6i.dtw_matrix(reg, ev)
+    assert drop == [1] and d.shape == (3, 3) and np.isfinite(d).all()
+    z = np.concatenate([r[:, :1] for r in reg])
+    rz = [(r[:, :1] - z.mean()) / z.std() for r in reg]
+    ze = np.concatenate([e[:, :1] for e in ev])
+    assert d[0, 1] == pytest.approx(dtw_ref((ev[0][:, :1] - ze.mean()) / ze.std(), rz[1]), rel=1e-12)
+    const = [np.full((5, 2), 0.3)] * 3
+    assert v6i.dtw_matrix(const, ev) == (None, [0, 1])
+
+
 def test_full_d_matches_v6c_full():
     rng = np.random.default_rng(2)
     g, e = rng.normal(size=(30, 4)), rng.normal(size=(30, 4))
@@ -247,12 +287,92 @@ def test_predict_b_constant_nt():
     cnt = {"kupa_copy_to_essay": {"sentence": st, "window_10s": win},
            "kupa_essay_to_copy": {"sentence": {"NT": {"rank_auc_ci": [0.5, 0.58]}}, "window_10s": win}}
     p = v6i.predict_b(cnt)
-    assert p == {"P5": True, "P6": True, "P7": True, "P8": True, "P10": True, "P11": True}
-    cnt["kupa_essay_to_copy"]["window_10s"] = {"NT": {"constant": True}}
-    assert not v6i.predict_b(cnt)["P7"]
+    assert p["P7"] is None  # a constant NT is not evaluable, not a success
+    assert {k: v for k, v in p.items() if k != "P7"} == {"P5": True, "P6": True, "P8": True, "P10": True, "P11": True}
+    cnt["kupa_copy_to_essay"]["sentence"]["NT"] = {"rank_auc_ci": [0.5, 0.58]}
+    assert v6i.predict_b(cnt)["P7"] is True
+    cnt["kupa_essay_to_copy"]["window_10s"] = {"NT": {"rank_auc_ci": [0.55, 0.7]}}
+    assert v6i.predict_b(cnt)["P7"] is False
+    st["SEQ"] = {"constant": True}
+    assert v6i.predict_b(cnt)["P6"] is None
 
 
 def test_no_long_list():
     v6i.no_long_list({"a": [1, 2, 3, 4, 5], "dropped_features": list(range(9))})
     with pytest.raises(SystemExit):
         v6i.no_long_list({"a": list(range(6))})
+
+
+class FT:
+    """A small stand-in for v6.Tiles in part (b)."""
+
+    def __init__(self, rng, n):
+        self.p, self.q = rng.random(n), rng.random(n)
+        self.depth, self.fineness = self.p + 1, self.q + 2
+        self.n = n
+
+    def all(self):
+        return {"S0": np.array([self.p.sum()]), "S1": np.array([self.p.mean(), self.q.mean()]),
+                "S2": np.array([self.depth.mean(), self.fineness.mean()])}
+
+
+def test_part_b_keys_and_paired_resamples(monkeypatch):
+    rng = np.random.default_rng(9)
+    n = 12
+    tiles = {(ds, pt): {u: [FT(rng, int(rng.integers(5, 9))) for _ in range(n)] for u in v6i.v6.UNIT}
+             for ds, parts in (("kupa", ("copy", "essay")), ("aalto", ("A", "B"))) for pt in parts}
+    seen, real = [], np.random.default_rng
+
+    def spy(k):
+        seen.append(list(k))
+        return real(k)
+
+    rec6c = {"full": {}}
+    monkeypatch.setattr(v6i.np.random, "default_rng", spy)
+    # v6c's record built from the same code with key 63, so the check passes and is exercised
+    for name, (ds, a, b, direction) in v6i.v6c.DIRECTIONS.items():
+        rec6c["full"][name] = {}
+        for u in v6i.v6.UNIT:
+            reg = v6i.stages_of(tiles[(ds, a)][u], ds, a, u, True)
+            ev = v6i.stages_of(tiles[(ds, b)][u], ds, b, u, True)
+            rec6c["full"][name][u] = {st: v6i.v6c.full(reg[st], ev[st], [v6i.SEED, 63, 1, v6i.v6.DATASET[ds], direction,
+                                                                           v6i.v6.STAGE[st], v6i.v6.UNIT[u]])
+                                      for st in ("S0", "S1", "S2")}
+    seen.clear()
+    rec = v6i.run_b(tiles, rec6c)
+    for place in range(n):
+        assert [v6i.SEED, 64, 3, 0, 1, 0, place] in seen  # KUPA essay, sentence
+        assert [v6i.SEED, 64, 3, 1, 0, 1, place] not in seen  # Aalto windows: no new stages
+    for st, si in v6i.STAGE_B.items():
+        assert [v6i.SEED, 64, 1, 0, 0, si, 0] in seen
+    c = rec["count"]["kupa_copy_to_essay"]["sentence"]
+    for x, y in v6i.PAIRED:
+        assert c["paired"][f"{x} - {y}"]["resamples_of"] == (x if v6i.STAGE_B[x] > v6i.STAGE_B[y] else y)
+    assert c["paired"]["IMG5_pq - IMG5_pq_scrambled"]["resamples_of"] == "IMG5_pq_scrambled"
+    aw = rec["count"]["aalto_first7_to_last8"]["window_10s"]
+    assert set(aw) == {"S0", "S1", "S2", "NT", "paired", "tiles_per_part"}
+    assert "DTW_pq" not in rec["count"]["kupa_copy_to_essay"]["window_10s"]
+
+
+def test_count_a_one_resample_per_statistic(monkeypatch):
+    seen, real = [], np.random.default_rng
+
+    def spy(k):
+        seen.append(list(k))
+        return real(k)
+
+    def pp(i):
+        out = {}
+        for x in ("p", "q"):
+            for st in v6i.STAT:
+                for nl in v6i.NULLS:
+                    out[(x, st, nl)] = {"r": (i % 7) / 7, "R": 1.0 + i / 10, "degenerate": False, "T": 0.1,
+                                        "median_null": 0.1, "width_null": 0.05}
+            out[(x, "gathered")] = {"r": 0.9, "R": 2.0}
+        return out
+
+    monkeypatch.setattr(v6i.np.random, "default_rng", spy)
+    out = v6i.count_a([pp(i) for i in range(10)], "lwp", "lwp")
+    keys = [k for k in seen if k[:2] == [v6i.SEED, 80]]
+    assert keys == [[v6i.SEED, 80, 2, 0, si] for si in v6i.STAT.values()]
+    assert out["H"]["raw"]["q"]["mean_r_ci"] == out["H"]["raw"]["p"]["mean_r_ci"]  # same values, same resamples
