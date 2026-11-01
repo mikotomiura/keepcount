@@ -251,6 +251,16 @@ def key_b(ds: str, direction: int, stage: int, unit: str, scale: str) -> list[in
     return [SEED, 65, 1, v6.DATASET[ds], direction, stage, v6.UNIT[unit], SCALE[scale]]
 
 
+def check_registration(reg: dict, ev: dict, rec_v6: dict, name: str, unit: str) -> None:
+    """S1 and S2 under the registration scale must equal v6's record."""
+    for st in ("S1", "S2"):
+        d, _ = vec_distance(reg[st], ev[st], "registration")
+        _, rr = v6.per_person(d)
+        if not abs(float(rr.mean()) - rec_v6["count_2_person"][name][unit]["registration_scale"][st]["rank_auc"]) \
+                < v6c.CHECK_TOL:
+            raise SystemExit(f"{name} {unit} {st}: the registration scale differs from v6's")
+
+
 def check_v6i(cell: dict, ref: dict, where: str) -> None:
     for k in ("top1", "rank_auc", "rank_auc_ci", "rank_n", "eer"):
         if cell[k] != ref[k]:
@@ -258,11 +268,15 @@ def check_v6i(cell: dict, ref: dict, where: str) -> None:
 
 
 def run_b(tiles: dict, rec_v6: dict, rec_vi: dict) -> dict:
-    out: dict = {"count": {}}
+    out: dict = {"count": {}, "checked_registration_s1_s2": {}}
     for name, (ds, a, b, direction) in v6c.DIRECTIONS.items():
         out["count"][name] = {}
         for unit in v6.UNIT:
-            if ds == "aalto" and unit == "window_10s":
+            if ds == "aalto" and unit == "window_10s":  # no new stages (v6i); only v6's check of S1 and S2 runs here
+                reg = v6i.stages_of(tiles[(ds, a)][unit], ds, a, unit, False)
+                ev = v6i.stages_of(tiles[(ds, b)][unit], ds, b, unit, False)
+                check_registration(reg, ev, rec_v6, name, unit)
+                out["checked_registration_s1_s2"][f"{name} {unit}"] = "equal to v6's record"
                 continue
             reg = v6i.stages_of(tiles[(ds, a)][unit], ds, a, unit, True)
             ev = v6i.stages_of(tiles[(ds, b)][unit], ds, b, unit, True)
@@ -277,15 +291,15 @@ def run_b(tiles: dict, rec_v6: dict, rec_vi: dict) -> dict:
                                           [np.column_stack([t.p, t.q]) for t in tiles[(ds, b)][unit]])
                 else:
                     d, _ = vec_distance(reg[st], ev[st], "main")
-                res, rr, ii = v6i.full_d(d, [SEED, 64, 1, v6.DATASET[ds], direction, v6i.STAGE_B[st], v6.UNIT[unit]])
+                if d is None:
+                    raise SystemExit(f"{name} {unit} {st}: constant under the main scale, unlike v6i")
+                res, _, _ = v6i.full_d(d, [SEED, 64, 1, v6.DATASET[ds], direction, v6i.STAGE_B[st], v6.UNIT[unit]])
                 check_v6i(res, ref[st], f"{name} {unit} {st}")
+                # reported with v6j's own key (the conditions' match), on the same distances
+                res, rr, ii = v6i.full_d(d, key_b(ds, direction, v6i.STAGE_B[st], unit, "main"))
                 cell["main"][st], rauc[("main", st)], idx[("main", st)] = res, rr, ii
-            for st in ("S1", "S2"):
-                d, _ = vec_distance(reg[st], ev[st], "registration")
-                _, rr = v6.per_person(d)
-                if not abs(float(rr.mean()) - rec_v6["count_2_person"][name][unit]["registration_scale"][st]["rank_auc"]) \
-                        < v6c.CHECK_TOL:
-                    raise SystemExit(f"{name} {unit} {st}: the registration scale differs from v6's")
+            check_registration(reg, ev, rec_v6, name, unit)
+            out["checked_registration_s1_s2"][f"{name} {unit}"] = "equal to v6's record"
             d, _ = vec_distance(reg["S1"], ev["S1"], "main")
             _, rauc[("main", "S1")] = v6.per_person(d)
             # new: registration scale of the vectors
@@ -306,12 +320,16 @@ def run_b(tiles: dict, rec_v6: dict, rec_vi: dict) -> dict:
                                   ("registration", dtw_registration)):
                     if scale == "registration":
                         d, drop = fn(seqs[a], seqs[b])
+                        if d is None:
+                            raise SystemExit(f"{name}: every number of DTW is constant under the registration scale")
                         res, rr, ii = v6i.full_d(d, key_b(ds, direction, v6i.STAGE_B["DTW_pq"], unit, scale))
                         res["dropped_features"] = drop
                         cell[scale]["DTW_pq"], rauc[(scale, "DTW_pq")], idx[(scale, "DTW_pq")] = res, rr, ii
                     draws, rs = [], []
                     for s in range(S):
                         d, drop = fn(scr[a][s], scr[b][s])
+                        if d is None:
+                            raise SystemExit(f"{name}: every number of a scrambled DTW is constant")
                         res, rr, ii = v6i.full_d(d, key_b(ds, direction, STAGE_SCR, unit, scale))
                         res["dropped_features"] = drop
                         draws.append(res)
@@ -338,10 +356,14 @@ def paired(rauc: dict, idx: dict, unit: str) -> dict:
              (("main", "DTW_pq"), ("registration", "DTW_pq"))]
     out = {}
     for x, y in pairs:
-        if x in rauc and y in rauc and y in idx:
-            diff = rauc[x] - rauc[y]
-            out[f"{x[0]} {x[1]} - {y[0]} {y[1]}"] = {"rank_auc_difference": float(diff.mean()),
-                                                     "ci": v6.ci(diff, idx[y])}
+        if unit != "sentence" and {x[1], y[1]} & {"DTW_pq", "DTW_pq_scrambled"}:
+            continue  # DTW is counted in sentences only
+        name = f"{x[0]} {x[1]} - {y[0]} {y[1]}"
+        if not (x in rauc and y in rauc and y in idx):
+            out[name] = {"constant": True}
+            continue
+        diff = rauc[x] - rauc[y]
+        out[name] = {"rank_auc_difference": float(diff.mean()), "ci": v6.ci(diff, idx[y])}
     return out
 
 
@@ -404,8 +426,8 @@ def main() -> None:
     cm.same_as_head([ROOT / p for p in paths])
     state = cm.git_state(paths)
     m, r = c4["mapping"], c4["relief"]
-    rec = {"a": run_a(c6, m, r, recs, d_lwp)}
-    rec["b"] = run_b(v6i.tiles_b(c6, m, r, recs["v6"]), recs["v6"], recs["v6i"])
+    rec_b = run_b(v6i.tiles_b(c6, m, r, recs["v6"]), recs["v6"], recs["v6i"])  # first: its checks are cheaper
+    rec = {"a": run_a(c6, m, r, recs, d_lwp), "b": rec_b}
     rec = {"main_cells": main_cells(rec), **rec}
     v6d.no_per_person(rec)
     v6i.no_long_list(rec)
@@ -416,6 +438,13 @@ def main() -> None:
                                          "kupa_essay": c6["data"]["kupa"]["files"]["essay"]["sha256"],
                                          "aalto": c6["data"]["aalto"]["sha256"], "lwp": d_lwp["sha256"]},
                          "choices_in_code": {
+                             **v6i.CHOICES,
+                             "paired_resamples": "the resamples of the later-named stage (y in x - y)",
+                             "gathered_gaps": "gathered's gaps pass through v6f's cumsum and differences, so they equal "
+                                              "text's multiset within rounding only (as v6i)",
+                             "P5": "read in both KUPA directions (copy -> essay and essay -> copy), sentence unit",
+                             "main_keys": "the main stages are checked against v6i with v6i's keys, then counted "
+                                          "again on the same distances with v6j's keys for the record",
                              "middle_block_key": "the block is deterministic, so the receiving key [.., 32, .., 4] "
                                                  "named in the conditions is not drawn",
                              "weak_m": "m counts the rests held by giving tiles of random_half before any move",

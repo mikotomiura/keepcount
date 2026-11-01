@@ -166,7 +166,7 @@ def test_paired_uses_resamples_of_the_later_named():
     rng = np.random.default_rng(6)
     rauc = {(sc, st): rng.random(10) for sc in ("main", "registration") for st in ("S1", "IMG5_pq", "DTW_pq",
                                                                                      "DTW_pq_scrambled")}
-    idx = {k: np.random.default_rng(hash(k) % 1000).integers(0, 10, (50, 10)) for k in rauc}
+    idx = {k: np.random.default_rng(i).integers(0, 10, (50, 10)) for i, k in enumerate(rauc)}
     out = v6j.paired(rauc, idx, "sentence")
     k = "main DTW_pq - main DTW_pq_scrambled"
     diff = rauc[("main", "DTW_pq")] - rauc[("main", "DTW_pq_scrambled")]
@@ -275,3 +275,71 @@ def test_non_finite_h_stops(monkeypatch):
     monkeypatch.setattr(v6j, "q_stats", bad)
     with pytest.raises(SystemExit):
         v6j.person_a(series(), [0, 1, 2], M, REST)
+
+
+class FT:
+    def __init__(self, rng, n):
+        self.p, self.q = rng.random(n), rng.random(n)
+        self.depth, self.fineness = self.p + 1, self.q * 2
+        self.n = n
+
+    def all(self):
+        return {"S0": np.array([self.p.sum(), self.q.min()]), "S1": np.array([self.p.mean(), self.q.mean()]),
+                "S2": np.array([self.depth.mean(), self.fineness.mean()])}
+
+
+def test_run_b_end_to_end(monkeypatch):
+    rng = np.random.default_rng(11)
+    n = 10
+    tiles = {(ds, pt): {u: [FT(rng, int(rng.integers(5, 9))) for _ in range(n)] for u in v6j.v6.UNIT}
+             for ds, parts in (("kupa", ("copy", "essay")), ("aalto", ("A", "B"))) for pt in parts}
+    v6i = v6j.v6i
+    rec6c = {"full": {}}
+    rec6 = {"count_2_person": {}}
+    for name, (ds, a, b, direction) in v6j.v6c.DIRECTIONS.items():
+        rec6c["full"][name], rec6["count_2_person"][name] = {}, {}
+        for u in v6j.v6.UNIT:
+            reg = v6i.stages_of(tiles[(ds, a)][u], ds, a, u, ds == "kupa" or u == "sentence")
+            ev = v6i.stages_of(tiles[(ds, b)][u], ds, b, u, ds == "kupa" or u == "sentence")
+            rec6c["full"][name][u] = {st: v6j.v6c.full(reg[st], ev[st], [v6j.SEED, 63, 1, v6j.v6.DATASET[ds], direction,
+                                                                       v6j.v6.STAGE[st], v6j.v6.UNIT[u]])
+                                      for st in ("S0", "S1", "S2")}
+            rec6["count_2_person"][name][u] = {"registration_scale": {
+                st: {"rank_auc": float(v6j.v6.per_person(v6j.vec_distance(reg[st], ev[st], "registration")[0])[1].mean())}
+                for st in ("S1", "S2")}}
+    rec_vi = {"b": v6i.run_b(tiles, rec6c)}
+    seen, real = [], np.random.default_rng
+
+    def spy(k):
+        seen.append(list(k))
+        return real(k)
+
+    monkeypatch.setattr(v6j.np.random, "default_rng", spy)
+    out = v6j.run_b(tiles, rec6, rec_vi)
+    assert list(out["checked_registration_s1_s2"]) == [f"{nm} {u}" for nm in v6j.v6c.DIRECTIONS for u in v6j.v6.UNIT]
+    for s in range(v6j.S):
+        assert [v6j.SEED, 65, 3, 0, 0, 0, 3, s] in seen  # KUPA copy, sentence, place 3
+    assert [v6j.SEED, 65, 1, 0, 0, 12, 0, 0] in seen and [v6j.SEED, 65, 1, 0, 0, 12, 0, 1] in seen
+    assert [v6j.SEED, 65, 1, 0, 0, v6i.STAGE_B["IMG5_pq"], 0, 0] in seen  # main reported with v6j's key
+    c = out["count"]["kupa_copy_to_essay"]["sentence"]
+    assert len(c["paired"]) == 6 and all("ci" in v for v in c["paired"].values())
+    w = out["count"]["kupa_copy_to_essay"]["window_10s"]["paired"]
+    assert not any("DTW" in k for k in w)
+    scr = c["main"]["DTW_pq_scrambled"]
+    assert scr["rank_auc_mean_over_draws"] == pytest.approx(np.mean([d["rank_auc"] for d in scr["draws"]]), rel=1e-12)
+    assert c["main"]["IMG5_pq"]["rank_auc"] == rec_vi["b"]["count"]["kupa_copy_to_essay"]["sentence"]["IMG5_pq"]["rank_auc"]
+    assert "aalto_first7_to_last8" in out["count"] and "window_10s" not in out["count"]["aalto_first7_to_last8"]
+    v6j.v6d.no_per_person(out)
+    v6i.no_long_list(out)
+    bad = json.loads(json.dumps(rec_vi))
+    bad["b"]["count"]["kupa_copy_to_essay"]["sentence"]["DTW_pq"]["eer"]["eer"] += 1e-6
+    with pytest.raises(SystemExit):
+        v6j.run_b(tiles, rec6, bad)
+    bad6 = json.loads(json.dumps(rec6))
+    bad6["count_2_person"]["aalto_first7_to_last8"]["window_10s"]["registration_scale"]["S1"]["rank_auc"] += 1e-6
+    with pytest.raises(SystemExit):
+        v6j.run_b(tiles, bad6, rec_vi)
+    bad6 = json.loads(json.dumps(rec6))
+    bad6["count_2_person"]["kupa_essay_to_copy"]["sentence"]["registration_scale"]["S2"]["rank_auc"] += 1e-6
+    with pytest.raises(SystemExit):
+        v6j.run_b(tiles, bad6, rec_vi)
