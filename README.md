@@ -162,8 +162,8 @@ original commit to the one here. The commits after the last mapped one add the R
 (version 1.0.0) and, in version 1.0.1, the images of this README, the tool that makes them, the Japanese README and
 `CITATION.cff`.
 
-Versions: 1.0.0 ([10.5281/zenodo.23858736](https://doi.org/10.5281/zenodo.23858736)), which the article cites; 1.0.1,
-which adds only the images of the README and their tool, `README.ja.md` and `CITATION.cff`, and rewrites this README.
+Versions: 1.0.0 ([10.5281/zenodo.23858736](https://doi.org/10.5281/zenodo.23858736)), which the article cites; 1.0.1
+([10.5281/zenodo.23862942](https://doi.org/10.5281/zenodo.23862942)), which adds only the images of the README and their tool, `README.ja.md` and `CITATION.cff`, and rewrites this README.
 [10.5281/zenodo.23858735](https://doi.org/10.5281/zenodo.23858735) resolves to the latest version.
 
 ## Citation

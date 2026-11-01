@@ -20,6 +20,9 @@ authors:
 doi: 10.5281/zenodo.23858735
 identifiers:
   - type: doi
+    value: 10.5281/zenodo.23862942
+    description: Version 1.0.1.
+  - type: doi
     value: 10.5281/zenodo.23858736
     description: Version 1.0.0, cited by the article.
 repository-code: "https://github.com/mikotomiura/keepcount"
