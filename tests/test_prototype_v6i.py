@@ -119,7 +119,7 @@ def test_eligible_a():
 
 def test_r_cell_and_tails():
     rs = np.array([0.99, 0.5, 0.01, 0.975, 0.025, 0.6])
-    Rs = [1.2, None, 0.8, 1.0, 1.1, 0.9]
+    Rs = [3.0, None, 0.8, 1.0, 1.1, 0.9]
     deg = np.array([False, True, False, False, False, False])
     idx = np.random.default_rng(1).integers(0, rs.size, (200, rs.size))
     c = v6i.r_cell(rs, Rs, deg, idx)
@@ -167,6 +167,19 @@ def test_groups_and_binned():
         v6i.groups(4, 5)
     b = v6i.binned(np.arange(7.0), np.arange(7.0) * 10, 5)
     assert b.tolist() == [0.5, 5.0, 2.5, 25.0, 4.0, 40.0, 5.0, 50.0, 6.0, 60.0]
+    sk = np.array([0.0, 0.0, 9.0] * 5)
+    assert v6i.binned(sk, sk, 5).tolist() == [3.0] * 10  # means, not medians (0.0)
+
+
+def test_degenerate_only_when_every_null_ties():
+    nv = np.array([0.5, 0.5, 0.7])
+    pa = {"text": {x: {st: 0.5 for st in v6i.STAT} for x in ("p", "q")},
+          "gathered": {x: {st: 0.5 for st in v6i.STAT} for x in ("p", "q")},
+          "H": {x: {st: nv for st in v6i.STAT} for x in ("p", "q")},
+          "C": {x: {st: np.full(3, 0.5) for st in v6i.STAT} for x in ("p", "q")}}
+    pp = v6i.per_person_a(pa)
+    assert not pp[("q", "raw", "H")]["degenerate"] and pp[("q", "raw", "C")]["degenerate"]
+    assert pp[("q", "raw", "H")]["r"] == pytest.approx(1 / 3) and pp[("q", "raw", "H")]["R"] == 1.0
 
 
 def test_new_vectors():
