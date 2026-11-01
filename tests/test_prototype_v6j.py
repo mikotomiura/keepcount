@@ -227,3 +227,51 @@ def test_count_a_keys(monkeypatch):
     out = v6j.count_a(fake_pp(8), tallies, "lwp", "lwp")
     assert [k for k in seen if k[:2] == [v6j.SEED, 81]] == [[v6j.SEED, 81, 2, 0, i] for i in range(4)]
     assert out["random_half"]["C_raw"]["mean_r_ci"] == out["gathered"]["C_raw"]["mean_r_ci"]
+
+
+def test_weak_moves_the_first_rests_with_the_same_partners():
+    G = np.diff(series().times)  # the gaps the controls start from (rebuilt times, so not GAPS bit for bit)
+    found_odd = False
+    for place in range(30):
+        key = [0, 1, place]
+        out = v6j.controls(series(), key, REST)
+        half = np.random.default_rng([v6j.SEED, 6, 32, *key, 2]).choice(9, 4, replace=False)
+        giving_rests = [int(j) for k, h in enumerate(HELD) if k not in half for j in h if G[j] >= REST - v6j.ks.TOL_MS]
+        m = len(giving_rests)
+        found_odd |= m % 2 == 1
+        k = math.ceil(m / 2)
+        full, weak = out["random_half"][0], out["random_half_weak"][0]
+        moved_w = [j for j in giving_rests if weak[j] != G[j]]
+        assert moved_w == giving_rests[:len(moved_w)] and len(moved_w) == out["random_half_weak"][1]
+        assert out["random_half_weak"][1] + out["random_half_weak"][2] == k
+        for j in giving_rests[:out["random_half_weak"][1]]:
+            assert weak[j] == full[j]  # the same partner as in the full move
+    assert found_odd
+
+
+def test_c_is_the_controls_own_and_h_detrended_column(monkeypatch):
+    s = series()
+    monkeypatch.setattr(v6j, "K", 3)
+    key = [2, 0, 5]
+    pa = v6j.person_a(s, key, M, REST)
+    gc = v6j.controls(s, key, REST)["random_half"][0]
+    c1 = v6j.v6i.circular(gc, np.random.default_rng([v6j.SEED, 6, 31, *key, 2, 1]))
+    assert pa["random_half"]["C_raw"][1][1] == v6j.q_stats(c1, RANGES, M, REST)[0]
+    assert pa["random_half"]["C_detrended"][1][1] == v6j.q_stats(c1, RANGES, M, REST)[1]
+    g0 = np.random.default_rng([v6j.SEED, 6, 16, *key, 0]).permutation(np.diff(s.times))
+    assert pa["random_half"]["H_detrended"][1][0] == v6j.q_stats(g0, RANGES, M, REST)[1]
+
+
+def test_non_finite_h_stops(monkeypatch):
+    real = v6j.q_stats
+    calls = {"n": 0}
+
+    def bad(*a):
+        calls["n"] += 1
+        x = real(*a)
+        return (float("nan"), x[1]) if calls["n"] == 1 else x
+
+    monkeypatch.setattr(v6j, "K", 3)
+    monkeypatch.setattr(v6j, "q_stats", bad)
+    with pytest.raises(SystemExit):
+        v6j.person_a(series(), [0, 1, 2], M, REST)
