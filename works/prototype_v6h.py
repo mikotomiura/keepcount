@@ -51,6 +51,7 @@ ROW_INDEX = {row: i + 1 for i, row in enumerate(ROWS)}
 TEXT_ONLY = ("gathered",)
 MAIN = (("kupa", "essay"), ("lwp", "lwp"))
 KEY_H, KEY_BASE_H = 16, 21
+NEAR_ZERO = v6g.NEAR_ZERO  # bases between 0 and this: the rounding of times rebuilt by cumsum (KUPA), counted beside 0
 KEY_TEXT = {"tiles_permuted": 13, "rests_moved": 14, "short_shuffled": 15, "rests_swapped": 22}
 KEY_ON_H = {"shuffled": 17, "tiles_permuted": 18, "rests_moved": 19, "short_shuffled": 20, "rests_swapped": 23}
 
@@ -71,13 +72,13 @@ def is_rest(gaps: np.ndarray, rest_ms: float) -> np.ndarray:
 
 
 def shuffle_all(times: np.ndarray, rng: np.random.Generator) -> np.ndarray:
-    """All gaps permuted uniformly (H, and shuffled on H)."""
-    return from_gaps(rng.permutation(gaps_of(times)))
+    """All gaps permuted uniformly (H, and shuffled on H); the new gaps."""
+    return rng.permutation(gaps_of(times))
 
 
 def rests_moved(times: np.ndarray, rest_ms: float, rng: np.random.Generator) -> np.ndarray:
     """The positions of the rests drawn again uniformly without replacement among all positions; the rest values put
-    there in their original order, the short gaps in the other positions in their original order."""
+    there in their original order, the short gaps in the other positions in their original order; the new gaps."""
     g = gaps_of(times)
     rest = is_rest(g, rest_ms)
     new = np.empty_like(g)
@@ -85,7 +86,7 @@ def rests_moved(times: np.ndarray, rest_ms: float, rng: np.random.Generator) -> 
     pos[rng.choice(g.size, size=int(rest.sum()), replace=False)] = True
     new[pos] = g[rest]
     new[~pos] = g[~rest]
-    return from_gaps(new)
+    return new
 
 
 def rests_swapped(times: np.ndarray, rest_ms: float, rng: np.random.Generator) -> np.ndarray:
@@ -93,7 +94,7 @@ def rests_swapped(times: np.ndarray, rest_ms: float, rng: np.random.Generator) -
     g = gaps_of(times).copy()
     rest = is_rest(g, rest_ms)
     g[rest] = rng.permutation(g[rest])
-    return from_gaps(g)
+    return g
 
 
 def short_shuffled(times: np.ndarray, rest_ms: float, rng: np.random.Generator) -> np.ndarray:
@@ -101,12 +102,12 @@ def short_shuffled(times: np.ndarray, rest_ms: float, rng: np.random.Generator) 
     g = gaps_of(times).copy()
     short = ~is_rest(g, rest_ms)
     g[short] = rng.permutation(g[short])
-    return from_gaps(g)
+    return g
 
 
 def tiles_permuted(times: np.ndarray, held: list[np.ndarray], rng: np.random.Generator):
     """The gaps of each tile kept together in order and the tiles' order permuted; the new times and the sentence
-    ranges of the moved blocks (the tiles follow their gaps)."""
+    ranges of the moved blocks (the tiles follow their gaps); the new gaps and the ranges."""
     g = gaps_of(times)
     if not np.array_equal(np.concatenate(held), np.arange(g.size)):
         raise SystemExit("the tiles do not hold every gap in order; tiles_permuted is not defined")
@@ -115,7 +116,7 @@ def tiles_permuted(times: np.ndarray, held: list[np.ndarray], rng: np.random.Gen
     for k in order:
         ranges.append((at, at + held[k].size))
         at += held[k].size
-    return from_gaps(np.concatenate([g[held[k]] for k in order])), ranges
+    return np.concatenate([g[held[k]] for k in order]), ranges
 
 
 # ---------------------------------------------------------------- observables and counts
@@ -125,16 +126,17 @@ def observables(t: v6.Tiles) -> dict:
     return {st: np.column_stack([getattr(t, a) for a in NUMBERS[st]]).astype(float) for st in STAGE}
 
 
-def own_of(z, text: np.ndarray, base: list, change: np.ndarray) -> tuple[float, np.ndarray, float, float, bool]:
-    """own over the B draws (1 change > base_b, 1/2 equal, 0), the per-draw indicators, the median change and base,
-    and whether a base is 0."""
+def own_of(z, text: np.ndarray, base: list, change: np.ndarray):
+    """own over the B draws (1 change > base_b, 1/2 equal, 0), the per-draw strict indicators (change > base_b), the
+    median change and base, whether a base is 0 and whether a base is below NEAR_ZERO."""
     zt = z(text)
     bs = np.array([v6f.rms(z(x), zt) for x in base])
     c = v6f.rms(z(change), zt)
     if not (np.all(np.isfinite(bs)) and np.isfinite(c)):
         raise SystemExit("a non-finite distance")
     ind = v6f.win(np.full(B, c), bs)
-    return float(ind.mean()), ind, c, float(np.median(bs)), bool((bs == 0).any())
+    return (float(ind.mean()), (c > bs).astype(float), c, float(np.median(bs)), bool((bs == 0).any()),
+            bool((bs < NEAR_ZERO).any()))
 
 
 def count_cell(b: dict, row: str, st: str, key: list[int], where: str) -> dict:
@@ -154,26 +156,29 @@ def count_cell(b: dict, row: str, st: str, key: list[int], where: str) -> dict:
     per_draw = np.zeros((n, B))
     share_h_by = np.zeros((n, M))
     med = {"change_text": [], "base_text": [], "change_H": [], "base_H": []}
-    zero_t = zero_h = 0
+    zero_t = zero_h = near_t = near_h = 0
     for i, p in enumerate(b["persons"]):
-        o, ind, c, mb, z0 = own_of(z, p["text"][st], [x[st] for x in p["base"]], p["rows"][row][st])
+        o, ind, c, mb, z0, n0 = own_of(z, p["text"][st], [x[st] for x in p["base"]], p["rows"][row][st])
         own_t[i], per_draw[i] = o, ind
         med["change_text"].append(c)
         med["base_text"].append(mb)
         zero_t += int(z0)
+        near_t += int(n0)
         if row in TEXT_ONLY:
             continue
-        cs, bs, any0 = [], [], False
+        cs, bs, any0, anyn = [], [], False, False
         for h, hh in enumerate(p["H"]):
-            oh, _, ch, mbh, z0h = own_of(z, hh["text"][st], [x[st] for x in hh["base"]], hh["rows"][row][st])
+            oh, _, ch, mbh, z0h, n0h = own_of(z, hh["text"][st], [x[st] for x in hh["base"]], hh["rows"][row][st])
             share_h_by[i, h] = oh
             cs.append(ch)
             bs.append(mbh)
             any0 |= z0h
+            anyn |= n0h
         own_h[i] = share_h_by[i].mean()
         med["change_H"].append(float(np.median(cs)))
         med["base_H"].append(float(np.median(bs)))
         zero_h += int(any0)
+        near_h += int(anyn)
     if n < 2:
         raise SystemExit(f"fewer than 2 persons for {where}")
     idx = np.random.default_rng(key).integers(0, n, (v6.N_BOOT, n))
@@ -181,7 +186,8 @@ def count_cell(b: dict, row: str, st: str, key: list[int], where: str) -> dict:
            "per_draw_share_of_persons_min": float(per_draw.mean(axis=0).min()),
            "per_draw_share_of_persons_max": float(per_draw.mean(axis=0).max()),
            "median_change_text": v6d.five(med["change_text"]), "median_base_text": v6d.five(med["base_text"]),
-           "persons_unchanged_text": int(b["unchanged"][row]), "persons_with_a_zero_base_text": zero_t}
+           "persons_unchanged_text": int(b["unchanged"][row]), "persons_with_a_zero_base_text": zero_t,
+           "persons_with_a_base_below_1e-9_text": near_t}
     if row not in TEXT_ONLY:
         delta = own_t - own_h
         by_h = share_h_by.mean(axis=0)
@@ -190,7 +196,8 @@ def count_cell(b: dict, row: str, st: str, key: list[int], where: str) -> dict:
                     "share_H_by_h_min": float(by_h.min()), "share_H_by_h_max": float(by_h.max()),
                     "median_range_of_own_H_over_h": float(np.median(share_h_by.max(axis=1) - share_h_by.min(axis=1))),
                     "median_change_H": v6d.five(med["change_H"]), "median_base_H": v6d.five(med["base_H"]),
-                    "persons_unchanged_H": int(b["unchanged_H"][row]), "persons_with_a_zero_base_H": zero_h})
+                    "person_h_pairs_unchanged_H": int(b["unchanged_H"][row]), "person_h_pairs_of": n * M,
+                    "persons_with_a_zero_base_H": zero_h, "persons_with_a_base_below_1e-9_H": near_h})
     return out
 
 
@@ -206,16 +213,22 @@ def operated(s: v6.Series, tt: v6.Tiles, row: str, key: list[int], kind: str, re
     """The tiles of one operation on a series (text or H_h) and whether its gaps equal the original."""
     k = KEY_TEXT if h is None else KEY_ON_H
     rng = np.random.default_rng([SEED, 6, k[row], *key] + ([] if h is None else [h]))
+    g = gaps_of(s.times)
+    ranges = None
     if row == "tiles_permuted":
-        times, ranges = tiles_permuted(s.times, tt.held, rng)
-        new = mk(v6.Series(times, sentence_ranges=ranges))
+        new_g, ranges = tiles_permuted(s.times, tt.held, rng)
+    elif row == "shuffled":
+        new_g = shuffle_all(s.times, rng)
     else:
-        f = {"rests_moved": rests_moved, "short_shuffled": short_shuffled, "rests_swapped": rests_swapped}.get(row)
-        times = shuffle_all(s.times, rng) if row == "shuffled" else f(s.times, rest_ms, rng)
-        new = mk(s.with_times(times))
+        new_g = {"rests_moved": rests_moved, "short_shuffled": short_shuffled,
+                 "rests_swapped": rests_swapped}[row](s.times, rest_ms, rng)
+    if np.array_equal(new_g, g):  # unchanged: the original tiles themselves, so the change is exactly 0
+        return tt, True
+    sx = v6.Series(from_gaps(new_g), sentence_ranges=ranges) if ranges is not None else s.with_times(from_gaps(new_g))
+    new = mk(sx)
     if new.n != tt.n:
         raise SystemExit(f"{kind} {row}: {new.n} tiles, not {tt.n}")
-    return new, bool(np.array_equal(np.diff(times), np.diff(s.times)))
+    return new, False
 
 
 def build(ds: str, task: str, chosen: list[str], series: dict, place: dict, m: dict, r: dict, rest_ms: float) -> dict:
@@ -247,6 +260,7 @@ def build(ds: str, task: str, chosen: list[str], series: dict, place: dict, m: d
             return res
 
         rw, _ = v6.make_rows("kupa", s, UNIT, tt, key, m, r, rest_ms)
+        v6.check_s0(rw, UNIT)
         rows = {"shuffled": rw["shuffled/before"]}
         if not np.array_equal(rows["shuffled"].held[-1], tt.held[-1]) or rows["shuffled"].n != tt.n:
             raise SystemExit(f"{ds} {task}: the shuffled row's tiles differ from text's")
@@ -262,7 +276,7 @@ def build(ds: str, task: str, chosen: list[str], series: dict, place: dict, m: d
             s.times, tt.held, np.random.default_rng([SEED, 6, v6g.KEY_BASE[False], *key, 0])))).q - tt.q))))
         hs = []
         for h in range(M):
-            sh = s.with_times(shuffle_all(s.times, np.random.default_rng([SEED, 6, KEY_H, *key, h])))
+            sh = s.with_times(from_gaps(shuffle_all(s.times, np.random.default_rng([SEED, 6, KEY_H, *key, h]))))
             th = mk(sh)
             if th.n != tt.n:
                 raise SystemExit(f"{ds} {task}: H has {th.n} tiles, not {tt.n}")
@@ -318,8 +332,11 @@ def evaluate(cnt: dict) -> dict:
             "P4": all(not c(nm, "short_shuffled", "IMG_q")["share_text_ci"][0] > 0.60 for nm in names),
             "P5": all(c(nm, "rests_swapped", "IMG_q")["share_text"] < c(nm, "rests_moved", "IMG_q")["share_text"]
                       for nm in names)}
-    return {"q1": v1, "q1_cells_not_above": {" | ".join(x): "not above" for x, ok in zip(q1, lo) if not ok},
-            "q1_cells_below": below, "q2": v2,
+    def label(x):
+        a, z = c(*x)["mean_delta_ci"]
+        return "above 0" if a > 0 else ("below 0" if z < 0 else "contains 0")
+
+    return {"q1": v1, "q1_cells": {" | ".join(x): label(x) for x in q1}, "q1_cells_below": below, "q2": v2,
             "q2_cells_not_held": {" | ".join(x): "not held" for x, ok in zip(q2, held2) if not ok},
             "predictions": pred}
 
@@ -353,6 +370,12 @@ def run(c6: dict, m: dict, r: dict, recs: dict) -> dict:
         if v6d.five(b["dq0"]) != recs["v6g"]["tallies"][name]["median_abs_dq_draw0"]:
             raise SystemExit(f"{name}: the redraws of text differ from v6g's")
         rec["count"][name] = count(b, ds, task)
+        for row, grow in (("shuffled", "shuffled/before"), ("gathered", "gathered/before")):
+            for st in ("IMG_pq", "IMG_df"):
+                mine, theirs = rec["count"][name][row][st], recs["v6g"]["count"][name][grow][st]
+                if mine["share_text"] != theirs["share_vs_own"] or not np.isclose(
+                        mine["median_base_text"]["median"], theirs["median_base"], rtol=1e-12, atol=0):
+                    raise SystemExit(f"{name} {row} {st}: the count against text differs from v6g's")
         rec["left_out"][name] = b["left_out"]
         rec["tallies"][name] = {"persons_unchanged_text": b["unchanged"], "persons_unchanged_H_of_5": b["unchanged_H"]}
         del b, series
@@ -366,9 +389,14 @@ def main_cells(rec: dict) -> dict:
     order += [(row, st) for row in ("rests_moved", "rests_swapped", "short_shuffled") for st in ("IMG_q", "IMG_p")]
     order += [(row, st) for row in ("tiles_permuted", "gathered") for st in ("IMG_pq", "IMG_df")]
     keys = ("share_text", "share_text_ci", "share_H", "share_H_ci", "mean_delta", "mean_delta_ci")
-    return {f"{ds}_{task} | {row} | {st}": {k: rec["count"][f"{ds}_{task}"][row][st][k] for k in keys
-                                             if k in rec["count"][f"{ds}_{task}"][row][st]}
-            for ds, task in MAIN for row, st in order}
+    out = {f"{ds}_{task} | {row} | {st}": {k: rec["count"][f"{ds}_{task}"][row][st][k] for k in keys
+                                            if k in rec["count"][f"{ds}_{task}"][row][st]}
+           for ds, task in MAIN for row, st in order}
+    for ds, task in MAIN:
+        x = rec["count"][f"{ds}_{task}"]["shuffled"]["IMG_pq"]
+        out[f"{ds}_{task} | shuffled | IMG_pq | medians"] = {k: x[k]["median"] for k in (
+            "median_change_text", "median_base_text", "median_change_H", "median_base_H")}
+    return out
 
 
 def main() -> None:
