@@ -1,0 +1,69 @@
+{
+ "purpose": "Prototype v6j: three computations that close readings of v6i, asked for by the pre-review of the manuscript (round 5, points C, D and F) and decided by the researcher (decision 9 of .steering/20261101-paper-a-draft). (a) v6i's positive control (gathered rests) was run only against the plain null H; the reading of rest under the two nulls that allow for drift (a straight line removed, circular shifts C) had no control, and C keeps local runs of the gaps. Here the same control is counted under those two nulls. (b) v6i's DTW gained over S1 without a test of whether the gain comes from the order of the tiles; here DTW is counted with the tiles of each record in random order. (c) IMG5 and DTW were counted only under the main standardisation; here also with the registration set's scale only, as v6 did for S0-S2.",
+ "fixed_before_running": "Written on 2026-11-01 after seeing v6i's record (results/prototype_v6i/record.json) and the pre-review round 5. No value of gathered under C or detrended, of DTW with scrambled tiles, or of IMG5 or DTW under the registration scale has been computed for any person. A first draft was sent to Codex (codex-consult, the conditions text only; .steering/20261101-v6j-controls-under-drift/codex-consult-output.md) and changed after its six points (decision 1 of that folder): non-periodic and block controls and a weaker strength added, the rule reads only sensitivity to a control, the block statement softened, DTW scrambled with five keys and tiles kept as (p, q) pairs, the registration scale's unit fixed, paired differences between scales added, and the limits extended.",
+ "version": "6j",
+ "status": "(a) a decomposition on v6i's persons (status d), a positive control added after the reading it gates was seen; (b) and (c) descriptive on v6's persons, added after v6i's results (status d).",
+ "part_a": {
+  "persons": "v6i's part (a) persons: KUPA essay 178 and LWP 196 (v6h's count persons), drawn and checked as v6i.",
+  "record": "Controls on text (no relief; p and q as v6i). Each moves rest gaps held by giving tiles into receiving tiles by v6f's swap (a rest gap of a giving tile, giving tiles in order, swapped with a non-rest gap of a receiving tile drawn uniformly without replacement): (1) gathered: v6f's (receiving k mod 4 in {0, 1}) with v6f's key, as v6i; (2) random_half: receiving tiles a uniform random set of floor(n / 2) tiles, numpy.random.default_rng([20261031, 6, 32, dataset, task, place, 2]), every rest of a giving tile moved (strength 1); (3) random_half_weak: the same receiving set and draws, only the first ceil(m / 2) of the m rests of giving tiles (in tile order) moved (strength 1/2); (4) middle_block: receiving tiles the consecutive block [floor(n / 3), floor(2 n / 3)), key [.., 32, .., 4], every rest moved. The receiving non-rest gaps are drawn with numpy.random.default_rng([20261031, 6, 33, dataset, task, place, control]) for controls 2-4 (control 2, 3, 4; 3 uses the same draw as 2). Rests left when no receiving non-rest gap remains stay, and their number is counted.",
+  "nulls": {
+   "H_raw and H_detrended": "the control's T against T of the same 1000 H_k of text as v6i (keys [20261031, 6, 16, dataset, task, place, k]); the multiset of gaps is the same; the straight line is fitted anew to each series (control and each H_k) on its own tile index",
+   "C_raw and C_detrended": "the control's T against T of 1000 circular shifts of the control's own gaps, numpy.random.default_rng([20261031, 6, 31, dataset, task, place, control, k]), offset uniform on 1..G-1 (shifts may repeat; the wrap joins the last gap to the first)"
+  },
+  "check": "gathered against H_raw is v6i's control: recomputed, it must equal v6i's record (mean r, interval, tail shares) exactly, or the run stops (this checks the reuse of v6i's code, not its validity).",
+  "cell": "per dataset, control and null as v6i: mean r_q with a 95% percentile interval over 2000 bootstrap resamples of persons, numpy.random.default_rng([20261031, 81, dataset, task, null]) with null H_raw 0, H_detrended 1, C_raw 2, C_detrended 3 (the same resamples for every control); median R; both tail shares; ties of r counted 1/2; the moved and left rests in five-number summaries.",
+  "rule": "fixed before running. A control is seen under a null in a cell if the lower end of its mean r_q is above 0.5. The rule's control is random_half (a concentration in sentences chosen without period): where it is seen, v6i's reading of rest under that null in that cell is 'sensitive to a concentration in particular sentences of this strength'; where it is not, v6i's reading under that null in that cell is 'not evaluable'. Neither is read as showing that the records hold no structure. gathered, random_half_weak and middle_block are reported beside the rule (a phase-dependent control, a weaker strength, and a block that C keeps and a straight line may partly remove).",
+  "limits": "The controls are made strong; seeing them shows sensitivity to these concentrations at these strengths, not to weaker structure. A block of consecutive sentences is partly kept by C and partly removed by a straight line; middle_block shows how much, for one block. The standard deviation over tiles does not depend on the order of the tiles, so every reading is about the spread of q over sentences, not about which sentences."
+ },
+ "part_b": {
+  "persons": "v6's 200 KUPA and 200 Aalto persons, drawn as v6i (ids checked).",
+  "stages": {
+   "DTW_pq_scrambled": "v6i's DTW_pq on the tiles of each part put in random order first, the (p, q) of a tile kept together; five draws s = 0..4, numpy.random.default_rng([20261031, 65, 3, dataset, part, unit, place, s]) (part and place as v6i's scramble; registration and evaluation scrambled independently); sentence unit only. Each draw is counted; the per-person rank_auc is averaged over the five for the paired difference, and the spread over draws is reported.",
+   "registration_scale": "IMG5_pq, IMG5_df, IMG5_pq_scrambled and SEQ with v6.standardise(..., 'registration_scale') (per feature, the mean and standard deviation over the registration set's persons, applied to both sets; a feature constant in either set dropped). DTW_pq and DTW_pq_scrambled with each of p and q z-scored by the mean and standard deviation over all tiles of the registration set (tile-weighted, so longer records weigh more), applied to both sets; recomputed for each direction from its own registration set."
+  },
+  "check": "v6i's DTW_pq, IMG5_pq, IMG5_df, IMG5_pq_scrambled and SEQ under the main standardisation are recomputed with v6i's keys and must equal v6i's record (rank_auc, top1, Rank-n with intervals, EER) exactly; S1 and S2 under the registration scale must equal v6's record (rank_auc within 1e-12); otherwise the run stops.",
+  "match": "as v6i: top1, rank_auc with interval, Rank-1/5/10/20, EER; bootstrap key numpy.random.default_rng([20261031, 65, 1, dataset, direction, stage, unit, scale]) with stage indices as v6i plus DTW_pq_scrambled 12, scale main 0 and registration 1. Paired, on the same evaluation persons with the resamples of the later-named stage: DTW_pq - DTW_pq_scrambled (the mean over the five draws); under the registration scale IMG5_pq - S1 and DTW_pq - S1; and between scales, main - registration for S1, IMG5_pq and DTW_pq (resamples of the registration scale).",
+  "reading": "descriptive, as v6i; no threshold."
+ },
+ "prediction": "Claude's, written before running. P1: random_half's mean r_q has a lower end above 0.5 under all four nulls in both cells. P2: gathered's too under H_detrended and C_raw. P3: middle_block's lower end is above 0.5 under H_raw and C_raw, and not under H_detrended, in at least one cell. P4: DTW_pq_scrambled's rank_auc (mean over draws, point estimate) is within 0.03 of DTW_pq's in KUPA copy -> essay sentences. P5: under the registration scale, IMG5_pq and DTW_pq fall from the main standardisation by 0.05-0.10 (point estimates) in KUPA sentences, as S1 does. No value of v6j had been seen.",
+ "main_cells": "fixed before running: (a) random_half under the four nulls in KUPA essay and LWP, with the rule; then gathered, random_half_weak and middle_block; tails. (b) KUPA copy -> essay sentences: DTW_pq, DTW_pq_scrambled (each draw and the mean) and the paired difference; S1, IMG5_pq and DTW_pq under the registration scale and the paired differences; then the other cells.",
+ "record": {
+  "public": "results/prototype_v6j/record.json: counts and summaries over persons and the provenance; no per-person value or id (as v6i).",
+  "provenance": "as v6i"
+ },
+ "limits_written_before": "As v6i's and part_a.limits. A scrambled DTW is not a distance without order (the warping path, ends and lengths still act); a small difference from DTW does not by itself show that the gain comes from the distribution. A change of scale also changes the weights of p and q in DTW and in the vectors, so a fall in rates does not identify the source. The exact checks against v6i and v6 show the reuse of code, not its validity. Status d throughout: added after the readings they test were seen.",
+ "rerun_rule": "if a defect of the code is found after the first run, the first record is kept unchanged, the fix and the reason are committed, and the rerun is reported separately beside the first; the conditions are not changed after the first run except by such a recorded amendment.",
+ "earlier": {
+  "works/conditions/prototype_v4.json": "c334f89543fc84bd90e02f6d3eae105d0e285643628aeda809dc4bc7ef731e8e",
+  "works/conditions/prototype_v6.json": "afc4c330c7a3862ca9f2d6a1ad6d0c1d84ff68ff3b2baf4b39acdd0b6085b078",
+  "works/conditions/prototype_v6b.json": "ae52effd10d6235051839df1ebfa35249e283846090805213b5b3c0e6272ba7a",
+  "works/conditions/prototype_v6e.json": "6cf2cfabcf2bcf44841380f2d78e89ef0b6dc6a121f60309e8a0f58e746b45d8",
+  "results/prototype_v6b/record.json": "94d3feda2b4a499738e2711821f930a88443ddca05e02c31782ad564c9cacb6f",
+  "results/prototype_v6e/record.json": "aca8d16a950b365c77f2f8f82eaeecec10c07e781a9bdba14bd7ff3dbbf7ee29",
+  "works/conditions/prototype_v6f.json": "c756de3fe499d683219ede0a9e12aadc5895e3d30527e913a2513deda93ba66e",
+  "results/prototype_v6f/record.json": "cbca3ad1c579ea1495a9b6faf5c78553747ad9560324ba51333800cf93d7dbfb",
+  "works/conditions/prototype_v6g.json": "6c432a21b1a95e3d932edaad841cc5b6747a1c62edb524a88379ba8933af2204",
+  "results/prototype_v6g/record.json": "090f455b56055ddf5eb0eab0bfc7c5675292baa1e4246ba8d4cd193915a3e37a",
+  "works/conditions/prototype_v6h.json": "9fae79891979e9565e32b53e5cc1ed492465f20e6eba055f270a2a0fa3be5725",
+  "results/prototype_v6h/record.json": "7f13b6730cae88789b5028bec27bccefbef9d4dc6025edda5e5b0fba5839ed1f",
+  "works/conditions/prototype_v6c.json": "62dd2503b668cad0163cc6c265acd927395952c000bc1b90a5e5bf74192f5b51",
+  "results/prototype_v6c/record.json": "85e82a489fa6da959ca57a338deae96fb50ab092ef43b039b2c69b4dfc3326d5",
+  "results/prototype_v6/record.json": "4672ad73eb24d0716ff52ec31f9e000b0027c4663949668e0cfe598568dc11d3",
+  "works/conditions/prototype_v6i.json": "b6e6c988a4d97fd8f6dadb0d4d2af56507c6890e7f3b8d934e4494814dcb7c61",
+  "results/prototype_v6i/record.json": "65d4d8efbe779207279c38b08846788b4b29f7a28a8a69d6f2baf124fbd91cdb"
+ },
+ "generator": {
+  "requirement": "atact @ git+https://github.com/mikotomiura/affective-relief-audit@b559a80c623d36357dd0736b887497a0cb789af5",
+  "commit": "b559a80c623d36357dd0736b887497a0cb789af5",
+  "library_sha256": {
+   "__init__.py": "d5980876e37cb7a1f5dc379028ab50f7a0c1d77d84c7651ee5d1beefd623b6ab",
+   "field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
+   "lexicon.py": "36cad1e49a25b352a7ae04868c6693ef349e8276d51909061eeb378085065e81",
+   "mapping.py": "83a50faaa664ddcb99004392e13a73fb096a85588a8b3c423b2c8b71ce626d26",
+   "transform.py": "5d35c9c10dfa6c8d5d3b2a9e8126ab45b895a1be14e05650c3ef60ffd3431bd1"
+  }
+ },
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1"
+}
