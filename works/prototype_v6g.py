@@ -50,6 +50,9 @@ SENS_OFFSET = 20
 SHUFFLES = ("shuffled/before", "shuffled_in_halves/before")
 MAIN = (("kupa", "essay"), ("lwp", "lwp"))
 PLAN = (("kupa", "essay"), ("kupa", "copy"), ("lwp", "lwp"))
+# Times rebuilt by cumsum differ from the record's times in the last bits where these are not integers (KUPA), so a
+# tile drawn back to its own gaps can sit about 1e-13 from text: such near-zero bases are counted beside the exact ones.
+NEAR_ZERO = 1e-9
 KEY_BASE, KEY_REDRAW = {False: 9, True: 11}, {False: 10, True: 12}  # index 2 of the draw's key (boundary kept: True)
 
 
@@ -90,6 +93,8 @@ def scale(text: list, st: str, where: str) -> tuple[np.ndarray, np.ndarray]:
     if not np.all(np.isfinite(allv)):
         raise SystemExit(f"a non-finite value for {where}")
     sd = allv.std(axis=0)
+    if not np.all(np.isfinite(sd)):
+        raise SystemExit(f"a non-finite standard deviation for {where}")
     keep = sd > 0
     if not keep.any():
         raise SystemExit(f"every feature is constant for {where}")
@@ -102,19 +107,26 @@ def dist(x: np.ndarray, y: np.ndarray, st: str) -> float:
 
 def own_terms(text: list, base: list[list], change: list, st: str, where: str):
     """Per person: own = mean over draws of 1 (change > base_b), 1/2 (equal), 0; the per-draw indicators; the median
-    base over draws and the change (per draw for redrawn). base[i][b]; change[i] is one array or a list of B arrays."""
+    base over draws and the change (per draw for redrawn); persons with a zero base; dropped numbers; the share of
+    (person, draw) pairs with change equal to base. base[i][b]; change[i] is one array or a list of B arrays (redrawn,
+    which stops if every person ties in one draw)."""
+    redrawn = bool(change) and isinstance(change[0], list)
     sd, keep = scale(text, st, where)
 
     def z(x):
         x = np.asarray(x, dtype=float)
         if not np.all(np.isfinite(x)):
             raise SystemExit(f"a non-finite value for {where}")
-        return x[..., keep] / sd[keep]
+        x = x[..., keep] / sd[keep]
+        if not np.all(np.isfinite(x)):
+            raise SystemExit(f"a non-finite standardized value for {where}")
+        return x
 
     n = len(text)
     ind = np.zeros((n, B))
     med_base, med_change = np.zeros(n), np.zeros(n)
-    zero_base = 0
+    zero_base = near_zero = 0
+    ties = np.zeros(B)
     for i in range(n):
         zt = z(text[i])
         bs = np.array([dist(z(base[i][b]), zt, st) for b in range(B)])
@@ -122,14 +134,21 @@ def own_terms(text: list, base: list[list], change: list, st: str, where: str):
             cs = np.array([dist(z(change[i][b]), zt, st) for b in range(B)])
         else:
             cs = np.full(B, dist(z(change[i]), zt, st))
+        if not (np.all(np.isfinite(bs)) and np.all(np.isfinite(cs))):
+            raise SystemExit(f"a non-finite distance for {where}")
+        ties += cs == bs
         ind[i] = v6f.win(cs, bs)
         med_base[i], med_change[i] = np.median(bs), np.median(cs)
         zero_base += int((bs == 0).any())
-    return ind, med_base, med_change, zero_base, [int(j) for j in np.flatnonzero(~keep)]
+        near_zero += int((bs < NEAR_ZERO).any())
+    if redrawn and n > 0 and np.any(ties == n):
+        raise SystemExit(f"every person ties in one draw for {where} (is redrawn drawn with the base's key?)")
+    return (ind, med_base, med_change, (zero_base, near_zero), [int(j) for j in np.flatnonzero(~keep)],
+            float(ties.sum() / (n * B)))
 
 
-def summary(ind: np.ndarray, med_base: np.ndarray, med_change: np.ndarray, zero_base: int, dropped: list[int],
-            key: list[int]) -> dict:
+def summary(ind: np.ndarray, med_base: np.ndarray, med_change: np.ndarray, zero_base: tuple[int, int],
+            dropped: list[int], tie_share: float, key: list[int]) -> dict:
     own = ind.mean(axis=1)
     n = own.size
     if n < 2:
@@ -138,12 +157,21 @@ def summary(ind: np.ndarray, med_base: np.ndarray, med_change: np.ndarray, zero_
     c = v6.ci(own, idx)
     per_draw = ind.mean(axis=0)
     pos = med_base > 0
+    ratio = med_change[pos] / med_base[pos]
+    if not np.all(np.isfinite(ratio)):
+        raise SystemExit(f"a non-finite ratio for {key}")
     return {"persons": n, "dropped_features": dropped, "share_vs_own": float(own.mean()), "share_vs_own_ci": c,
             "reading": v6.reading(*c), "share_by_single_draw_min": float(per_draw.min()),
             "share_by_single_draw_max": float(per_draw.max()),
             "median_base": float(np.median(med_base)), "median_change": float(np.median(med_change)),
-            "median_change_over_base": float(np.median(med_change[pos] / med_base[pos])) if pos.any() else None,
-            "persons_with_a_zero_base": zero_base}
+            "median_change_over_base": float(np.median(ratio)) if pos.any() else None,
+            "persons_with_a_zero_base": zero_base[0], "persons_with_a_base_below_1e-9": zero_base[1],
+            "share_of_draws_tied": tie_share}
+
+
+def draw_keys(key: list[int], b: int, kb: bool) -> tuple[list[int], list[int]]:
+    """The keys of draw b for the base and for redrawn (key: dataset, task, place)."""
+    return [SEED, 6, KEY_BASE[kb], *key, b], [SEED, 6, KEY_REDRAW[kb], *key, b]
 
 
 def key_of(ds: str, task: str, st: str, row: str, sens: bool) -> list[int]:
@@ -191,9 +219,9 @@ def build(ds: str, task: str, chosen: list[str], series: dict, place: dict, m: d
         for kb in ((False, True) if sens else (False,)):
             bs, rd = [], []
             for b in range(B):
-                tb = tiles_of(resampled(s.times, tt.held, np.random.default_rng([SEED, 6, KEY_BASE[kb], *key, b]), kb))
-                tr = tiles_of(resampled(s.times, tt.held, np.random.default_rng([SEED, 6, KEY_REDRAW[kb], *key, b]),
-                                        kb))
+                kbase, kred = draw_keys(key, b, kb)
+                tb = tiles_of(resampled(s.times, tt.held, np.random.default_rng(kbase), kb))
+                tr = tiles_of(resampled(s.times, tt.held, np.random.default_rng(kred), kb))
                 if b == 0 and not kb:
                     out["dq0"].append(float(np.median(np.abs(tb.q - tt.q))))
                 bs.append(observables(tb))
@@ -297,12 +325,19 @@ def run(c6: dict, m: dict, r: dict, recs: dict) -> dict:
             n_f = recs["v6f"]["count"][name][UNIT]["oddeven"]["persons"]
             if len(b["text"]) != n_f:
                 raise SystemExit(f"{name}: {len(b['text'])} count persons, not v6f's {n_f}")
+            if b["left_out"] != recs["v6f"]["left_out"][name][UNIT]:
+                raise SystemExit(f"{name}: the persons left out differ from v6f's")
             rec["count"][name] = count(b, ds, task, False)
             if sens:
                 rec["sensitivity_boundary_kept"][name] = count(b, ds, task, True)
             rec["left_out"][name] = b["left_out"]
-            zero = rec["count"][name]["redrawn"]["IMG_pq"]["persons_with_a_zero_base"]
-            rec["tallies"][name] = {"median_abs_dq_draw0": v6d.five(b["dq0"]), "persons_with_a_zero_base_IMG_pq": zero}
+            red = rec["count"][name]["redrawn"]["IMG_pq"]
+            rec["tallies"][name] = {"median_abs_dq_draw0": v6d.five(b["dq0"]),
+                                    "persons_with_a_zero_base_IMG_pq": red["persons_with_a_zero_base"],
+                                    "persons_with_a_base_below_1e-9_IMG_pq": red["persons_with_a_base_below_1e-9"]}
+            inside_d = [all(float(np.max(np.abs(np.asarray(rw[st]) - np.asarray(tx[st])))) == 0.0 for st in STAGE)
+                        for rw, tx in zip(b["rows"]["inside/before"], b["text"])]
+            rec["tallies"][name]["inside_identical_to_text_all_persons"] = all(inside_d)
             del b
         del series
     rec["rule"] = evaluate(rec["count"])
@@ -310,14 +345,27 @@ def run(c6: dict, m: dict, r: dict, recs: dict) -> dict:
 
 
 def main_cells(rec: dict) -> dict:
+    """In the order of the conditions: both main datasets at IMG, then at S1 and S2, then KUPA copy."""
+    order = [(nm, st) for sts in (IMG, ("S1", "S2")) for nm in [f"{ds}_{task}" for ds, task in MAIN] for st in sts]
+    order += [("kupa_copy", st) for st in STAGE]
     out: dict = {}
-    for ds, task in MAIN:
-        cell = rec["count"][f"{ds}_{task}"]
-        for st in (*IMG, "S1", "S2"):
-            out[f"{ds}_{task} | {st}"] = {row: {k: cell[row][st][k] for k in ("share_vs_own", "share_vs_own_ci")}
-                                          for row in ["redrawn", "gathered/before", *v6f.SCALES, "inside/before",
-                                                      *SHUFFLES]}
+    for nm, st in order:
+        cell = rec["count"][nm]
+        out[f"{nm} | {st}"] = {row: {k: cell[row][st][k] for k in ("share_vs_own", "share_vs_own_ci")}
+                               for row in ["redrawn", "gathered/before", *v6f.SCALES, "inside/before", *SHUFFLES]}
     return out
+
+
+def no_long_list(x, path: str = "") -> None:
+    """Beside v6d's check: no list of numbers longer than a five-number summary, except the dropped numbers."""
+    if isinstance(x, dict):
+        for k, v in x.items():
+            no_long_list(v, f"{path}/{k}")
+    elif isinstance(x, (list, tuple)):
+        if len(x) > 5 and not path.endswith("/dropped_features"):
+            raise SystemExit(f"{path}: a list of {len(x)} values in the record")
+        for v in x:
+            no_long_list(v, path)
 
 
 def main() -> None:
@@ -345,6 +393,7 @@ def main() -> None:
     state = cm.git_state(paths)
     rec = run(c6, c4["mapping"], c4["relief"], recs)
     v6d.no_per_person(rec)
+    no_long_list({k: v for k, v in rec.items() if k != "rule"})
     rec["provenance"] = {"run_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), **state,
                          "conditions_sha256": hashlib.sha256(raw).hexdigest(), "earlier_sha256": c["earlier"],
                          "code_sha256": {p: cm.sha256(ROOT / p) for p in CODE},

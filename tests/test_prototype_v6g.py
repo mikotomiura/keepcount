@@ -41,8 +41,8 @@ def test_own_terms_redrawn_is_symmetric_and_operations_are_compared_per_draw():
     ind, *_ = v6g.own_terms(text, base, redraw, "IMG_pq", "t")
     assert abs(ind.mean() - 0.5) < 0.03
     big = [t + 3.0 for t in text]
-    ind2, mb, mc, zero, dropped = v6g.own_terms(text, base, big, "IMG_pq", "t")
-    assert ind2.mean() == 1.0 and zero == 0 and dropped == []
+    ind2, mb, mc, zero, dropped, _ = v6g.own_terms(text, base, big, "IMG_pq", "t")
+    assert ind2.mean() == 1.0 and zero == (0, 0) and dropped == []
     same = list(text)
     ind3, *_ = v6g.own_terms(text, base, same, "IMG_pq", "t")
     assert ind3.mean() == 0.0
@@ -51,15 +51,16 @@ def test_own_terms_redrawn_is_symmetric_and_operations_are_compared_per_draw():
 def test_zero_base_ties():
     text = [np.array([[0.0, 1.0], [1.0, 0.0]]), np.array([[1.0, 1.0], [0.0, 0.0]])]
     base = [[t.copy() for _ in range(v6g.B)] for t in text]  # resampled to itself
-    ind, _, _, zero, _ = v6g.own_terms(text, base, [t.copy() for t in text], "IMG_pq", "t")
-    assert zero == 2 and ind.mean() == 0.5
+    ind, _, _, zero, _, _ = v6g.own_terms(text, base, [t.copy() for t in text], "IMG_pq", "t")
+    assert zero == (2, 2) and ind.mean() == 0.5
 
 
 def test_summary_and_keys():
     ind = np.zeros((10, v6g.B))
     ind[:5] = 1.0
     ind[:, 0] = 1.0
-    s = v6g.summary(ind, np.ones(10), np.ones(10) * 2, 0, [], [1, 2])
+    s = v6g.summary(ind, np.ones(10), np.ones(10) * 2, (0, 0), [], 0.0, [1, 2])
+    assert s["share_vs_own_ci"] == v6g.v6.ci(ind.mean(axis=1), np.random.default_rng([1, 2]).integers(0, 10, (v6g.v6.N_BOOT, 10)))
     assert s["share_vs_own"] == pytest.approx(0.5 + 0.5 / v6g.B) and s["share_by_single_draw_max"] == 1.0
     assert s["share_by_single_draw_min"] == 0.5
     assert v6g.key_of("lwp", "lwp", "IMG_df", "redrawn", False) == [20261031, 71, 2, 0, 8, 8]
@@ -131,7 +132,74 @@ def test_change_and_base_values():
     sd = np.concatenate(text).std(axis=0)  # 1, 1
     base = [[t + [0.5, 0.0] for _ in range(v6g.B)] for t in text]
     change = [t + [0.0, 1.5] for t in text]
-    ind, mb, mc, zero, _ = v6g.own_terms(text, base, change, "IMG_pq", "t")
+    ind, mb, mc, zero, _, _ = v6g.own_terms(text, base, change, "IMG_pq", "t")
     assert sd.tolist() == [1.0, 1.0]
     assert mb.tolist() == pytest.approx([0.5, 0.5]) and mc.tolist() == pytest.approx([1.5, 1.5])
     assert ind.mean() == 1.0
+
+
+def test_boundary_kept_still_draws_the_first_tile_whole():
+    firsts = {np.diff(v6g.resampled(series(GAPS), HELD, np.random.default_rng(k), keep_boundary=True))[0]
+              for k in range(20)}
+    assert firsts != {100.0}
+
+
+def test_a_tile_drawn_back_to_its_own_gaps_is_identical():
+    same = [np.arange(0, 3), np.arange(3, 10)]
+    g = [100.0, 100.0, 100.0] + GAPS[3:]
+    out = v6g.resampled(series(g), same, np.random.default_rng(0))
+    assert np.array_equal(np.diff(out)[:3], np.array(g[:3]))
+
+
+def test_redrawn_with_the_base_key_stops_and_keys_differ():
+    rng = np.random.default_rng(3)
+    text = [rng.normal(size=(5, 2)) for _ in range(20)]
+    base = [[t + rng.normal(0, 0.3, t.shape) for _ in range(v6g.B)] for t in text]
+    with pytest.raises(SystemExit):
+        v6g.own_terms(text, base, [list(x) for x in base], "IMG_pq", "t")
+    kb, kr = v6g.draw_keys([2, 0, 7], 3, False)
+    assert kb == [20261031, 6, 9, 2, 0, 7, 3] and kr == [20261031, 6, 10, 2, 0, 7, 3]
+    assert v6g.draw_keys([2, 0, 7], 3, True) == ([20261031, 6, 11, 2, 0, 7, 3], [20261031, 6, 12, 2, 0, 7, 3])
+
+
+def test_s1_scale_ddof0_drops_constant_numbers():
+    text = [np.array([0.0, 5.0, 1.0]), np.array([2.0, 5.0, 3.0])]  # sd (ddof 0): 1, 0, 1
+    base = [[t + [1.0, 0.0, 0.0] for _ in range(v6g.B)] for t in text]
+    change = [t + [0.0, 0.0, 3.0] for t in text]
+    ind, mb, mc, zero, dropped, _ = v6g.own_terms(text, base, change, "S1", "t")
+    assert dropped == [1] and mb.tolist() == pytest.approx([1.0, 1.0]) and mc.tolist() == pytest.approx([3.0, 3.0])
+
+
+def test_zero_base_in_some_draws_and_summary_without_zero_bases():
+    text = [np.array([[0.0, 1.0], [1.0, 0.0]]), np.array([[1.0, 1.0], [0.0, 0.0]])]
+    base = [[t.copy() if b == 0 else t + 1.0 for b in range(v6g.B)] for t in text]
+    _, mb, mc, zero, _, _ = v6g.own_terms(text, base, [t + 0.5 for t in text], "IMG_pq", "t")
+    assert zero == (2, 2)
+    near = [[t + (1e-13 if b == 0 else 1.0) for b in range(v6g.B)] for t in text]
+    assert v6g.own_terms(text, near, [t + 0.5 for t in text], "IMG_pq", "t")[3] == (0, 2)
+    s = v6g.summary(np.zeros((3, v6g.B)), np.array([0.0, 1.0, 2.0]), np.array([5.0, 3.0, 2.0]), (1, 1), [], 0.0, [1])
+    assert s["median_change_over_base"] == pytest.approx(2.0)  # median of 3 and 1, the person with base 0 left out
+
+
+def test_record_list_guard():
+    v6g.no_long_list({"a": [1, 2, 3, 4, 5], "dropped_features": list(range(9))})
+    with pytest.raises(SystemExit):
+        v6g.no_long_list({"a": {"b": list(range(6))}})
+
+
+def test_main_cells_order():
+    cell = {row: {st: {"share_vs_own": 0.5, "share_vs_own_ci": [0.4, 0.6]} for st in v6g.STAGE} for row in v6g.ROWS}
+    rec = {"count": {nm: cell for nm in ("kupa_essay", "lwp_lwp", "kupa_copy")}}
+    keys = list(v6g.main_cells(rec))
+    assert keys[:4] == ["kupa_essay | IMG_pq", "kupa_essay | IMG_df", "lwp_lwp | IMG_pq", "lwp_lwp | IMG_df"]
+    assert keys[4:8] == ["kupa_essay | S1", "kupa_essay | S2", "lwp_lwp | S1", "lwp_lwp | S2"]
+    assert keys[8:] == ["kupa_copy | " + st for st in v6g.STAGE]
+
+
+def test_summary_interval_uses_the_cell_key():
+    ind = np.random.default_rng(9).random((30, v6g.B))
+    s = v6g.summary(ind, np.ones(30), np.ones(30), (0, 0), [], 0.0, [20261031, 71, 0, 1, 7, 2])
+    idx = np.random.default_rng([20261031, 71, 0, 1, 7, 2]).integers(0, 30, (v6g.v6.N_BOOT, 30))
+    assert s["share_vs_own_ci"] == v6g.v6.ci(ind.mean(axis=1), idx)
+    other = v6g.v6.ci(ind.mean(axis=1), np.random.default_rng(0).integers(0, 30, (v6g.v6.N_BOOT, 30)))
+    assert other != s["share_vs_own_ci"]  # the check can tell keys apart
