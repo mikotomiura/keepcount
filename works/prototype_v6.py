@@ -18,12 +18,14 @@ parts) and count 1 (the operations on a series against the person's own halves a
 
 from __future__ import annotations
 
+import atexit
 import csv
 import datetime as dt
 import hashlib
 import io
 import json
 import math
+import shutil
 import sys
 import tempfile
 import zipfile
@@ -31,6 +33,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.pycache_prefix = tempfile.mkdtemp(prefix="pycache-")
+atexit.register(shutil.rmtree, sys.pycache_prefix, ignore_errors=True)
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "works"))
 

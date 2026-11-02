@@ -15,9 +15,11 @@ Output: results/prototype_v6i/record.json (written to a temporary directory besi
 
 from __future__ import annotations
 
+import atexit
 import datetime as dt
 import hashlib
 import json
+import shutil
 import sys
 import tempfile
 import zipfile
@@ -25,6 +27,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.pycache_prefix = tempfile.mkdtemp(prefix="pycache-")
+atexit.register(shutil.rmtree, sys.pycache_prefix, ignore_errors=True)
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "works"))
 
