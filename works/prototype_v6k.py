@@ -244,7 +244,7 @@ def part_vectors(rec: Rec, idx: np.ndarray, th_values: dict[str, float | None]) 
                  "S1": np.concatenate([v6.med_iqr(rec.p[idx]), v6.med_iqr(rec.q[idx])]),
                  "R": v6b.loc(rec, idx, rec.lab)}
     lab = rec.lab[held]
-    over = g > I_MS
+    over = g > I_MS + ks.TOL_MS  # 'exceed', with v6's tolerance against the rebuild's last bits (CHOICES)
     a, wi, wo = g[over], g[over & (lab == "within")], g[over & (lab == "word")]
     out["I"] = None if min(a.size, wi.size, wo.size) == 0 else np.array([a.mean(), wi.mean(), wo.mean()]) / 1000.0
     tally = {"I0": float(a.mean()) / 1000.0 if a.size else None}
@@ -947,6 +947,10 @@ CHOICES = {  # decisions of the code where the conditions are silent
     "lwp_task_code": "LWP's task code is 0 in every key, as v6e",
     "too_few_persons": "a count with fewer than 2 persons is recorded as too_few_persons instead of stopping the run "
                        "(v6b.one stops); in part 1 such a cell is 'fewer than 2 rule persons' and not read",
+    "i_tolerance": "a gap exceeds 200 ms only if it is above 200 + 1e-6 ms (src/keystroke TOL_MS): rebuilding the times "
+                   "of an operated series moves gaps by about 1e-11 ms, and a gap of 200 ms written with decimals "
+                   "otherwise crossed the strict boundary (found by the construction check in the first attempt, "
+                   "which stopped before writing a record)",
     "edge_share": "the share of bursts cut by a run's edge is summarised over the text's parts at 2 s",
 }
 

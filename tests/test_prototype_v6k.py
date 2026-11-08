@@ -459,3 +459,19 @@ def test_check_v6_count2_bites():
     ref["count_2_person"]["kupa_essay_to_copy"]["sentence"]["main"]["S1"]["rank_auc"] += 1e-9
     with pytest.raises(SystemExit):
         k6.check_v6_count2(series, ids, M, ref)
+
+
+def test_a_gap_of_200_ms_is_not_over_after_the_rebuild():
+    s, kinds = fake_person(9, 14)
+    lab = k6.v6b.labels(s, kinds)
+    g = np.diff(s.times)
+    w = np.flatnonzero(lab == "within")[:3]
+    for j, v in zip(w, (200.0, 200.0 + 7e-12, 200.0 - 7e-12)):
+        g[j] = v
+    t = np.concatenate([[0.0], np.cumsum(g)])
+    rec = k6.Rec(t, s.ranges("before"), lab, M)
+    v, tal = k6.part_vectors(rec, np.arange(rec.n), {"2000": 2000.0})
+    gg = rec.gaps
+    mask = gg > 200.0 + 1e-6
+    assert tal["I0"] == pytest.approx(gg[mask].mean() / 1000, rel=1e-12)
+    assert not np.any(mask[w])
