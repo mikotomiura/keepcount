@@ -1,0 +1,81 @@
+{
+ "purpose": "Prototype v6o: does the positive control's reach depend on the number of sentence starts per part? Asked by the pre-review of outline v11 for the Journal of Writing Research (round 5, R1 M3: in KUPA essay inside_100 moves a median of 11 sentence-initial gaps and R_loc's sentence-start number has a split-half reliability of .54, so the reach may be set by how many sentence starts a part holds) and decided by the researcher (decision 26 of .steering/20261108-paper-a-jowr-reframe). (1) Per dataset and baseline, persons are split into three groups by their number of sentence starts per part, and the share of persons whose row exceeds their own parts is reported per group for R_loc and R_mean on v6n's dose rows and v6k's main rows. (2) KUPA essay and LWP are compared within the same bands of that number.",
+ "fixed_before_running": "Written on 2026-11-09 after seeing the records and notes of v6k-v6n and the pre-review of outline v11 (round 5). The persons are v6m's (= v6n's), whose v6m and v6n values have been seen. No share per group of sentence starts, and no per-person number of sentence starts per part, has been computed or looked at for any person. A first draft was sent to Codex (codex-consult, the conditions text and earlier aggregate results only, no data; .steering/20261109-v6o-sentence-count/codex-consult-output.md) and changed after its seven points (decision 1 of that folder): reading d is narrowed to what the intervals show; the intervals are stated to be conditional on the scale, the cuts, the contributions and the plans; the smaller part's number of sentence starts is counted beside the mean; the handling of small groups is fixed so that no summary over fewer than 5 persons can be derived from what is written; P3's cells are named; the primary comparisons are named before running.",
+ "version": "6o",
+ "status": "Description (status d) throughout: v6m's persons with v6m's and v6n's values seen, and a covariate chosen after a reviewer's question. The readings below are fixed before any new value is seen; they are not a confirmation. No rule and no label.",
+ "sources": {
+  "v6n": "works/conditions/prototype_v6n.json and results/prototype_v6n/record.json: the persons, rows (with the 75% steps), R_mean, count 1 and its keys; v6n's code is imported.",
+  "round_5": ".steering/20261108-paper-a-jowr-reframe/attack-me/outline-paper-a-jowr/round-5/verdict.md, R1 M3."
+ },
+ "data": "as v6n.",
+ "participants": {
+  "persons": "v6n's (v6m's draw, reused; v6n's checks of the id lists run).",
+  "cell_persons": "in each cell, the persons with R (gate 0) for the text and the row, as v6n's count 1 cells of R_loc and R_mean (R, R_loc and R_mean have the same persons; checked). The run checks that, per dataset and baseline, these persons are the same set in every row used (labels are fixed by position, so a permutation row cannot remove a label from a part); it stops otherwise."
+ },
+ "units_parts": "as v6n: sentences (counting 'before'), parts odd/even and halves, one threshold 2000 ms.",
+ "covariate": {
+  "n_s": "per person and baseline: the mean over the two parts of the number of gaps labelled 'sentence' that the part holds in the text (text/before; the gaps R uses: v6b's labels, the part's held gaps). It is the number of sentence-initial gaps from which R_loc's and R_mean's first and fifth numbers are made in each part. It is not changed by any row (checked: the same count from each row's record).",
+  "why": "R1 M3 names sentence starts. Not chosen among several covariates; the length of the text, the number of long gaps and typing speed are not counted (they would be further covariates chosen after the result) and are correlated with n_s, so a dependence on n_s is not a dependence on sentence starts as such. Text length, the number of long gaps and typing speed could be described as associations; they are left out here to keep one question, and this is a limit, not a reason.",
+  "n_s_min": "beside n_s, per person and baseline: the smaller of the two parts' numbers of gaps labelled 'sentence' (the part whose medians and means rest on fewer sentence starts). Groups by n_s_min are made and reported in the same way as by n_s (group indices 10, 11, 12 in the keys; matched bands 13, 14, 15). n_s is the primary covariate; n_s_min is a sensitivity beside it, not a second test."
+ },
+ "groups": {
+  "cut": "per dataset and baseline, over the cell persons: c1, c2 = numpy.quantile(n_s, [1/3, 2/3]) (numpy's default, linear). low: n_s <= c1; mid: c1 < n_s <= c2; high: n_s > c2. Ties at a cut go to the lower group, so the groups can be unequal; if c1 = c2, mid is empty. The cut is the same for every row and both references within a dataset and baseline (the persons are the same set; checked).",
+  "reported": "per group: persons, the minimum, median and maximum of n_s; per set and baseline: c1, c2 and the number of persons tied at each cut.",
+  "small": "a group with fewer than 5 persons is too_few_persons: nothing of it is written (no range, no share). Because the cell's share is in v6n's record and the groups' persons are written, a group's share could be derived from the others; so if any group of a cell has fewer than 5 persons, no group share, interval, difference or median of that cell is written (only the persons per group). rising and high - low are then not written. The cut points c1, c2 are written (quantiles over all cell persons)."
+ },
+ "count_1_by_group": {
+  "how": "v6n's count 1 cell (v6b.one; the per-person contributions 1, 1/2, 0 against the own two parts; each feature scaled by its standard deviation over the cell's persons and the text's two parts) is computed on all cell persons, exactly as in v6n (same key; checked against v6n's record: persons, share_vs_own and its interval). The per-person contributions of that cell (the full cell's scale) are then averaged within each group. So the groups' shares, weighted by their persons, give the cell's share (checked to 1e-12), and the groups differ only in which persons are averaged, not in the scale.",
+  "interval": "95% percentile interval over 2000 bootstrap resamples of the group's persons, key numpy.random.default_rng([20261031, 96, dataset, task, stage, row index, baseline, group, 0]) with v6n's indices (R_loc 10, R_mean 12; rows as v6n's ROW_IX) and group 0 low, 1 mid, 2 high. Class against 0.60 as v6k (above if the lower end is above, below if the upper end is below, else undecided). The interval is over the group's persons with the full cell's scale, the cuts, the per-person contributions and v6n's one random plan per person held fixed; it is not the uncertainty of rerunning the whole procedure on new persons.",
+  "difference": "high - low: the difference of the group shares with a 95% percentile interval over the two groups' resamples (each group's own resamples, the same as for its interval; independent groups).",
+  "beside": "per group: the medians of the change and of the own distance (base) over all its persons, and of change/base over its persons with base > 0, from the full cell's scale. Separate medians do not decompose a difference in shares into change and base; they are reported as a description only. The own distance is the text's and does not depend on the row (written once per reference, set, baseline and group; checked equal over rows).",
+  "rising": "per cell, whether low <= mid <= high (only when all three groups are written).",
+  "rows": "v6n's eight dose rows (inside_25/50/75/100, cross_25/50/75/100) and v6k's three main rows (inside/before, shuffled/before, shuffled_in_halves/before).",
+  "references": "R_loc and R_mean (gate 0). The rule stages are not counted by group (they read no dose step in v6n, so a split would show nothing about the reach).",
+  "ties": "a share counts ties as 1/2 (v6b.one); 'more often' below means a higher share in this sense.",
+  "primary": "named before running, read first: R_loc and R_mean at inside_75, inside_100 and cross_100, both sets and baselines, by n_s (24 cells). The other cells are listed as a table and not read one by one."
+ },
+ "matched_bands": {
+  "how": "per baseline, KUPA essay's cut points c1, c2 are applied to LWP's cell persons, giving three bands of n_s on a common scale (low: n_s <= c1; mid: c1 < n_s <= c2; high: n_s > c2). Per band, row and reference: KUPA essay's share (its group, as above) and LWP's share over the LWP persons in the band (LWP's own full cell's contributions and scale), and LWP - KUPA with a 95% percentile interval over independent resamples (LWP's key with group 3 + band; KUPA's resamples as above). A band with fewer than 5 persons in either set is too_few_persons and not written. Beside it, the difference over all persons (LWP - KUPA, keys: each set's v6n key for the full cell).",
+  "caveat": "the scale of count 1 is each set's own (as in every comparison of sets in v6k-v6n); persons in a band are not matched on anything but n_s; LWP and KUPA differ in task, prompt, language background and text length.",
+  "small": "per baseline and row, the bands are written only if every band has at least 5 persons in both sets (otherwise only the persons per band, so that no share over fewer than 5 persons can be derived from the sets' total shares). Per band and set, the median of n_s is written beside the share, since n_s is not distributed alike within a band in the two sets."
+ },
+ "readings": {
+  "a": "In a cell, if the interval of high - low lies above 0: on these persons, the persons with more sentence starts per part reach the positive control more often in that cell; a statement about the reach (e.g. 'R_loc first reads inside at 75 in LWP') is then a statement about these persons' numbers of sentence starts as well as about the operation. The medians of base and change say whether this goes with a smaller own distance, a larger change or both. Not read as a mechanism, nor as the number of sentence starts being the cause (n_s is correlated with text length and other things not counted).",
+  "b": "If the interval includes 0: a dependence on n_s is not shown in that cell; this is not read as no dependence (the groups have about a third of the persons each).",
+  "c": "If the interval lies below 0: persons with fewer sentence starts reach more often in that cell; reported as it is.",
+  "d": "Matched bands (only where the bands are written): where the difference over all persons (LWP - KUPA) excludes 0 and every band's interval includes 0, the bands do not show a difference between the sets beyond n_s; this is read only as 'every band's interval includes 0', with fewer persons per band than in the whole (lower precision), not as n_s accounting for the difference. Where a band's interval excludes 0 in the same direction, a difference between the sets remains within that band; since n_s is not distributed alike within a band, this is not read as n_s not accounting for it. Neither is read as a cause."
+ },
+ "checks": {
+  "reuse": "before any new quantity is reported, and stopping the run otherwise: v6n's persons (id SHA-256 and numbers looked at); v6n's count persons per set; for KUPA essay and LWP, both baselines, the eleven rows and R_loc and R_mean: persons, share_vs_own and its interval equal v6n's record (gate 0). Every one of the eleven rows is in v6n's record for both references (checked).",
+  "groups": "the groups' shares weighted by persons equal the cell's share (1e-12); the groups partition the cell persons; the persons with R are the same set in every row used; n_s is the same from every row's record.",
+  "missing": "as v6n: a summary over fewer than 5 values is not written; a non-finite value stops the run."
+ },
+ "prediction": "Claude's, written before running. P1: in KUPA essay, R_loc's high - low (by n_s) at inside_100 lies above 0 under both baselines. P2: in LWP, R_loc's high - low (by n_s) at inside_75 lies above 0 under both baselines. P3: the own distance (base) does not depend on the row, so per reference, set and baseline (2 x 2 x 2 = 8 combinations) its median is lower in high than in low in at least 6 of 8. P4: at inside_100, for R_loc, LWP - KUPA includes 0 in every written band under at least one baseline (not evaluable if no band is written). No new value has been seen.",
+ "main_cells": "fixed before running, shown first: per set and baseline, the groups' n_s ranges and persons; per reference and dose row, the groups' shares and classes with high - low and its interval; the same for the main rows; then the matched bands at the dose rows; then the medians of base and change.",
+ "record": {
+  "public": "results/prototype_v6o/record.json: counts and summaries over persons and the provenance; no press time, gap, key, text, per-person vector, value, n_s, change or id (ids only as the SHA-256 of their sorted list); a summary over fewer than 5 values is not written. The data are not redistributed.",
+  "provenance": "git commit and dirty state of the conditions, code and lock; SHA-256 of the conditions, the earlier conditions and records, the code and the data; versions."
+ },
+ "limits_written_before": "The persons are v6m's with v6m's and v6n's values seen, and the covariate was chosen after a reviewer's question about these results: nothing here is a confirmation. Three groups per set and baseline, about 50-65 persons each, so intervals are wide and a difference not shown is not an absence. n_s is one covariate among several correlated ones (text length, number of long gaps, typing speed) that are not counted. The groups share the full cell's scale, so a group's share is not what count 1 would give on that group alone. The cells are many and correlated (two references, eleven rows, two baselines, two sets); no correction. The dose steps are four on one random plan per person (v6n). Only the 2 s threshold. A share shows sensitivity of a summary to a difference in press times; it says nothing about the cognitive meaning of a pause or the quality of a text. The fixed scale weighs the features by their standard deviations over all cell persons; a group's difference includes how that weighting meets the group, and the sets have different scales. Per-feature results and a common scale are not counted. The intervals are conditional on the scale, cuts and plans (above).",
+ "rerun_rule": "as v6k: if a defect of the code is found after the first run, the first record is kept unchanged, the fix and the reason are committed, and the rerun is reported separately beside the first.",
+ "earlier": {
+  "works/conditions/prototype_v6.json": "afc4c330c7a3862ca9f2d6a1ad6d0c1d84ff68ff3b2baf4b39acdd0b6085b078",
+  "works/conditions/prototype_v6b.json": "ae52effd10d6235051839df1ebfa35249e283846090805213b5b3c0e6272ba7a",
+  "works/conditions/prototype_v6e.json": "6cf2cfabcf2bcf44841380f2d78e89ef0b6dc6a121f60309e8a0f58e746b45d8",
+  "works/conditions/prototype_v6k.json": "febecc6c3f24a2613acd906559c9d8583a881b72f09e8e792b81747c2211a715",
+  "works/conditions/prototype_v6l.json": "96c9563b725fcb3ae368f7a9813e0f5eb61f8834dd7dcdf048c5c0bc190894cd",
+  "results/prototype_v6/record.json": "4672ad73eb24d0716ff52ec31f9e000b0027c4663949668e0cfe598568dc11d3",
+  "results/prototype_v6b/record.json": "94d3feda2b4a499738e2711821f930a88443ddca05e02c31782ad564c9cacb6f",
+  "results/prototype_v6e/record.json": "aca8d16a950b365c77f2f8f82eaeecec10c07e781a9bdba14bd7ff3dbbf7ee29",
+  "results/prototype_v6k/record.json": "edfcce3f7c51911cd20af011ab862d458ea290e1b5e2e553b79e94bd4e553205",
+  "results/prototype_v6l/record.json": "034c00971d82610fa7cddb85240f8c820cb29fe463e395631bb867760331f9fe",
+  "works/conditions/prototype_v6m.json": "43eb39e3be3d212a5941b7551e5ddd7961bc77ea30fc8bd54a034cfc87e90f12",
+  "results/prototype_v6m/record.json": "440f252bee4436f908c9ad399472295ff2ae88816435af8bf2812d5a0af9b751",
+  "works/conditions/prototype_v6n.json": "b10f9f12277b3085e065dea074461ce05a181acd4daf4e723dd3886a06d66bf9",
+  "results/prototype_v6n/record.json": "738f61ad2f8c0abc3dc2efd74cc7938eed44d56d182278d7501c48c9b615c4ba"
+ },
+ "generator": "as v6k (checked by v6k's code against v6k's conditions).",
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1"
+}
