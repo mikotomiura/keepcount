@@ -1,0 +1,40 @@
+\begin{table}[htbp]
+\caption{Groups by sentence starts per part (writers with $R$; description)}
+\label{tab:groups}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}llllXX@{}}
+\toprule
+Data & Split & Cuts & Writers & Median sentence starts & Median own variation ($R_{loc}$) \\
+\midrule
+KUPA essays & odd--even & 5, 7.5 & 61 / 52 / 50 & 4.5 / 6.0 / 9.5 & 2.12 / 1.71 / 1.57 \\
+KUPA essays & first--second half & 5, 7.5 & 57 / 51 / 49 & 4.5 / 6.0 / 9.5 & 2.16 / 1.77 / 1.85 \\
+LWP & odd--even & 10.5, 15.5 & 64 / 59 / 58 & 8.5 / 13.0 / 19.25 & 1.88 / 1.59 / 1.34 \\
+LWP & first--second half & 10.5, 15.5 & 63 / 58 / 56 & 8.5 / 13.0 / 19.25 & 2.04 / 1.62 / 1.39 \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\footnotesize Note. Sentence starts per part: the mean over the two parts of the number of sentence-initial gaps. Groups low / mid / high, cut at the two values given.
+\end{table}
+\begin{table}[htbp]
+\caption{$I$ by group of sentence starts (description)}
+\label{tab:igroups}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}lllXXX@{}}
+\toprule
+Data & Split & Row & Low & Mid & High \\
+\midrule
+KUPA essays & odd--even & inside 75\% & [61]\,b, n & [52]\,b, n & [50]\,b, n \\
+KUPA essays & odd--even & inside 100\% & [61]\,b, n & [52]\,b, n & [50]\,b, gg \\
+KUPA essays & odd--even & cross 100\% & [61]\,b, n & [52]\,b, n & [50]\,b, m \\
+KUPA essays & first--second half & inside 75\% & [57]\,b, n & [51]\,b, n & [49]\,b, n \\
+KUPA essays & first--second half & inside 100\% & [57]\,b, m & [51]\,b, n & [49]\,b, m \\
+KUPA essays & first--second half & cross 100\% & [57]\,b, n & [51]\,b, n & [49]\,b, n \\
+LWP & odd--even & inside 75\% & .28\,b, n & .46\,b, gg & .48\,u, gg \\
+LWP & odd--even & inside 100\% & .30\,b, m & .53\,u, g & .55\,u, g \\
+LWP & odd--even & cross 100\% & .33\,b, m & .53\,u, m & .59\,u, m \\
+LWP & first--second half & inside 75\% & .25\,b, n & .26\,b, g & .36\,b, g \\
+LWP & first--second half & inside 100\% & .33\,b, g & .33\,b, g & .46\,b, g \\
+LWP & first--second half & cross 100\% & .37\,b, n & .36\,b, m & .52\,u, gg \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\footnotesize Note. Share and class of $I$ (a above .60, b below, u undecided), then the state of the reference in the group: g the cell's gate reached and the group's $R_{loc}$ above; gg only the group's $R_{loc}$ above; m only the group's $R_{mean}$ above; n neither. Where the agreement of the verdicts between the two splits is given for $I$ (Table~\ref{tab:split}), the share is replaced by the number of writers in brackets (Appendix~A, disclosure rule).
+\end{table}

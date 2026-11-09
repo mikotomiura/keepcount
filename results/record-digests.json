@@ -1,0 +1,41 @@
+{
+ "note": "Per run: the SHA-256 of the original record file (results/prototype_<run>/record.json, not archived; the conditions of later runs name it) and the SHA-256 of its content without the provenance (tools/record_digest.py). A rebuilt record with the same content digest holds the same values.",
+ "runs": {
+  "v6k": {
+   "record_sha256": "edfcce3f7c51911cd20af011ab862d458ea290e1b5e2e553b79e94bd4e553205",
+   "content_sha256": "9e90765dadac2fe68e5a42f6fc8c6307476d8a1f3fec6960241e113cc176fdc7"
+  },
+  "v6l": {
+   "record_sha256": "034c00971d82610fa7cddb85240f8c820cb29fe463e395631bb867760331f9fe",
+   "content_sha256": "52ef34d181a7448a18c656353446692a74c2fcb544b9c0387fccfc70f7616891"
+  },
+  "v6m": {
+   "record_sha256": "440f252bee4436f908c9ad399472295ff2ae88816435af8bf2812d5a0af9b751",
+   "content_sha256": "e6d322f064ab29a88ff241d740b356da0532f3361be52fd80db025a3b1221ca6"
+  },
+  "v6n": {
+   "record_sha256": "738f61ad2f8c0abc3dc2efd74cc7938eed44d56d182278d7501c48c9b615c4ba",
+   "content_sha256": "93eca9a54fb293516c046fdd4b9f27b7bb781bbef68b1c3fe4507b29321c7195"
+  },
+  "v6o": {
+   "record_sha256": "60cd29c6a3742293f4c3e8e510cfe3329ca2dddb2b06838c534540b16712e888",
+   "content_sha256": "063d3f0b693871b7979459d167103580076a11854d806941c70139fe17ff6ee1"
+  },
+  "v6p": {
+   "record_sha256": "6073c525dbd7e163f89e0fe720c8d00aa45156d0294cce88094a3facc1d3944b",
+   "content_sha256": "ea5055e1fabf71c095db819b3524b98ff6250771815f84707461cb8b18bdc3a1"
+  },
+  "v6q": {
+   "record_sha256": "057c0c5bdf931608e424fde1b47efd214e5d338f5b152ab41ceb9f1897bd8554",
+   "content_sha256": "cd331c645b4be926c866aa8cd16ae0ecec4c893ba8581ce96666bdf923d5588e"
+  },
+  "v6r": {
+   "record_sha256": "d21b309a60e92b3e1af648049c7719468cf2fc3d23d5ab2773e7056117b1bfdc",
+   "content_sha256": "4adc29d50104b6a69d37b1a507ca4dbd403d77e3f13c43e305a50dca200a3500"
+  },
+  "v6s": {
+   "record_sha256": "d5d2e7c9a675fcb3213585a36a0ac0456d20f0776b6bff6f45df1380b23d4219",
+   "content_sha256": "931a8b5b75a118f2a798c731eb7dcc1d7e18ee1d50d41e66da241697f90639f3"
+  }
+ }
+}

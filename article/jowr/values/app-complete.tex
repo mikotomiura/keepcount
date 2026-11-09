@@ -1,0 +1,40 @@
+\begin{table}[htbp]
+\caption{Complete-burst variants in the rule cells (description beside the rule)}
+\label{tab:complete}
+\scriptsize
+\begin{tabularx}{\linewidth}{@{}lllXXX@{}}
+\toprule
+Data & Split & Operation & $B_{sd}$ complete (rule count) & $B$ complete (second count) & $B_{sd}$ complete (second count) \\
+\midrule
+KUPA essays & odd--even & inside & .21\,b (145); u & .21\,b (153); u & .24\,b (148); u \\
+KUPA essays & odd--even & shuffled & .48\,b (141); a & .47\,b (151); a & .59\,u (146); a \\
+KUPA essays & odd--even & shuffled in halves & .49\,b (142); a & .44\,b (152); a & .58\,u (146); a \\
+KUPA essays & first--second half & inside & .16\,b (159); u & .03\,b (153); u & .13\,b (151); u \\
+KUPA essays & first--second half & shuffled & .52\,b (157); a & .34\,b (151); a & .42\,b (149); a \\
+KUPA essays & first--second half & shuffled in halves & .42\,b (159); a & .16\,b (153); a & .37\,b (151); a \\
+LWP & odd--even & inside & .28\,b (174); a & .29\,b (181); a & .26\,b (177); a \\
+LWP & odd--even & shuffled & .55\,u (174); a & .47\,b (181); a & .52\,b (176); a \\
+LWP & odd--even & shuffled in halves & .49\,b (174); a & .43\,b (181); a & .53\,u (176); a \\
+LWP & first--second half & inside & .15\,b (173); a & .02\,b (177); a & .14\,b (177); a \\
+LWP & first--second half & shuffled & .45\,b (173); a & .29\,b (177); a & .45\,b (177); a \\
+LWP & first--second half & shuffled in halves & .44\,b (173); a & .11\,b (177); a & .39\,b (177); a \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\footnotesize Note. Bursts bounded by long gaps at both ends only; a part with fewer than two such bursts has no $B_{sd}$ complete. Share, class and number of writers, then the class of the gate ($R$ in the rule count, $R_{loc}$ in the second count) on the same writers (class only). $B$ complete was not counted in the rule count; it was counted afterwards on the rule count's writers as a description, not given here. Neither variant is fixed by construction.
+\end{table}
+\begin{table}[htbp]
+\caption{The 15 cells read through the gate: LWP, inside (second count's writers; description)}
+\label{tab:gatecells}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}llXXXX@{}}
+\toprule
+Split & Dose & $B_{sd}$ & $I$ & $B$ complete & $B_{sd}$ complete \\
+\midrule
+odd--even & 75\% & .19\,b (181) & gate not above & .24\,b (181) & .23\,b (177) \\
+odd--even & 100\% & .24\,b (181) & .45\,b (181) & .29\,b (181) & .26\,b (177) \\
+first--second half & 75\% & .14\,b (177) & .29\,b (177) & .01\,b (177) & .12\,b (177) \\
+first--second half & 100\% & .15\,b (177) & .37\,b (177) & .02\,b (177) & .14\,b (177) \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\footnotesize Note. Share, class and number of writers where $R_{loc}$ on the summary's writers was above .60. At odd--even 75\% the reference was undecided on $I$'s writers (a border cell, Table~\ref{tab:border}).
+\end{table}

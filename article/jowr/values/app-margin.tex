@@ -1,0 +1,77 @@
+\begin{table}[htbp]
+\caption{Classes of the rule cells at three margins (recomputed from the recorded intervals; description)}
+\label{tab:margin}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}llXXX@{}}
+\toprule
+Summary & Count & .55 & .60 & .65 \\
+\midrule
+$U$ & rule count & 0 / 7 / 1 & 0 / 8 / 0 & 0 / 8 / 0 \\
+$B$ & rule count & 0 / 6 / 0 & 0 / 6 / 0 & 0 / 6 / 0 \\
+$B_{sd}$ & rule count & 1 / 8 / 3 & 0 / 8 / 4 & 0 / 10 / 2 \\
+$I$ & rule count & 8 / 4 / 0 & 8 / 4 / 0 & 8 / 4 / 0 \\
+$R$ (gate) & rule count & 10 / 0 / 2 & 10 / 1 / 1 & 9 / 2 / 1 \\
+$U$ & second count & 0 / 7 / 1 & 0 / 8 / 0 & 0 / 8 / 0 \\
+$B$ & second count & 0 / 6 / 0 & 0 / 6 / 0 & 0 / 6 / 0 \\
+$B_{sd}$ & second count & 0 / 8 / 4 & 0 / 8 / 4 & 0 / 10 / 2 \\
+$I$ & second count & 8 / 4 / 0 & 8 / 4 / 0 & 8 / 4 / 0 \\
+$R_{loc}$ (gate) & second count & 12 / 0 / 0 & 10 / 0 / 2 & 10 / 0 / 2 \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\footnotesize Note. Cells above / below / undecided over the 12 rule cells (inside and the two reshuffles at the full dose, two datasets, two splits), cells fixed by construction left out. Each summary on its own writers; the gate on $U$'s writers. The gate is not applied in this table.
+\end{table}
+\begin{table}[htbp]
+\caption{The rule's labels at three margins (the margin moved for the gate and the summaries together; description)}
+\label{tab:marginlabels}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}llXXX@{}}
+\toprule
+Summary & Count & .55 & .60 & .65 \\
+\midrule
+$U$ & rule count & does not show, partly undecided (8) & does not show (8) & does not show (8) \\
+$B$ & rule count & does not show (6) & does not show (6) & does not show (6) \\
+$B_{sd}$ & rule count & mixed directions (10) & does not show, partly undecided (10) & does not show, partly undecided (9) \\
+$I$ & rule count & mixed directions (10) & mixed directions (10) & mixed directions (9) \\
+$U$ & second count & does not show, partly undecided (8) & does not show (8) & does not show (8) \\
+$B$ & second count & does not show (6) & does not show (6) & does not show (6) \\
+$B_{sd}$ & second count & does not show, partly undecided (11) & does not show, partly undecided (10) & does not show, partly undecided (10) \\
+$I$ & second count & mixed directions (12) & mixed directions (10) & mixed directions (10) \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\footnotesize Note. In brackets the number of cells the label is given over (the gate above, the summary not fixed by construction). At .60 the labels are those of the records. Gate $R$ in the rule count and $R_{loc}$ in the second count, each read on the summary's writers.
+\end{table}
+\begin{table}[htbp]
+\caption{Reach of $R_{loc}$ by dose at three margins (second count's writers, all who have $R$; description)}
+\label{tab:marginreach}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}lllXXX@{}}
+\toprule
+Data & Split & Operation & .55 & .60 & .65 \\
+\midrule
+KUPA essays & odd--even & inside & b b u a & b b b u & b b b u \\
+KUPA essays & odd--even & cross & b b b b & b b b b & b b b b \\
+KUPA essays & first--second half & inside & b b u a & b b b u & b b b u \\
+KUPA essays & first--second half & cross & b b b b & b b b b & b b b b \\
+LWP & odd--even & inside & b u a a & b u a a & b b u a \\
+LWP & odd--even & cross & b b u u & b b b u & b b b u \\
+LWP & first--second half & inside & b u a a & b u a a & b b u a \\
+LWP & first--second half & cross & b b u a & b b u u & b b b u \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\footnotesize Note. Classes at the doses 25, 50, 75 and 100\% (a above the margin, b below, u undecided).
+\end{table}
+\begin{table}[htbp]
+\caption{Cells of the dose rows read through the gate at three margins (second count's writers; description)}
+\label{tab:marginread}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}lllX@{}}
+\toprule
+Margin & Cells read & Above / below / undecided & Where \\
+\midrule
+.55 & 29 & 0 / 29 / 0 & KUPA essays inside, LWP cross, LWP inside \\
+.60 & 15 & 0 / 15 / 0 & LWP inside \\
+.65 & 9 & 0 / 9 / 0 & LWP inside \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\footnotesize Note. Summaries that can move ($B_{sd}$, $I$ and the complete-burst variants under inside; also $U$ and $B$ under cross), at every dose, read where $R_{loc}$ on the summary's own writers is above the margin; the margin moved for the gate and the summary together. On a summary's writers the reference is resampled with that summary's key, so the cells read can differ from the reach on all writers (Table~\ref{tab:marginreach}). These are three cells: at .60 LWP odd--even inside 75\% for $I$ is not read (the border cell of Section~\ref{sec:inside}); at .65 one of the nine is LWP first--second half inside 75\% for $B_{sd}$ complete, read; at .55 KUPA essays under first--second half inside 100\% for $B_{sd}$ complete is not read.
+\end{table}

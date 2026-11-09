@@ -4,9 +4,11 @@ type: software
 title: "KeepCount: conditions, code, records and history"
 abstract: >-
   The conditions, code, records, notes and git history of an audit of what images of behavioral data keep, applied to
-  a transform that turns keystroke times into shaded tiles, one per sentence, through speed and rest. Every
-  computation ran a script on conditions committed before the script was first run. The keystroke data are not
-  redistributed. The code (src/, works/*.py, tools/, tests/) is under the MIT License (LICENSE); the documents,
+  a transform that turns keystroke times into shaded tiles, one per sentence, through speed and rest (runs v1 to
+  v6j), and, from version 1.1.0, the conditions, code and tests of the same audit applied to the pause summaries that
+  writing research reports (runs v6k to v6s), with the values that article writes and the record cells they come
+  from; the records of v6k to v6s are not shared and are rebuilt from the public data. Every computation ran a script
+  on conditions committed before the script was first run. The keystroke data are not redistributed. The code (src/, works/*.py, tools/, tests/, article/jowr/values/*.py) is under the MIT License (LICENSE); the documents,
   conditions, records, texts and images are under CC BY-NC-SA 4.0 (LICENSE-docs).
 authors:
   - family-names: Miura
@@ -20,15 +22,18 @@ authors:
 doi: 10.5281/zenodo.23858735
 identifiers:
   - type: doi
+    value: DOI_110
+    description: Version 1.1.0.
+  - type: doi
     value: 10.5281/zenodo.23862942
     description: Version 1.0.1.
   - type: doi
     value: 10.5281/zenodo.23858736
-    description: Version 1.0.0, cited by the article.
+    description: Version 1.0.0, cited by both articles.
 repository-code: "https://github.com/mikotomiura/keepcount"
 license-url: "https://github.com/mikotomiura/keepcount/blob/main/LICENSE-docs"
-version: 1.0.1
-date-released: 2026-11-02
+version: 1.1.0
+date-released: DATE_110
 keywords:
   - visualization evaluation
   - keystroke dynamics
@@ -36,7 +41,20 @@ keywords:
   - privacy
   - data art
   - positive controls
+  - keystroke logging
+  - pause analysis
 references:
+  - type: article
+    title: "Can a pause summary show where one writer paused? An audit procedure for keystroke logs"
+    authors:
+      - family-names: Miura
+        given-names: Mikoto
+      - family-names: Harada
+        given-names: Yuusuke
+    year: 2026
+    status: submitted
+    journal: "Journal of Writing Research"
+    notes: "Manuscript submitted to the Journal of Writing Research."
   - type: article
     title: "KeepCount: A Stage-by-Stage Audit of What Images of Behavioral Data Keep, with Keystroke Tiles as a Worked Example"
     authors:
@@ -49,7 +67,7 @@ references:
     publisher:
       name: Zenodo
     doi: 10.5281/zenodo.23858734
-    notes: "Submitted to Information Visualization. Preprint (not peer reviewed)."
+    notes: "Preprint (not peer reviewed)."
   - type: article
     title: "Affective Tactility: Cross-Modal Translation from Natural Language to Procedural Height Maps"
     authors:

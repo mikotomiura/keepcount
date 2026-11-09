@@ -1,12 +1,13 @@
 Copyright (c) 2026 Mikoto Miura and Yuusuke Harada
 
 The documents, conditions, results, texts and images of this repository (README.md, README.ja.md, CITATION.cff,
-works/conditions/, works/texts/, results/, docs/media/ and commit-map.tsv) are licensed under the Creative Commons
+works/conditions/, works/texts/, results/, docs/, commit-map.tsv, and the values, tables and lists of
+article/jowr/values/: *.json and *.tex) are licensed under the Creative Commons
 Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0). The source code and the files of
-the environment (src/, works/*.py, tools/, tests/, pyproject.toml, uv.lock, .python-version and .gitignore) are
+the environment (src/, works/*.py, tools/, tests/, article/jowr/values/*.py, pyproject.toml, uv.lock, .python-version and .gitignore) are
 licensed under the MIT License in LICENSE.
 
-The results of runs v6 to v6j count keystroke data of others and keep the terms of their sources: counts and values
+The results of runs v6 to v6s, and the values of article/jowr/values/, count keystroke data of others and keep the terms of their sources: counts and values
 derived from KUPA-KEYS (Velentzas et al., LREC-COLING 2024) are under CC BY-NC-SA 4.0, those from 136M Keystrokes
 (Dhakal, Feit, Kristensson and Oulasvirta, CHI 2018) are for non-commercial use with attribution to its authors, and
 those from the essays of the Kaggle competition Linking Writing Processes to Writing Quality are under the

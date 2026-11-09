@@ -1,0 +1,24 @@
+\begin{table}[htbp]
+\caption{Classes at the 2-s, 1-s and 500-ms thresholds and at the writer-specific threshold (rule count's writers)}
+\label{tab:thr}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}lllXXX@{}}
+\toprule
+Data & Split & Operation & $U$ & $B$ & $B_{sd}$ \\
+\midrule
+KUPA essays & odd--even & inside & b b b b b & b b b b b & b b b b b \\
+KUPA essays & odd--even & shuffled & b b b u b & b b b u b & u u u b b \\
+KUPA essays & odd--even & shuffled in halves & b b b u b & b b b u b & u u u b b \\
+KUPA essays & first--second half & inside & b b b b b & b b b b b & b b b b b \\
+KUPA essays & first--second half & shuffled & b b b u b & b b b a b & b u b u b \\
+KUPA essays & first--second half & shuffled in halves & b b b b b & b b b u b & b b b u b \\
+LWP & odd--even & inside & b b b b b & b b b b b & b b b b b \\
+LWP & odd--even & shuffled & b b b a u & b b b a b & u u u a b \\
+LWP & odd--even & shuffled in halves & b b b a b & b b b a b & u u u a b \\
+LWP & first--second half & inside & b b b b b & b b b b b & b b b b b \\
+LWP & first--second half & shuffled & b b b a b & b b b a b & b b b u b \\
+LWP & first--second half & shuffled in halves & b b b u b & b b b u b & b b b u b \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\footnotesize Note. Per cell the classes at 2~s, 1~s, 500~ms, the writer-specific threshold refitted on each record, and the writer-specific threshold kept from the original record (a above .60, b below, u undecided). The 2-s class is recomputed from its interval; the others are the record's classes (it gives no interval for them), checked against its count of cells equal to 2~s. Cells fixed by construction ($U$ and $B$ under inside, $B$ under shuffled in halves with the first--second half split) are b at the fixed thresholds; a writer-specific threshold refitted on each record can move them. Only the classes are written.
+\end{table}

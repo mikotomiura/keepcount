@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 2,horizontal sep=14mm,vertical sep=24mm},width=62mm,height=46mm,xmin=20,xmax=105,ymin=0,ymax=1,xtick={25,50,75,100},ytick={0,.2,.4,.6,.8,1},yticklabel style={/pgf/number format/fixed},label style={font=\footnotesize},tick label style={font=\footnotesize},title style={font=\footnotesize},xlabel={Dose (\% of eligible swaps)},ylabel={Share of writers}]
+\nextgroupplot[title={LWP, inside},legend to name=doselegendhalves,legend columns=3]
+\addplot[black,thick,mark=*,error bars/.cd,y dir=both,y explicit] coordinates {(25,0.164) -= (0,0.056) += (0,0.056) (50,0.559) -= (0,0.073) += (0,0.073) (75,0.718) -= (0,0.068) += (0,0.073) (100,0.819) -= (0,0.062) += (0,0.051)};
+\addplot[gray,thick,mark=square*,error bars/.cd,y dir=both,y explicit] coordinates {(25,0.107) -= (0,0.045) += (0,0.051) (50,0.169) -= (0,0.056) += (0,0.056) (75,0.288) -= (0,0.073) += (0,0.068) (100,0.373) -= (0,0.073) += (0,0.068)};
+\addplot[gray,mark=triangle,error bars/.cd,y dir=both,y explicit] coordinates {(25,0.073) -= (0,0.034) += (0,0.040) (50,0.102) -= (0,0.040) += (0,0.045) (75,0.141) -= (0,0.051) += (0,0.051) (100,0.147) -= (0,0.051) += (0,0.051)};
+\addplot[dashed,domain=20:105] {0.6};
+\legend{Reference $R_{loc}$,Composite $I$,$B_{sd}$}
+\nextgroupplot[title={LWP, cross}]
+\addplot[black,thick,mark=*,error bars/.cd,y dir=both,y explicit] coordinates {(25,0.169) -= (0,0.056) += (0,0.056) (50,0.384) -= (0,0.073) += (0,0.068) (75,0.542) -= (0,0.068) += (0,0.073) (100,0.644) -= (0,0.073) += (0,0.068)};
+\addplot[gray,thick,mark=square*,error bars/.cd,y dir=both,y explicit] coordinates {(25,0.113) -= (0,0.045) += (0,0.045) (50,0.209) -= (0,0.056) += (0,0.062) (75,0.328) -= (0,0.062) += (0,0.068) (100,0.412) -= (0,0.068) += (0,0.073)};
+\addplot[gray,mark=triangle,error bars/.cd,y dir=both,y explicit] coordinates {(25,0.124) -= (0,0.045) += (0,0.051) (50,0.158) -= (0,0.051) += (0,0.056) (75,0.198) -= (0,0.056) += (0,0.062) (100,0.232) -= (0,0.062) += (0,0.062)};
+\addplot[dashed,domain=20:105] {0.6};
+\nextgroupplot[title={KUPA essays, inside}]
+\addplot[black,thick,mark=*,error bars/.cd,y dir=both,y explicit] coordinates {(25,0.070) -= (0,0.038) += (0,0.045) (50,0.287) -= (0,0.070) += (0,0.070) (75,0.484) -= (0,0.076) += (0,0.070) (100,0.631) -= (0,0.076) += (0,0.076)};
+\addplot[gray,thick,mark=square*,error bars/.cd,y dir=both,y explicit] coordinates {(25,0.019) -= (0,0.019) += (0,0.025) (50,0.089) -= (0,0.045) += (0,0.045) (75,0.146) -= (0,0.051) += (0,0.057) (100,0.191) -= (0,0.057) += (0,0.064)};
+\addplot[gray,mark=triangle,error bars/.cd,y dir=both,y explicit] coordinates {(25,0.025) -= (0,0.019) += (0,0.025) (50,0.045) -= (0,0.032) += (0,0.032) (75,0.089) -= (0,0.045) += (0,0.045) (100,0.121) -= (0,0.051) += (0,0.051)};
+\addplot[dashed,domain=20:105] {0.6};
+\nextgroupplot[title={KUPA essays, cross}]
+\addplot[black,thick,mark=*,error bars/.cd,y dir=both,y explicit] coordinates {(25,0.089) -= (0,0.038) += (0,0.045) (50,0.172) -= (0,0.057) += (0,0.064) (75,0.268) -= (0,0.064) += (0,0.070) (100,0.376) -= (0,0.076) += (0,0.083)};
+\addplot[gray,thick,mark=square*,error bars/.cd,y dir=both,y explicit] coordinates {(25,0.076) -= (0,0.038) += (0,0.045) (50,0.102) -= (0,0.045) += (0,0.051) (75,0.185) -= (0,0.057) += (0,0.064) (100,0.223) -= (0,0.064) += (0,0.064)};
+\addplot[gray,mark=triangle,error bars/.cd,y dir=both,y explicit] coordinates {(25,0.102) -= (0,0.045) += (0,0.051) (50,0.140) -= (0,0.051) += (0,0.057) (75,0.178) -= (0,0.057) += (0,0.064) (100,0.178) -= (0,0.051) += (0,0.064)};
+\addplot[dashed,domain=20:105] {0.6};
+\end{groupplot}
+\end{tikzpicture}
+
+\ref{doselegendhalves}

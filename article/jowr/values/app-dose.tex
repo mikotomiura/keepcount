@@ -1,0 +1,60 @@
+\begin{table}[htbp]
+\caption{Shares by dose (second count's writers; descriptions)}
+\label{tab:dose}
+\scriptsize
+\begin{tabularx}{\linewidth}{@{}llllXXXX@{}}
+\toprule
+Data & Split & Operation & Summary & 25\% & 50\% & 75\% & 100\% \\
+\midrule
+KUPA essays & odd--even & inside & $R_{loc}$ & .10\,b & .30\,b & .49\,b & .63\,u \\
+KUPA essays & odd--even & inside & $R_{mean}$ & .10\,b & .28\,b & .57\,u & .76\,a \\
+KUPA essays & odd--even & inside & $I$ & .01\,b & .09\,b & .12\,b & .17\,b \\
+KUPA essays & odd--even & inside & $B_{sd}$ & .07\,b & .11\,b & .19\,b & .24\,b \\
+KUPA essays & odd--even & cross & $R_{loc}$ & .10\,b & .17\,b & .32\,b & .37\,b \\
+KUPA essays & odd--even & cross & $R_{mean}$ & .09\,b & .27\,b & .47\,b & .58\,u \\
+KUPA essays & odd--even & cross & $I$ & .04\,b & .08\,b & .13\,b & .18\,b \\
+KUPA essays & odd--even & cross & $B_{sd}$ & .12\,b & .18\,b & .23\,b & .26\,b \\
+KUPA essays & first--second half & inside & $R_{loc}$ & .07\,b & .29\,b & .48\,b & .63\,u \\
+KUPA essays & first--second half & inside & $R_{mean}$ & .06\,b & .36\,b & .59\,u & .73\,a \\
+KUPA essays & first--second half & inside & $I$ & .02\,b & .09\,b & .15\,b & .19\,b \\
+KUPA essays & first--second half & inside & $B_{sd}$ & .03\,b & .04\,b & .09\,b & .12\,b \\
+KUPA essays & first--second half & cross & $R_{loc}$ & .09\,b & .17\,b & .27\,b & .38\,b \\
+KUPA essays & first--second half & cross & $R_{mean}$ & .10\,b & .23\,b & .50\,b & .57\,u \\
+KUPA essays & first--second half & cross & $I$ & .08\,b & .10\,b & .18\,b & .22\,b \\
+KUPA essays & first--second half & cross & $B_{sd}$ & .10\,b & .14\,b & .18\,b & .18\,b \\
+LWP & odd--even & inside & $R_{loc}$ & .20\,b & .53\,u & .67\,a & .78\,a \\
+LWP & odd--even & inside & $R_{mean}$ & .25\,b & .53\,u & .78\,a & .87\,a \\
+LWP & odd--even & inside & $I$ & .12\,b & .25\,b & .40\,b & .45\,b \\
+LWP & odd--even & inside & $B_{sd}$ & .06\,b & .12\,b & .19\,b & .24\,b \\
+LWP & odd--even & cross & $R_{loc}$ & .17\,b & .40\,b & .51\,b & .59\,u \\
+LWP & odd--even & cross & $R_{mean}$ & .19\,b & .45\,b & .68\,a & .80\,a \\
+LWP & odd--even & cross & $I$ & .14\,b & .27\,b & .39\,b & .48\,b \\
+LWP & odd--even & cross & $B_{sd}$ & .08\,b & .15\,b & .23\,b & .25\,b \\
+LWP & first--second half & inside & $R_{loc}$ & .16\,b & .56\,u & .72\,a & .82\,a \\
+LWP & first--second half & inside & $R_{mean}$ & .28\,b & .54\,u & .78\,a & .86\,a \\
+LWP & first--second half & inside & $I$ & .11\,b & .17\,b & .29\,b & .37\,b \\
+LWP & first--second half & inside & $B_{sd}$ & .07\,b & .10\,b & .14\,b & .15\,b \\
+LWP & first--second half & cross & $R_{loc}$ & .17\,b & .38\,b & .54\,u & .64\,u \\
+LWP & first--second half & cross & $R_{mean}$ & .22\,b & .43\,b & .69\,a & .79\,a \\
+LWP & first--second half & cross & $I$ & .11\,b & .21\,b & .33\,b & .41\,b \\
+LWP & first--second half & cross & $B_{sd}$ & .12\,b & .16\,b & .20\,b & .23\,b \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\footnotesize Note. All cells are descriptions. Inside at 100\% applies the same swaps as the second count's inside (Table~\ref{tab:cellsm}), recounted with the dose rows' resampling keys; cross at 100\% and $R_{mean}$ were never rule cells. The references on all writers who have them; $I$ and $B_{sd}$ on the writers who have both the summary and the reference. Share and class (a, b, u).
+\end{table}
+\begin{table}[htbp]
+\caption{What moved by dose (medians over writers; description)}
+\label{tab:moved}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}llXXXX@{}}
+\toprule
+Data & Operation & 25\% & 50\% & 75\% & 100\% \\
+\midrule
+KUPA essays & inside & 3; 1.1\% & 6; 2.7\% & 9; 4.1\% & 11; 5.7\% \\
+KUPA essays & cross & 1; 1.5\% & 2; 2.6\% & 3; 4.3\% & 4; 4.8\% \\
+LWP & inside & 6; 1.5\% & 12; 3.3\% & 18; 5.2\% & 23; 7.1\% \\
+LWP & cross & 3; 1.7\% & 5; 3.2\% & 8; 5.1\% & 10; 7.1\% \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\footnotesize Note. Median number of swaps (inside: sentence-initial gaps swapped; cross: long sentence-initial gaps swapped), then the median share of the record's time moved (inside: the sum over swaps of the absolute difference of the two gaps; cross: the sum of the moved long gaps; each over the record's total time); the two medians are taken separately.
+\end{table}

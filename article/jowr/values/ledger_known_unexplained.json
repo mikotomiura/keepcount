@@ -1,0 +1,127 @@
+{
+ "_note": "Decimal tokens of each output that no leaf read by that unit explains (code-reviewer round 2, MEDIUM 4). Each was checked on 2026-11-09 to be one of: a value reused from a leaf read for an earlier key (the leaf is caught in 'caught_elsewhere': sRange, sIKUPA, sILWPshuf, sRefsKUPA, mRlocessay), an interval width or end (nCIwidth, .6497), a figure's error-bar length or axis tick (fig2), a number from the conditions files (predictions), a median or share of time moved (moved, groups, oMed*, nTime*, writer_threshold, reliability percentiles), or the margin (.60). A new token outside this list stops ledger_inventory.py.",
+ "known": {
+  "body:mRlocessay": [
+   ".58",
+   ".59"
+  ],
+  "body:sRange": [
+   ".09",
+   ".39"
+  ],
+  "body:sRefsKUPA": [
+   ".29",
+   ".39"
+  ],
+  "body:sIKUPA": [
+   ".10",
+   ".16"
+  ],
+  "body:sILWPshuf": [
+   ".09",
+   ".14"
+  ],
+  "body:nCIwidth": [
+   ".14"
+  ],
+  "body:nTime75L": [
+   "5.2"
+  ],
+  "body:oMedL": [
+   "13.0",
+   "8.5"
+  ],
+  "body:oMedK": [
+   "4.5",
+   "6.0",
+   "9.5"
+  ],
+  "body:nTime100K": [
+   "5.7"
+  ],
+  "body:nLWPin75ci": [
+   ".6497"
+  ],
+  "body:fig2": [
+   ".2",
+   ".4",
+   ".6",
+   ".8",
+   "0.018",
+   "0.025",
+   "0.033",
+   "0.044",
+   "0.050",
+   "0.061",
+   "0.062",
+   "0.066",
+   "0.6"
+  ],
+  "body:fig2-halves": [
+   ".2",
+   ".4",
+   ".6",
+   ".8",
+   "0.034",
+   "0.056",
+   "0.064",
+   "0.083",
+   "0.6"
+  ],
+  "appendix:thresholds": [
+   ".60"
+  ],
+  "appendix:reliability": [
+   ".05",
+   ".10",
+   "2.5",
+   "97.5"
+  ],
+  "appendix:groups": [
+   ".60",
+   "10.5",
+   "13.0",
+   "15.5",
+   "4.5",
+   "6.0",
+   "7.5",
+   "8.5",
+   "9.5"
+  ],
+  "appendix:predictions": [
+   "0.1",
+   "0.15",
+   "0.20",
+   "0.50",
+   "0.60",
+   "0.75",
+   "0.80",
+   "0.86",
+   "0.97"
+  ],
+  "appendix:moved": [
+   "1.1",
+   "1.5",
+   "1.7",
+   "2.6",
+   "2.7",
+   "3.2",
+   "3.3",
+   "4.1",
+   "4.3",
+   "4.8",
+   "5.1",
+   "5.2",
+   "5.7",
+   "7.1"
+  ],
+  "appendix:writer_threshold": [
+   "10.0",
+   "14.8",
+   "2.6",
+   "23.5",
+   "32.9",
+   "4.1"
+  ]
+ }
+}

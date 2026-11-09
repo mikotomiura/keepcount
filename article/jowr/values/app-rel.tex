@@ -1,0 +1,37 @@
+\begin{table}[htbp]
+\caption{Split-half reliability of every feature (rule count's writers; description)}
+\label{tab:rel}
+\scriptsize
+\begin{tabularx}{\linewidth}{@{}lllll@{}}
+\toprule
+Feature & KUPA $r$ & KUPA $r_{SB}$ & LWP $r$ & LWP $r_{SB}$ \\
+\midrule
+$S_0$: quantile .05 & .98 & .99 [.99, .99] & .67 & .80 [.76, .84] \\
+$S_0$: quantile .10 & .98 & .99 [.99, .99] & .71 & .83 [.79, .87] \\
+$S_0$: quantile .25 & .99 & .99 [.99, .99] & .82 & .90 [.88, .92] \\
+$S_0$: quantile .50 & .99 & .99 [.99, .99] & .98 & .99 [.98, .99] \\
+$S_0$: quantile .75 & .97 & .99 [.98, .99] & .94 & .97 [.96, .98] \\
+$S_0$: quantile .90 & .92 & .96 [.95, .97] & .92 & .96 [.95, .97] \\
+$S_0$: quantile .95 & .86 & .92 [.91, .94] & .86 & .92 [.91, .94] \\
+$U$: log median short gap, median & .98 & .99 [.99, .99] & .99 & .99 [.99, 1.00] \\
+$U$: log median short gap, IQR & .19 & .31 [.14, .46] & .09 & .16 [$-$.03, .35] \\
+$U$: long-gap share, median & .69 & .82 [.78, .86] & .69 & .82 [.77, .85] \\
+$U$: long-gap share, IQR & .23 & .37 [.21, .51] & .22 & .36 [.20, .50] \\
+$B$ & .70 & .82 [.72, .88] & .76 & .86 [.80, .91] \\
+$B_{sd}$ & .56 & .72 [.63, .80] & .75 & .86 [.81, .89] \\
+$B$ complete & .39 & .55 [.30, .73] & .56 & .72 [.58, .82] \\
+$B_{sd}$ complete & .36 & .53 [.34, .69] & .56 & .72 [.60, .80] \\
+$I$: all gaps & .42 & .58 [.46, .70] & .14 & .24 [.06, .39] \\
+$I$: within words & .22 & .35 [.19, .50] & .01 & .02 [$-$.04, .09] \\
+$I$: between words & .29 & .45 [.29, .59] & .21 & .35 [.25, .46] \\
+$R$: sentence start & .39 & .56 [.44, .66] & .57 & .73 [.66, .79] \\
+$R$: subsentence start & .30 & .46 [.33, .58] & .37 & .54 [.42, .65] \\
+$R$: word start & .95 & .98 [.97, .98] & .97 & .99 [.98, .99] \\
+$R$: within word & .98 & .99 [.99, .99] & .99 & .99 [.99, 1.00] \\
+$R$: sentence minus within & .33 & .49 [.35, .61] & .54 & .70 [.62, .76] \\
+$R$: long time at sentence or subsentence starts & .33 & .49 [.34, .62] & .26 & .41 [.25, .55] \\
+$R$: lag-1 correlation & .75 & .85 [.82, .89] & .53 & .70 [.64, .75] \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\footnotesize Note. Mean over 5,000 random splits of each record into two halves of its sentences; $r$ uncorrected, $r_{SB}$ with the Spearman--Brown step, with the 2.5 and 97.5 percentiles of $r_{SB}$ over splits (no interval over writers). Components in the order of the record (for $U$: the log median short gap, then the long-gap share; $R_{loc}$ is $R$ less its lag-1 correlation).
+\end{table}

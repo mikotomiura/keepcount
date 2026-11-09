@@ -15,3 +15,7 @@ review/
 
 # Large generated files (STL), recorded by SHA-256 in results/
 output/
+
+# Written by the ledger scripts of article/jowr/values; ledger_inventory.json holds record values
+article/jowr/values/ledger_inventory.json
+article/jowr/values/ledger_classes.json
