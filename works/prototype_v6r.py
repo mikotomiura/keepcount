@@ -147,6 +147,12 @@ def agreement(a: np.ndarray, b: np.ndarray, key: list[int]) -> dict:
 # ================================================================ one split: verdicts and ledgers
 
 
+def state_of(old_n: dict) -> str:
+    """The gate state of a v6n rule cell from its R_loc's and R_mean's classes (decision 25)."""
+    return q6.cell_state(o6.size_class(old_n["R_loc"]["share_vs_own_ci"]),
+                         o6.size_class(old_n["R_mean"]["share_vs_own_ci"]))
+
+
 def verdicts(hv: dict, hq: dict, ds: str, task: str, how: str, row: str, rn: dict, rq: dict) -> dict:
     """Per stage of STAGES_R: the persons and contributions of the split (v6n's rule cells recomputed and checked by
     v6p's rule_keep; I[2] on I's rule persons checked against v6q's record), and the rules for the ledgers."""
@@ -180,8 +186,7 @@ def verdicts(hv: dict, hq: dict, ds: str, task: str, how: str, row: str, rn: dic
         cls = (o6.size_class(rq["cells"][nm][how][row]["rule"][I2]["share_vs_own_ci"]) if st == I2
                else o6.size_class(old_n[part]["share_vs_own_ci"]))
         out["stages"][st] = {"persons": rule["persons"], "own": own, "class": cls,
-                             "state": q6.cell_state(o6.size_class(old_n["R_loc"]["share_vs_own_ci"]),
-                                                    o6.size_class(old_n["R_mean"]["share_vs_own_ci"]))}
+                             "state": state_of(old_n)}
     return out
 
 

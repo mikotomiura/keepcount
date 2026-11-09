@@ -55,8 +55,8 @@ def test_is_fixed():
 
 # continuous trial values are not possible for categories: the contributions are a mix of 0, 1/2 and 1 with unequal
 # counts, so that no two categories or marginals coincide by accident
-A = np.array([1, 1, 1, 0, 0, 0.5, 1, 0, 1, 0, 1, 1, 0.5, 0], dtype=float)
-B = np.array([1, 0, 1, 0, 1, 0.5, 1, 0, 0, 0, 1, 0.5, 1, 0], dtype=float)
+A = np.array([1, 1, 1, 0, 0, 0.5, 1, 0, 1, 0, 1, 1, 0.5, 0, 0, 0.5], dtype=float)
+B = np.array([1, 0, 1, 0, 1, 0.5, 1, 0, 0, 0, 1, 0.5, 1, 0, 0.5, 0], dtype=float)
 
 
 def test_table_by_hand():
@@ -454,6 +454,8 @@ def test_predictions_by_hand():
                       ("lwp_lwp", "inside_100", I2): cellw(0.7, 0.2)})
     p = r6.predictions(rec)
     assert p["P1"].startswith("did not hold") and p["P3"].startswith("did not hold") and p["P4"].startswith("did not hold")
+    tie = fake_rec({("lwp_lwp", "inside_100", I2): cellw(0.7, 0.25), ("lwp_lwp", "inside_100", "I"): cellw(0.7, 0.25)})
+    assert r6.predictions(tie)["P4"].startswith("did not hold")
 
 
 def test_prediction_p2_counts_by_hand():
@@ -619,3 +621,100 @@ def test_same_row_stops(run):
         not rq["groups"]["n_s"]["lwp_lwp"]["halves"]["inside_100"].get("written")
     with pytest.raises(SystemExit, match="families differ"):
         r6.same_row(rp, rq, "lwp_lwp", "halves")
+
+
+def test_state_of_reads_r_loc_then_r_mean():
+    def cell(loc, mean):
+        return {"R_loc": {"share_vs_own_ci": loc}, "R_mean": {"share_vs_own_ci": mean}}
+    assert r6.state_of(cell([0.7, 0.9], [0.1, 0.2])) == "gate"
+    assert r6.state_of(cell([0.1, 0.2], [0.7, 0.9])) == "R_mean only"
+    assert r6.state_of(cell([0.5, 0.7], [0.5, 0.7])) == "not read"
+
+
+def test_i2_persons_check_stops(run, monkeypatch):
+    real = p6.persons_with
+
+    def fewer(hv, how, row, need):
+        out = real(hv, how, row, need)
+        return out[1:] if need == (I2, "R") else out
+
+    monkeypatch.setattr(p6, "persons_with", fewer)
+    with pytest.raises(SystemExit, match="persons with I\\[2\\] and R"):
+        rerun(run)
+
+
+def test_admit_checks_the_second_split_too():
+    n, m = 30, p6.mask_of
+    leds = {"oddeven": {"pool": [m(range(20), n)], "stage": {"I": [m(range(20), n)]}, I2: []},
+            "halves": {"pool": [m(range(20), n)], "stage": {"I": [m(range(20), n), m(range(8), n)]}, I2: []}}
+    assert not r6.admit_common(leds, "I", m(range(6), n))  # fine under odd/even, 2 left under halves
+    assert len(leds["oddeven"]["pool"]) == 1 and len(leds["oddeven"]["stage"]["I"]) == 1
+
+
+@pytest.mark.parametrize("which", [0, 1])
+def test_final_checks_each_catch(run, monkeypatch, which):
+    def admit_blind(leds, st, mask):
+        for how in r6.SPLITS:
+            ls = r6.ledger_of(leds[how], st)
+            if len(ls) == 2:
+                ls[which].append(mask)
+                ls[which].append(mask.copy() & ~np.eye(len(mask), dtype=bool)[np.flatnonzero(mask)[0]])
+        return True
+
+    monkeypatch.setattr(r6, "admit_common", admit_blind)
+    with pytest.raises(SystemExit, match="pooled ledger" if which == 0 else "stage's ledger"):
+        rerun(run)
+
+
+def test_same_row_is_called(run):
+    rp = copy.deepcopy(run[3])
+    rp["sets"]["kupa_essay"]["written"]["halves"]["inside/before"]["I"] = {"n_s": "x"}
+    with pytest.raises(SystemExit, match="v6p's plans"):
+        rerun(run, rp=rp)
+
+
+def test_pool_holds_v6p_written_families(run, monkeypatch):
+    rp = run[3]
+    got = []
+    real = r6.ledgers
+
+    def spy(hv, how, row, gate0, o_fams, lab_how, written_o, rules, nm, *rest):
+        led = real(hv, how, row, gate0, o_fams, lab_how, written_o, rules, nm, *rest)
+        got.append((how, row, gate0, lab_how, rules, nm, len(hv[how]["text/before"]), {x.tobytes() for x in led["pool"]}))
+        return led
+
+    monkeypatch.setattr(r6, "ledgers", spy)
+    rerun(run)
+    seen = 0
+    for how, row, gate0, lab_how, rules, nm, n, have in got:
+        pos = {p: k for k, p in enumerate(gate0)}
+        plan = rp["sets"][nm]["written"][how][row]
+        for st in p6.STAGES:
+            for c in p6.COVARIATES:
+                if plan[st].get(c) == "written":
+                    ok = rules[st]["persons"]
+                    for f in p6.family(ok, lab_how[c][2][[pos[p] for p in ok]], n):
+                        assert f.tobytes() in have
+                        seen += 1
+    assert seen > 0
+
+
+def test_ledgers_adds_written_families_to_pool_and_stage(monkeypatch):
+    n = 12
+    fam = [p6.mask_of([0, 1, 2, 3, 4], n), p6.mask_of([5, 6, 7, 8], n), p6.mask_of([9, 10, 11], n)]
+    plan = {st: ({"n_s": "written"} if st == "Bsd@2000" else {}) for st in p6.STAGES}
+    monkeypatch.setattr(p6, "base_sets", lambda *a: {"count_1": {}, "rule": {}, "v6o": []})
+    monkeypatch.setattr(p6, "plan_row", lambda *a: (plan, {}))
+    monkeypatch.setattr(p6, "pooled", lambda base: [])
+    monkeypatch.setattr(p6, "stage_ledger", lambda base, st: [])
+    monkeypatch.setattr(p6, "family", lambda ok, g, n_: [f.copy() for f in fam])
+    rp = {"sets": {"x": {"written": {"oddeven": {"r": plan}}}}}
+    rq = {"cells": {"x": {"oddeven": {"r": {"rule": {"no_count": True}, "gate_0": {"no_count": True}}}}},
+          "groups": {c: {"x": {"oddeven": {"r": {}}}} for c in p6.COVARIATES}}
+    rules = {st: {"persons": list(range(n))} for st in p6.STAGES}
+    rules["I"] = {"persons": list(range(n)), "no_count": True}
+    lab = {"n_s": (0, 0, np.zeros(n, dtype=int)), "n_s_min": (0, 0, np.zeros(n, dtype=int))}
+    led = r6.ledgers({}, "oddeven", "r", list(range(n)), [], lab, {}, rules, "x", {"count_1": {"x": {"oddeven": {}}}},
+                     rp, rq, n)
+    assert len(led["pool"]) == 3 and len(led["stage"]["Bsd@2000"]) == 3 and led["stage"]["I"] == []
+    assert led[I2] == []
