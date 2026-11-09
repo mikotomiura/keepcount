@@ -1,0 +1,75 @@
+{
+ "purpose": "Prototype v6s: the share of persons whose per-person verdict of count 1 (1, 1/2 or 0; v6b.one) is the same under the two fixed splits (odd/even sentences and halves), and only that. v6r (results/prototype_v6r, 44ce4eb) asked the same question with the full cross-table and withheld every cell: the persons who are rule persons under both splits (the common persons: 155 in KUPA essay, 175 in LWP) differ from the halves rule persons (157, 177) by 2, so any share of the halves verdicts over the common persons makes those 2 persons' sum derivable from v6n's shares. Decided by the researcher (decision 40 of .steering/20261108-paper-a-jowr-reframe): count the agreement share p_o alone, which is not a linear sum of either split's contributions. Asked by the pre-review of outline v14 (round 8, R3 m1; Parsons et al. 2019: 'Reliability should be estimated for the actual outcome measures to be analysed').",
+ "fixed_before_running": "Written on 2026-11-09 after seeing the records and notes of v6k-v6r. The persons are v6m's (= v6n's to v6r's), whose values have been seen, including every stage's share per split on its rule persons (v6n, v6q) and the sizes of the common sets (v6r). No cross-tabulation of the two splits' verdicts has been computed: v6r withheld every cell before computing its table. A first draft was sent to Codex (codex-consult, the conditions text and earlier aggregate results only, no data; .steering/20261109-v6s-split-agreement-po/codex-consult-output.md) and changed after its points (decision 1 of that folder).",
+ "version": "6s",
+ "status": "Description (status d) throughout. The readings below are fixed before any new value is seen; they are not a confirmation. No rule and no label.",
+ "sources": {
+  "v6r": "works/conditions/prototype_v6r.json and its code (imported): the persons, stages, rows, each split's verdicts (v6n's rule cells recomputed and checked; I[2] checked against v6q), the common persons, fixed stages, and the checks of v6r except its written plan and cross-table.",
+  "v6n": "results/prototype_v6n/record.json: each split's share of each stage on its own rule persons (for the chance level).",
+  "v6q": "results/prototype_v6q/record.json: I[2]'s share per split on I's rule persons."
+ },
+ "data": "as v6n.",
+ "participants": "as v6r: per dataset, row and stage, the common persons (rule persons of the stage under both splits; R_loc, R_mean and I[2] on I's rule persons).",
+ "units_parts": "as v6r.",
+ "stages": "as v6r: U@2000, B@2000, Bsd@2000, I, I[2], R_loc, R_mean; a stage fixed by construction under a row in either split is not counted (listed as fixed). Each split's verdict is exactly the one inside v6n's share (each split's own cell scale; v6r's verdict).",
+ "rows": "as v6r: inside_75, inside_100, cross_100, shuffled/before, shuffled_in_halves/before.",
+ "cells": {
+  "written": "per dataset, row and stage on the common persons, where the written plan admits it: persons_common; persons_agree (persons whose two contributions are equal, 0, 1/2 and 1 as three categories) and persons_disagree (the rest); p_o = persons_agree / persons_common and 1 - p_o; the 95% percentile interval of p_o over 2000 bootstrap resamples of the common persons (v6.ci of the agreement indicator), and that of 1 - p_o written as [1 - upper, 1 - lower]. Beside, not on the common persons and not recomputed: each split's class and gate state of the stage on its own rule persons (v6n; I[2]: v6q's; as v6r).",
+  "not_written": "no share of either split's verdicts over the common persons, no cross-table or count of a direction of disagreement, no chance level and no kappa (exact or approximate: an approximate level from the two means cannot fix the chance agreement of three-valued verdicts, Codex's point 3 of decision 1).",
+  "keys": "numpy.random.default_rng([20261031, 102, dataset, task, stage, row index, 7, 9, 0]) (v6r's indices; 102 so no key is shared with v6k-v6r)."
+ },
+ "written_plan": {
+  "rule": "p_o is written only where it adds nothing to what is already known about the sum of a small one-split-only set. For a cell, let m_s be the number of persons who are rule persons under split s only (v6r's persons_one_split_only) and S_s the sum of their contributions under split s (values 0, 1/2, 1, so S_s in {0, 1/2, ..., m_s}). Known before v6s: the sums over each split's full rule set, H_s = share x persons from v6n's record (exactly, as the shares are means of halves). With X and Y the sums of the odd/even and halves contributions over the common persons, X = H_oe - S_oe and Y = H_h - S_h, each in [0, n_c]. The disagreement count d constrains X - Y to the set D_d of sums of d terms each in {-1, -1/2, +1/2, +1} (D_0 = {0}; computed exactly by enumeration). For each split with 1 <= m_s <= 4, the code enumerates the feasible values of S_s (over S_s, the other split's S in its range, and X - Y in D_d, with X and Y in [0, n_c]) with and without the constraint from d; if the feasible set with d is smaller than without it, p_o, d and the interval of that cell are withheld (persons only, reason 'narrows a one-split-only sum'). One-split-only sets of 5 or more are not protected by this rule (as v6k-v6r).",
+  "guarantee": "the check covers the structure above (v6n's rule-cell shares of the two splits and d of the same stage and row). It does not cover combinations with other published summaries of these contributions (v6n's count 1 cells, v6o-v6q's groups), which already make some small sets derivable in the records (decision 38: handled when the public derived values are built). A p_o of 0 or 1 over 5 or more persons tells every member's agreement."
+ },
+ "primary": "named before running and read in this order. (1) Read first, chosen because of known results (the rows where the gate R_loc reaches in at least one split, v6n): 1 - p_o with its interval for I, I[2] and R_loc at LWP inside_75 and inside_100, beside p_e_approx. (2) The primary cells: every counted stage at inside_75, inside_100 and cross_100 in both datasets. (3) The shuffles as a table, not read one by one. Counts of cells are not counts of independent replications.",
+ "readings": {
+  "a": "1 - p_o is the share of the common persons whose per-person verdict depends on which of the two fixed splits is used. It is the number read for the paper (recommendation ii-c and the limits).",
+  "b": "No chance level is written: p_o is read against 1 (all verdicts the same) only; a comparison with chance needs the joint distribution, which the disclosure rule withholds here.",
+  "c": "Disagreement mixes split noise, the different comparisons the splits make (halves: earlier against later writing), each split's own cell scale and the rows' random plan as it falls on each split's parts (v6r readings.d). Not separated; random two-part splits are not counted.",
+  "d": "Agreement of a stage is not the reliability of its components and is not compared in size with another stage's as a test (shares and numbers of features differ).",
+  "intervals": "over the common persons with the verdicts held fixed; it describes these persons and is not a population inference, not the uncertainty of rerunning the operations or of choosing other splits; when all agree it is [1, 1]."
+ },
+ "checks": {
+  "reuse": "v6r's checks on the verdicts (v6n's rule cells recomputed for every stage, split and row; I[2] against v6q; the persons with I[2] and R are I's rule persons; inside/before and inside_100 the same in v6p and v6q) and the same common sets as v6r's record (persons_common, persons_rule and persons_one_split_only equal per cell). The sums H_s are recomputed from the contributions and equal share x persons of v6n's record (1e-9).",
+  "construction": "contributions 0, 1/2 or 1; persons_agree + persons_disagree = persons_common; p_o recomputed from the indicator; D_d by enumeration; the feasible sets of S_s without d contain the true S_s (checked in the run, not written).",
+  "missing": "a summary over fewer than 5 persons is not written; a non-finite value stops the run."
+ },
+ "prediction": "Claude's, written before running; exploratory guesses, not tests (as v6r's, kept for comparison). P1: at LWP inside_75 and inside_100, R_loc's p_o is at least 0.75 in both rows. P2: over the primary cells written, 1 - p_o is at least 0.20 in at least half. P3: I's p_o at LWP inside_75 and inside_100 is below 0.80 in both rows. Thresholds compared on counts (4 x agree >= 3 x common; 5 x disagree >= common; 5 x agree < 4 x common). A prediction with a cell not written is 'not evaluable'. v6r's P4 (kappa) is dropped. No new value has been seen.",
+ "main_cells": "shown first: the read-first cells; then per dataset a table over the stages and primary rows (common persons, 1 - p_o and its interval, the two splits' classes and states beside); then the shuffles; then over the counted primary cells the number written, withheld and fixed and the distribution of 1 - p_o (min, median, max), not read as an overall reproducibility index.",
+ "record": {
+  "public": "results/prototype_v6s/record.json: counts and summaries over persons and the provenance; no press time, gap, key, text, per-person vector, value, contribution, indicator, change or id; a summary over fewer than 5 persons is not written. The data are not redistributed.",
+  "provenance": "as v6r."
+ },
+ "limits_written_before": "As v6r's. In addition: without the table the direction of disagreement and the chance level are not known; the result is limited to the persons eligible under both splits and to these two fixed splits.",
+ "rerun_rule": "as v6k.",
+ "earlier": {
+  "works/conditions/prototype_v6.json": "afc4c330c7a3862ca9f2d6a1ad6d0c1d84ff68ff3b2baf4b39acdd0b6085b078",
+  "works/conditions/prototype_v6b.json": "ae52effd10d6235051839df1ebfa35249e283846090805213b5b3c0e6272ba7a",
+  "works/conditions/prototype_v6e.json": "6cf2cfabcf2bcf44841380f2d78e89ef0b6dc6a121f60309e8a0f58e746b45d8",
+  "works/conditions/prototype_v6k.json": "febecc6c3f24a2613acd906559c9d8583a881b72f09e8e792b81747c2211a715",
+  "works/conditions/prototype_v6l.json": "96c9563b725fcb3ae368f7a9813e0f5eb61f8834dd7dcdf048c5c0bc190894cd",
+  "results/prototype_v6/record.json": "4672ad73eb24d0716ff52ec31f9e000b0027c4663949668e0cfe598568dc11d3",
+  "results/prototype_v6b/record.json": "94d3feda2b4a499738e2711821f930a88443ddca05e02c31782ad564c9cacb6f",
+  "results/prototype_v6e/record.json": "aca8d16a950b365c77f2f8f82eaeecec10c07e781a9bdba14bd7ff3dbbf7ee29",
+  "results/prototype_v6k/record.json": "edfcce3f7c51911cd20af011ab862d458ea290e1b5e2e553b79e94bd4e553205",
+  "results/prototype_v6l/record.json": "034c00971d82610fa7cddb85240f8c820cb29fe463e395631bb867760331f9fe",
+  "works/conditions/prototype_v6m.json": "43eb39e3be3d212a5941b7551e5ddd7961bc77ea30fc8bd54a034cfc87e90f12",
+  "results/prototype_v6m/record.json": "440f252bee4436f908c9ad399472295ff2ae88816435af8bf2812d5a0af9b751",
+  "works/conditions/prototype_v6n.json": "b10f9f12277b3085e065dea074461ce05a181acd4daf4e723dd3886a06d66bf9",
+  "results/prototype_v6n/record.json": "738f61ad2f8c0abc3dc2efd74cc7938eed44d56d182278d7501c48c9b615c4ba",
+  "works/conditions/prototype_v6o.json": "05d21d595aff42ada5b89418a33465f6f839f0b2c04b4111abfe3490c764b4d1",
+  "results/prototype_v6o/record.json": "60cd29c6a3742293f4c3e8e510cfe3329ca2dddb2b06838c534540b16712e888",
+  "works/conditions/prototype_v6p.json": "0f328d36448e1543f67b75fc6a347ed8302c502da1faa68d5f33fa1bfea39dc7",
+  "results/prototype_v6p/record.json": "6073c525dbd7e163f89e0fe720c8d00aa45156d0294cce88094a3facc1d3944b",
+  "works/conditions/prototype_v6q.json": "9a268caf6e54f9b2bee2d7fe6871fa333050116c0c4b8bb062ba8e023d784757",
+  "results/prototype_v6q/record.json": "057c0c5bdf931608e424fde1b47efd214e5d338f5b152ab41ceb9f1897bd8554",
+  "works/conditions/prototype_v6r.json": "4c8bfb874a90766fb1a9c6fa3f61823cc076b61b5d6f5f858ff2962917de7e48",
+  "results/prototype_v6r/record.json": "d21b309a60e92b3e1af648049c7719468cf2fc3d23d5ab2773e7056117b1bfdc"
+ },
+ "generator": "as v6k (checked by v6k's code against v6k's conditions).",
+ "numpy": "2.5.4",
+ "pillow": "13.0.0",
+ "scipy": "1.18.1",
+ "implementation": "v6r's code imported for the persons and verdicts (verdicts, same_row, is_fixed, the build); the bootstrap interval is v6.ci."
+}
