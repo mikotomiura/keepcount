@@ -686,3 +686,130 @@ def test_predictions_stop_on_a_non_gate_state():
     r["cells"]["lwp_lwp"]["halves"]["inside_75"]["rule"]["state"] = "R_mean only"
     with pytest.raises(SystemExit, match="named as a gate cell"):
         q6.predictions(r)
+
+
+# ---------------------------------------------------------------- guards exercised directly (mutation survivors)
+
+
+def test_contrib_stops_on_a_bad_contribution(monkeypatch):
+    first, sel = i2_people([1.0, 2.0, 3.0], [1.5, 2.5, 2.0], [1.2, 2.9, 3.0], [1.0, 2.5, 2.4])
+    monkeypatch.setattr(o6, "contrib_base_change", lambda f, s, k: (np.array([0.3, 1.0, 0.0]), np.ones(3), np.ones(3)))
+    with pytest.raises(SystemExit, match="not 0, 1/2 or 1"):
+        q6.contrib(first, sel, I2, "w")
+
+
+def test_i2_cell_stops_when_v6b_one_disagrees(monkeypatch):
+    first, sel = i2_people([1.0, 2.0, 3.0, 4.0], [1.5, 2.5, 2.0, 3.0], [1.2, 2.9, 3.0, 4.4], [1.0, 2.5, 2.4, 3.1])
+    real = v6b.one
+    monkeypatch.setattr(v6b, "one", lambda *a: {**real(*a), "share_vs_own": real(*a)["share_vs_own"] + 0.01})
+    with pytest.raises(SystemExit, match="do not give its share"):
+        q6.i2_cell(first, sel, [1, 2], "w")
+    monkeypatch.setattr(v6b, "one", lambda *a: {**real(*a), "share_vs_own_ci": [0.0, 1.0]})
+    with pytest.raises(SystemExit, match="interval"):
+        q6.i2_cell(first, sel, [1, 2], "w")
+
+
+def fresh_hv(run, ds="lwp"):
+    rec, rn, ro, rp, (ks_, kid, kp, ls_, lid, lp) = run
+    series, ids, place, task = (ls_, lid, lp, "lwp") if ds == "lwp" else (ks_, kid, kp, "essay")
+    b = n6.build(series, ids, ds, task, place, M, o6.BUILD_ROWS)
+    return q6.with_i2(n6.hv_of(b, o6.BUILD_ROWS)), task
+
+
+def test_rule_i2_checks_inside_alone(run):
+    hv, task = fresh_hv(run)
+    rn = run[1]
+    rule = p6.rule_keep(hv, "lwp", task, "oddeven", "inside_50", "I", rn)
+    i = rule["persons"][0]
+    pair = hv["oddeven"]["inside_50"][i]
+    d = dict(pair[0])
+    d["I"] = np.asarray(d["I"], dtype=float) + np.array([1e-6, 0.0, 0.0])
+    hv["oddeven"]["inside_50"][i] = (d, pair[1])
+    with pytest.raises(SystemExit, match="changed under inside"):
+        q6.rule_i2(hv, "lwp", task, "oddeven", "inside_50", rn)
+
+
+def test_rule_i2_stops_on_a_class_mismatch(run, monkeypatch):
+    hv, task = fresh_hv(run)
+    real = p6.rule_keep
+
+    def wrong(*a):
+        r = real(*a)
+        r["cell_R_loc_class"] = {"above": "below", "below": "above", "undecided": "above"}[r["cell_R_loc_class"]]
+        return r
+    monkeypatch.setattr(p6, "rule_keep", wrong)
+    with pytest.raises(SystemExit, match="R_loc's class differs"):
+        q6.rule_i2(hv, "lwp", task, "halves", "cross_100", run[1])
+
+
+def test_gate0_no_count_must_match_v6n(run, monkeypatch):
+    hv, task = fresh_hv(run)
+    monkeypatch.setattr(n6, "one_cell", lambda *a, **k: {"too_few_persons": True, "persons": 1})
+    with pytest.raises(SystemExit, match="count 1 cell differs"):
+        q6.gate0_i2(hv, "lwp", task, "halves", "cross_100", run[1])
+
+
+def test_gate0_counts_persons_below_i(run, monkeypatch):
+    hv, task = fresh_hv(run)
+    real = q6.contrib
+    monkeypatch.setattr(q6, "contrib", lambda f, s, k, w: np.full(len(f), 2.0) if k == "I" else real(f, s, k, w))
+    out, ok = q6.gate0_i2(hv, "lwp", task, "oddeven", "inside_100", run[1])
+    assert out["persons_I[2]_below_I"] == len(ok) > 0
+
+
+def hand_groups(n_per=6):
+    rng = np.random.default_rng(11)
+    n = 3 * n_per
+    # continuous trial values (not 0, 1/2, 1), so that groups with the same values cannot share an interval by chance
+    rule = {I2: rng.random(n), "stage": rng.random(n), "R_loc": rng.random(n), "persons": list(range(n))}
+    g = np.repeat([0, 1, 2], n_per)
+    ig = {"persons": {"low": n_per, "mid": n_per, "high": n_per}, "high_minus_low": {"difference": 0.1, "ci": [0, .2]},
+          "groups": {gn: {"persons": n_per, "share_vs_own": 0.5, "share_vs_own_ci": [0.3, 0.7], "class": "undecided",
+                          "R_loc": {"class": "above"}, "R_mean": {"class": "above"}, "state": "gate"}
+                     for gn in q6.GROUPS}}
+    return rule, g, ig
+
+
+def test_i2_groups_by_hand_with_n_s_min_keys():
+    rule, g, ig = hand_groups()
+    out = q6.i2_groups(rule, g, "kupa", "essay", "cross_50", "halves", "n_s_min", ig)
+    means = {}
+    for j, gn in enumerate(q6.GROUPS):
+        own = rule[I2][g == j]
+        idx = np.random.default_rng(q6.qkey("kupa", "essay", "cross_50", "halves", 10 + j, 0)).integers(
+            0, len(own), (v6.N_BOOT, len(own)))
+        means[gn] = own[idx].mean(axis=1)
+        e = out["groups"][gn]
+        assert e["share_vs_own_ci"] == v6.ci(own, idx) and e["share_vs_own"] == pytest.approx(own.mean())
+        assert e["I[2]_minus_I"]["ci"] == v6.ci(own - rule["stage"][g == j], idx)
+    assert out["high_minus_low"]["ci"] == o6.pct(means["high"] - means["low"])
+    assert out["I_high_minus_low"] == ig["high_minus_low"]
+
+
+def test_i2_groups_stops_on_persons_mismatch():
+    rule, g, ig = hand_groups()
+    ig["groups"]["mid"]["persons"] = 5
+    with pytest.raises(SystemExit, match="differ from I's"):
+        q6.i2_groups(rule, g, "kupa", "essay", "cross_50", "halves", "n_s", ig)
+    rule, g, ig = hand_groups(n_per=4)
+    with pytest.raises(SystemExit, match="fewer than 5"):
+        q6.i2_groups(rule, g, "kupa", "essay", "cross_50", "halves", "n_s", ig)
+
+
+def test_family_out_stops_when_v6p_counted_where_v6n_did_not():
+    rp = {"groups": {"n_s": {"kupa_essay": {"oddeven": {"I": {"cross_25": {"written": False, "plan": "derivable",
+                                                                            "persons": {}}}}}}}}
+    with pytest.raises(SystemExit, match="v6p counted I where v6n did not"):
+        q6.family_out({}, None, {"no_count": True, "persons": 1}, [], {}, "kupa", "essay", "oddeven", "cross_25", "n_s",
+                      rp, {}, [], 10)
+    rp["groups"]["n_s"]["kupa_essay"]["oddeven"]["I"]["cross_25"] = {"no_count": True, "written": False}
+    out = q6.family_out({}, None, {"no_count": True, "persons": 1}, [], {}, "kupa", "essay", "oddeven", "cross_25",
+                        "n_s", rp, {}, [], 10)
+    assert out == {"no_count": True, "persons": 1, "written": False}
+
+
+def test_same_ledger_is_called_per_set_and_baseline(run, monkeypatch):
+    seen = []
+    monkeypatch.setattr(q6, "same_ledger", lambda a, b, w: seen.append((len(a), len(b), w)))
+    rerun(run)
+    assert len(seen) == 4 and all(a == b for a, b, _ in seen)
