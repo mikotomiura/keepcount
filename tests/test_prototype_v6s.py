@@ -387,3 +387,103 @@ def test_summary_and_short():
     assert s["primary"]["one_minus_p_o"] == {"cells": 40, "min": 0.1, "median": 0.1, "max": 0.4}
     assert s["shuffles"]["withheld_fewer_than_5"] == 1 and s["shuffles"]["written"] == 27
     assert s6.short({"persons_common": 9, "fixed_by_construction": True}) == "not written (fixed; common 9)"
+
+
+def test_interval_canonical_with_many_persons():
+    rng = np.random.default_rng(11)
+    a = rng.choice([0.0, 0.5, 1.0], 101)
+    b = np.where(rng.random(101) < 0.6, a, rng.choice([0.0, 0.5, 1.0], 101))
+    e = s6.agreement_po(a, b, [9, 9])
+    agree = int(np.sum(a == b))
+    idx = np.random.default_rng([9, 9]).integers(0, 101, (v6.N_BOOT, 101))
+    assert e["p_o_ci"] == v6.ci(np.array([1.0] * agree + [0.0] * (101 - agree)), idx)
+    assert e["p_o_ci"] != v6.ci((a == b).astype(float), idx)  # the original order would give another interval
+
+
+def test_last_d_counts_in_w():
+    found = False
+    for n_c in range(2, 7):
+        for ho in range(0, 2 * n_c + 1):
+            for hh in range(0, 2 * n_c + 3):
+                h2, m = {"oddeven": ho, "halves": hh}, {"oddeven": 0, "halves": 1}
+                if not s6.narrows_d(h2, m, n_c, n_c):
+                    continue
+                w = [d for d in range(n_c + 1) if s6.narrows_d(h2, m, n_c, d)]
+                union = set().union(*(s6.pairs(h2, m, n_c, d) for d in w))
+                if s6.view(union, m) != s6.view(s6.pairs(h2, m, n_c, None), m):
+                    continue
+                ps = s6.pairs(h2, m, n_c, n_c)
+                if ps:
+                    t = sorted(ps)[0]
+                    assert s6.withhold(h2, m, n_c, n_c, {"oddeven": t[0], "halves": t[1]})
+                    found = True
+    assert found
+
+
+def test_fixed_cells_are_listed(run):
+    rec = run[0]
+    n = 0
+    for nm, row, st, e in cells(rec):
+        if r6.is_fixed(st, row):
+            assert e.get("fixed_by_construction") and "p_o" not in e
+            n += 1
+    assert n > 0
+
+
+def test_fewer_than_5_common(run, monkeypatch):
+    real = r6.verdicts
+
+    def tiny(*a, **k):
+        v = real(*a, **k)
+        for st in s6.STAGES_R:
+            s = v["stages"][st]
+            if not s.get("no_count"):
+                v["stages"][st] = {**s, "persons": s["persons"][:4], "own": s["own"][:4]}
+        return v
+
+    monkeypatch.setattr(r6, "verdicts", tiny)
+    rr = copy.deepcopy(run[4])
+    for nm in rr["cells"]:
+        for row in s6.ROWS_R:
+            for st, e in rr["cells"][nm][row].items():
+                e["persons_common"], e["persons_rule"] = 4, {"oddeven": 4, "halves": 4}
+                e["persons_one_split_only"] = {"oddeven": 0, "halves": 0}
+    rec = rerun(run, rr=rr)
+    for nm, row, st, e in cells(rec):
+        if not (e.get("fixed_by_construction") or e.get("no_count")):
+            assert e["withheld"] == "fewer than 5" and "p_o" not in e
+
+
+def test_true_odd_even_only_sum_is_passed(run, monkeypatch):
+    real = r6.verdicts
+    dropped = {}
+
+    def drop1(*a, **k):
+        v = real(*a, **k)
+        if a[4] == "halves":
+            for st in s6.STAGES_R:
+                s = v["stages"][st]
+                if not s.get("no_count"):
+                    v["stages"][st] = {**s, "persons": s["persons"][1:], "own": s["own"][1:]}
+        else:
+            for st in s6.STAGES_R:
+                s = v["stages"][st]
+                if not s.get("no_count"):
+                    dropped[(a[2], a[5], st)] = 2 * float(s["own"][0])
+        return v
+
+    monkeypatch.setattr(r6, "verdicts", drop1)
+    rr = copy.deepcopy(run[4])
+    for nm in rr["cells"]:
+        for row in s6.ROWS_R:
+            for st, e in rr["cells"][nm][row].items():
+                e["persons_common"] -= 1
+                e["persons_rule"]["halves"] -= 1
+                e["persons_one_split_only"]["oddeven"] += 1
+    monkeypatch.setattr(s6, "full_sum", lambda v, *a: float(v["own"].sum()))
+    got = []
+    real_w = s6.withhold
+    monkeypatch.setattr(s6, "withhold", lambda h2, m, n_c, d, t: (got.append(t["oddeven"]), real_w(h2, m, n_c, d, t))[1])
+    rerun(run, rr=rr)
+    assert got and any(x > 0 for x in got)
+    assert sorted(got) == sorted(v for (ds, row, st), v in dropped.items() if not r6.is_fixed(st, row))
