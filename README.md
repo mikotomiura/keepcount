@@ -210,7 +210,8 @@ uv run --frozen python tools/rebuild_records.py
 The tool runs v6k to v6s in order and stops unless each record has the content of the original (its SHA-256 without
 the provenance). A rebuilt record differs from the original file in its provenance (time, commit), so the SHA-256 that
 the conditions of later runs name for it no longer matches; on the local branch the tool replaces those SHA-256 values,
-and nothing else, in the later conditions and commits them with the record (`docs/procedure.md`). Checked before this version was archived: from a fresh clone,
+and the SHA-256 of each conditions file so changed (later conditions name earlier ones), and nothing else, in the
+later conditions, and commits them with the record (`docs/procedure.md`). Checked before this version was archived: from a fresh clone,
 on macOS 27.0.1 (Apple silicon), uv 0.11.1 and Python 3.13.12, all nine records were rebuilt with the content of the
 originals; the tests then gave 659 passed, and the scripts of `article/jowr/values/` gave all 135 values of the body
 and every appendix table as the article prints them, except the table of runs (`app-runs.tex`), which prints each
@@ -228,12 +229,13 @@ original commit to the one here. The commits after the last mapped one add the R
 Version 1.1.0 continues the history after v6j with the commits of the working repository that hold the conditions,
 code and tests of v6k to v6s and a fix of the earlier scripts' temporary files, made the same way (same dates,
 messages and author) and placed after the commits of version 1.0.1. The commits that added only the records or notes
-of v6k to v6s, and those of the later study, are left out. `commit-map.tsv` maps these commits too; the last commit
-adds the files of this version.
+of v6k to v6s, and those of the later study, are left out. `commit-map.tsv` maps these commits too; the last two
+commits add the files of this version and its DOI.
 
-Versions: 1.0.0 ([10.5281/zenodo.23858736](https://doi.org/10.5281/zenodo.23858736)), which both articles cite; 1.0.1
+Versions: 1.0.0 ([10.5281/zenodo.23858736](https://doi.org/10.5281/zenodo.23858736)), which the preprint of the first article cites; 1.0.1
 ([10.5281/zenodo.23862942](https://doi.org/10.5281/zenodo.23862942)), which adds only the images of the README and their tool, `README.ja.md` and `CITATION.cff`, and rewrites this README.
-1.1.0 (DOI_110), which adds the conditions, code and tests of v6k to v6s and the files of the second article.
+1.1.0 ([10.5281/zenodo.24095177](https://doi.org/10.5281/zenodo.24095177)), which adds the conditions, code and tests of v6k to v6s and the files of the second article, and which the second
+article cites.
 [10.5281/zenodo.23858735](https://doi.org/10.5281/zenodo.23858735) resolves to the latest version.
 
 ## Citation
@@ -248,6 +250,9 @@ Please cite the article you use and this archive (also in `CITATION.cff`):
 
 > Miura, M. and Harada, Y. (2026). KeepCount: conditions, code, records and history. Zenodo.
 > https://doi.org/10.5281/zenodo.23858735
+
+This DOI resolves to the latest version. To cite the version an article used, cite its own DOI from the list of
+versions under History and provenance: 1.0.0 for the preprint of the first article, 1.1.0 for the second article.
 
 The form of the rule comes from the preprint of the second author:
 

@@ -326,6 +326,7 @@ def hand_typed():
         for ln in (HERE / name).read_text(encoding="utf-8").splitlines():
             ln = re.sub(r"(?<!\\)%.*", "", ln)
             ln = re.sub(r"\\N\{[^}]*\}", " ", ln)
+            ln = re.sub(r"10\.5281/zenodo\.\d+", " ", ln)  # a Zenodo DOI (\ArchiveDOI) is not a value
             found |= {t for t in tokens(ln) if "." in t}
     if found - HAND_TYPED:
         sys.exit(f"decimals typed by hand, not in HAND_TYPED: {sorted(found - HAND_TYPED)}")

@@ -22,18 +22,18 @@ authors:
 doi: 10.5281/zenodo.23858735
 identifiers:
   - type: doi
-    value: DOI_110
-    description: Version 1.1.0.
+    value: 10.5281/zenodo.24095177
+    description: Version 1.1.0, cited by the second article.
   - type: doi
     value: 10.5281/zenodo.23862942
     description: Version 1.0.1.
   - type: doi
     value: 10.5281/zenodo.23858736
-    description: Version 1.0.0, cited by both articles.
+    description: Version 1.0.0, cited by the preprint of the first article.
 repository-code: "https://github.com/mikotomiura/keepcount"
 license-url: "https://github.com/mikotomiura/keepcount/blob/main/LICENSE-docs"
 version: 1.1.0
-date-released: DATE_110
+date-released: 2026-11-10
 keywords:
   - visualization evaluation
   - keystroke dynamics
