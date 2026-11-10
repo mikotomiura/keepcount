@@ -52,9 +52,7 @@ references:
       - family-names: Harada
         given-names: Yuusuke
     year: 2026
-    status: submitted
-    journal: "Journal of Writing Research"
-    notes: "Manuscript submitted to the Journal of Writing Research."
+    notes: "Manuscript."
   - type: article
     title: "KeepCount: A Stage-by-Stage Audit of What Images of Behavioral Data Keep, with Keystroke Tiles as a Worked Example"
     authors:

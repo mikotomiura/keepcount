@@ -19,8 +19,7 @@
 This repository is the archive of two articles by Mikoto Miura and Yuusuke Harada: *KeepCount: A Stage-by-Stage
 Audit of What Images of Behavioral Data Keep, with Keystroke Tiles as a Worked Example* (preprint, not peer reviewed,
 [10.5281/zenodo.23858734](https://doi.org/10.5281/zenodo.23858734); runs v1 to v6j) and, from version 1.1.0, *Can a
-pause summary show where one writer paused? An audit procedure for keystroke logs* (manuscript submitted to the
-*Journal of Writing Research*; runs v6k to v6s), which asks the same questions of the pause summaries that writing
+pause summary show where one writer paused? An audit procedure for keystroke logs* (manuscript; runs v6k to v6s), which asks the same questions of the pause summaries that writing
 research reports (see [The article on pause summaries](#the-article-on-pause-summaries-version-110)).
 
 KeepCount is an audit procedure: cut a transform from data to image into stages and, at each stage and against
@@ -243,7 +242,7 @@ article cites.
 Please cite the article you use and this archive (also in `CITATION.cff`):
 
 > Miura, M. and Harada, Y. Can a pause summary show where one writer paused? An audit procedure for keystroke logs.
-> Manuscript submitted to the *Journal of Writing Research*, 2026.
+> Manuscript, 2026.
 
 > Miura, M. and Harada, Y. KeepCount: A Stage-by-Stage Audit of What Images of Behavioral Data Keep, with Keystroke
 > Tiles as a Worked Example. Preprint, Zenodo, 2026. https://doi.org/10.5281/zenodo.23858734

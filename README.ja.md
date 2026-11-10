@@ -16,7 +16,7 @@
 
 <p align="center"><a href="README.md">English</a> | <b>日本語</b></p>
 
-このリポジトリは Mikoto Miura・Yuusuke Harada の 2 つの論文のアーカイブである。*KeepCount: A Stage-by-Stage Audit of What Images of Behavioral Data Keep, with Keystroke Tiles as a Worked Example*（査読前のプレプリント [10.5281/zenodo.23858734](https://doi.org/10.5281/zenodo.23858734)。run v1〜v6j）と、版 1.1.0 からの *Can a pause summary show where one writer paused? An audit procedure for keystroke logs*（*Journal of Writing Research* に投稿した原稿。run v6k〜v6s）である。後者は同じ問いを、書く過程の研究が報告する休止の要約に向ける（下の「休止の要約の論文」）。
+このリポジトリは Mikoto Miura・Yuusuke Harada の 2 つの論文のアーカイブである。*KeepCount: A Stage-by-Stage Audit of What Images of Behavioral Data Keep, with Keystroke Tiles as a Worked Example*（査読前のプレプリント [10.5281/zenodo.23858734](https://doi.org/10.5281/zenodo.23858734)。run v1〜v6j）と、版 1.1.0 からの *Can a pause summary show where one writer paused? An audit procedure for keystroke logs*（原稿。run v6k〜v6s）である。後者は同じ問いを、書く過程の研究が報告する休止の要約に向ける（下の「休止の要約の論文」）。
 
 KeepCount は監査の手順である。データから画像への変換を段に切り、段ごとに、数える前に決めた比べの相手に対して、(a) その段が人をどれだけ見分けるか、(b) データへの操作がその段に映るかを数える。陽性対照を置き、人自身の揺れより細かい物差しには、間を入れ替えても同じとみなせる帰無（同じ間を無作為な順に並べたもの）を添える。作例は、打鍵の時刻を速さと休みの 2 つの量を通して、1 文 1 枚の陰影のタイルに変える変換である。
 
@@ -166,7 +166,7 @@ uv run --frozen python tools/rebuild_records.py
 使う論文とこのアーカイブを引くこと（`CITATION.cff` にもある）。
 
 > Miura, M. and Harada, Y. Can a pause summary show where one writer paused? An audit procedure for keystroke logs.
-> Manuscript submitted to the *Journal of Writing Research*, 2026.
+> Manuscript, 2026.
 
 > Miura, M. and Harada, Y. KeepCount: A Stage-by-Stage Audit of What Images of Behavioral Data Keep, with Keystroke
 > Tiles as a Worked Example. Preprint, Zenodo, 2026. https://doi.org/10.5281/zenodo.23858734
