@@ -229,12 +229,14 @@ Version 1.1.0 continues the history after v6j with the commits of the working re
 code and tests of v6k to v6s and a fix of the earlier scripts' temporary files, made the same way (same dates,
 messages and author) and placed after the commits of version 1.0.1. The commits that added only the records or notes
 of v6k to v6s, and those of the later study, are left out. `commit-map.tsv` maps these commits too; the last two
-commits add the files of this version and its DOI.
+commits add the files of this version and its DOI. Version 1.1.1 changes only the licences (see License) and adds
+`REUSE.toml`, `LICENSES/` and `CHANGELOG.md`.
 
 Versions: 1.0.0 ([10.5281/zenodo.23858736](https://doi.org/10.5281/zenodo.23858736)), which the preprint of the first article cites; 1.0.1
 ([10.5281/zenodo.23862942](https://doi.org/10.5281/zenodo.23862942)), which adds only the images of the README and their tool, `README.ja.md` and `CITATION.cff`, and rewrites this README.
 1.1.0 ([10.5281/zenodo.24095177](https://doi.org/10.5281/zenodo.24095177)), which adds the conditions, code and tests of v6k to v6s and the files of the second article, and which the second
-article cites.
+article cites; 1.1.1 ([10.5281/zenodo.24141890](https://doi.org/10.5281/zenodo.24141890)), which puts the documents,
+conditions, texts, images and the results of runs v1 to v5 under CC BY 4.0 and changes nothing else.
 [10.5281/zenodo.23858735](https://doi.org/10.5281/zenodo.23858735) resolves to the latest version.
 
 ## Citation

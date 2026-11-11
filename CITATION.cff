@@ -24,6 +24,9 @@ authors:
 doi: 10.5281/zenodo.23858735
 identifiers:
   - type: doi
+    value: 10.5281/zenodo.24141890
+    description: "Version 1.1.1: the documents under CC BY 4.0 (the licences only change)."
+  - type: doi
     value: 10.5281/zenodo.24095177
     description: Version 1.1.0, cited by the second article.
   - type: doi
@@ -37,8 +40,8 @@ license:
   - MIT
   - CC-BY-4.0
 license-url: "https://github.com/mikotomiura/keepcount/blob/main/LICENSE-docs"
-version: 1.1.0
-date-released: 2026-11-10
+version: 1.1.1
+date-released: 2026-11-12
 keywords:
   - visualization evaluation
   - keystroke dynamics
