@@ -8,8 +8,10 @@ abstract: >-
   v6j), and, from version 1.1.0, the conditions, code and tests of the same audit applied to the pause summaries that
   writing research reports (runs v6k to v6s), with the values that article writes and the record cells they come
   from; the records of v6k to v6s are not shared and are rebuilt from the public data. Every computation ran a script
-  on conditions committed before the script was first run. The keystroke data are not redistributed. The code (src/, works/*.py, tools/, tests/, article/jowr/values/*.py) is under the MIT License (LICENSE); the documents,
-  conditions, records, texts and images are under CC BY-NC-SA 4.0 (LICENSE-docs).
+  on conditions committed before the script was first run. The keystroke data are not redistributed. The code (src/, works/*.py, tools/, tests/, article/jowr/values/*.py) is under the MIT License; from version 1.1.1,
+  the documents, conditions, texts and images, and the results of runs v1 to v5 (synthetic keystrokes only), are under
+  CC BY 4.0, and the results of runs v6 to v6j and the values of article/jowr/values/ keep the terms of the keystroke
+  data they count (REUSE.toml, LICENSES/, LICENSE-docs).
 authors:
   - family-names: Miura
     given-names: Mikoto
@@ -31,6 +33,9 @@ identifiers:
     value: 10.5281/zenodo.23858736
     description: Version 1.0.0, cited by the preprint of the first article.
 repository-code: "https://github.com/mikotomiura/keepcount"
+license:
+  - MIT
+  - CC-BY-4.0
 license-url: "https://github.com/mikotomiura/keepcount/blob/main/LICENSE-docs"
 version: 1.1.0
 date-released: 2026-11-10

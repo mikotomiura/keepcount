@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="LICENSE"><img alt="Code: MIT" src="https://img.shields.io/badge/code-MIT-2f6f9f"></a>
-  <a href="LICENSE-docs"><img alt="Documents and records: CC BY-NC-SA 4.0" src="https://img.shields.io/badge/documents%20%26%20records-CC%20BY--NC--SA%204.0-d66e28"></a>
+  <a href="LICENSE-docs"><img alt="Documents: CC BY 4.0" src="https://img.shields.io/badge/documents-CC%20BY%204.0-d66e28"></a>
   <img alt="Python 3.13" src="https://img.shields.io/badge/python-3.13-4b8bbe">
   <a href="https://docs.astral.sh/uv/"><img alt="Environment: uv.lock" src="https://img.shields.io/badge/environment-uv.lock-5c5c5c"></a>
   <img alt="Tests: 384 passed (659 with the rebuilt records)" src="https://img.shields.io/badge/tests-384%20passed%20%7C%20659%20with%20records-3f8f4f">
@@ -260,9 +260,11 @@ The form of the rule comes from the preprint of the second author:
 
 ## License
 
-The code is released under the MIT License (`LICENSE`). The documents, conditions, records, texts and images are
-released under CC BY-NC-SA 4.0 (`LICENSE-docs`), which also states the terms of the keystroke datasets from which the
-records of runs v6 to v6s count.
+The code is released under the MIT License (`LICENSE`). From version 1.1.1, the documents, conditions, texts and
+images, and the results of runs v1 to v5 (synthetic keystrokes only), are released under CC BY 4.0. The results of runs
+v6 to v6j and the values of `article/jowr/values/` count keystroke data of others and keep the terms of their sources.
+`REUSE.toml` states the licence of every file, `LICENSES/` holds the texts and `LICENSE-docs` summarizes them.
+Versions 1.0.0 to 1.1.0 were released with the documents under CC BY-NC-SA 4.0 and keep that licence.
 
 ## Authors
 

@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="LICENSE"><img alt="Code: MIT" src="https://img.shields.io/badge/code-MIT-2f6f9f"></a>
-  <a href="LICENSE-docs"><img alt="Documents and records: CC BY-NC-SA 4.0" src="https://img.shields.io/badge/documents%20%26%20records-CC%20BY--NC--SA%204.0-d66e28"></a>
+  <a href="LICENSE-docs"><img alt="Documents: CC BY 4.0" src="https://img.shields.io/badge/documents-CC%20BY%204.0-d66e28"></a>
   <img alt="Python 3.13" src="https://img.shields.io/badge/python-3.13-4b8bbe">
   <a href="https://docs.astral.sh/uv/"><img alt="Environment: uv.lock" src="https://img.shields.io/badge/environment-uv.lock-5c5c5c"></a>
   <img alt="Tests: 384 passed (659 with the rebuilt records)" src="https://img.shields.io/badge/tests-384%20passed%20%7C%20659%20with%20records-3f8f4f">
@@ -183,7 +183,7 @@ uv run --frozen python tools/rebuild_records.py
 
 ## 使用許諾
 
-コードは MIT License（`LICENSE`）、文書・条件・記録・文章・画像は CC BY-NC-SA 4.0（`LICENSE-docs`）である。`LICENSE-docs` には、v6〜v6s の記録が数えた打鍵のデータの条件も書いてある。
+コードは MIT License（`LICENSE`）である。版 1.1.1 から、文書・条件・文章・画像と、v1〜v5 の結果（合成の打鍵だけから作ったもの）は CC BY 4.0 である。v6〜v6j の結果と `article/jowr/values/` の値は他者の打鍵のデータを数えたもので、元のデータの条件を継ぐ。ファイルごとのライセンスは `REUSE.toml`、本文は `LICENSES/`、まとめは `LICENSE-docs` にある。版 1.0.0〜1.1.0 は文書を CC BY-NC-SA 4.0 で出したもので、そのライセンスのまま残る。
 
 ## 著者
 
