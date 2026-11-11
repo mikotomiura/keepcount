@@ -1,0 +1,62 @@
+version = 1
+SPDX-PackageName = "KeepCount"
+SPDX-PackageDownloadLocation = "https://github.com/mikotomiura/keepcount"
+
+# Licences are set here rather than in file headers: the records hold the SHA-256 of the scripts
+# and conditions they ran, so those files are not edited. When several annotations match a file,
+# the last one applies.
+
+# (b) Our documents, conditions, texts, and the results and images of runs v1 to v5, which are made
+# from synthetic keystrokes only (the texts in works/texts/ and summary statistics published in
+# the cited papers), and the SHA-256 digests of the records of runs v6k to v6s (hashes only, no
+# values): CC BY 4.0.
+[[annotations]]
+path = [
+  "README.md",
+  "README.ja.md",
+  "CITATION.cff",
+  "CHANGELOG.md",
+  "commit-map.tsv",
+  "docs/**",
+  "works/texts/**",
+  "works/conditions/**",
+  "results/prototype_v1/**",
+  "results/prototype_v2/**",
+  "results/prototype_v3/**",
+  "results/prototype_v4/**",
+  "results/prototype_v5/**",
+  "results/record-digests.json",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Mikoto Miura and Yuusuke Harada"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+# (a) Code and the files of the environment: MIT.
+[[annotations]]
+path = [
+  "src/**",
+  "works/*.py",
+  "tools/**",
+  "tests/**",
+  "article/jowr/values/*.py",
+  "pyproject.toml",
+  "uv.lock",
+  ".python-version",
+  ".gitignore",
+  "**/.gitkeep",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Mikoto Miura and Yuusuke Harada"
+SPDX-License-Identifier = "MIT"
+
+# (c) Results and values that count keystroke data of others (runs v6 to v6s): the terms of the
+# source data (LICENSES/LicenseRef-KeepCount-source-data-terms.txt).
+[[annotations]]
+path = [
+  "results/prototype_v6*/**",
+  "article/jowr/values/*.json",
+  "article/jowr/values/*.tex",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Mikoto Miura and Yuusuke Harada"
+SPDX-License-Identifier = "LicenseRef-KeepCount-source-data-terms"

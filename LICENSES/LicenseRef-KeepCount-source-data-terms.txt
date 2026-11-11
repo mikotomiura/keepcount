@@ -1,0 +1,21 @@
+Terms of the keystroke data counted by runs v6 to v6s of KeepCount
+
+The results of runs v6 to v6j (results/prototype_v6*/) and the values, tables and lists of
+article/jowr/values/ (*.json and *.tex) count keystroke data of others. They keep the terms of
+their sources:
+
+- Counts and values derived from KUPA-KEYS (Velentzas et al., LREC-COLING 2024,
+  https://huggingface.co/datasets/ALTACambridge/KUPA-KEYS) are under the Creative Commons
+  Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0):
+  https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+- Counts and values derived from 136M Keystrokes (Dhakal, Feit, Kristensson and Oulasvirta,
+  CHI 2018, https://doi.org/10.1145/3173574.3174220) are for non-commercial use with
+  attribution to its authors.
+- Counts and values derived from the essays of the Kaggle competition Linking Writing Processes
+  to Writing Quality are under the competition's rules.
+
+The keystroke data themselves are not redistributed in this archive. Where a file draws on more
+than one source, the terms of every source it draws on apply.
+
+Copyright (c) 2026 Mikoto Miura and Yuusuke Harada, for the selection and arrangement of the
+counts and values, within the terms above.
